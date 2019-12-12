@@ -1,0 +1,89 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+    id 'groovy'
+    id 'org.unbroken-dome.test-sets' version '2.2.1'
+}
+
+
+group = 'com.splitoil'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 12
+targetCompatibility = 12
+def cucumberVersion = '4.7.4'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //groovy
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.8'
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    //spock
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.3-groovy-2.5'
+    testCompile group: 'org.spockframework', name: 'spock-spring', version: '1.3-groovy-2.5'
+
+    //cucumber
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+
+}
+
+testSets {
+    integrationTest
+    test
+}
+
+test {
+    useJUnit {
+        includeCategories 'com.splitoil.UnitTest'
+    }
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+check.dependsOn integrationTest
+integrationTest.mustRunAfter test
+
+integrationTest {
+    useJUnit {
+        includeCategories 'com.splitoil.IntegrationTest'
+    }
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, compileIntegrationTestGroovy
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.integrationTest.output
+            args = ['--plugin', 'pretty', '--glue', 'classpath:com.splitoil', 'src/integrationTest/resources/cucumber']
+        }
+    }
+}

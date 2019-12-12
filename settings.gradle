@@ -1,0 +1,3 @@
+rootProject.name = 'splitoil-mono'
+include 'splitoil-mono-c4'
+include 'splitoil-mono-core'

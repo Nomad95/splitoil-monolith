@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'groovy'
+}
+
+group 'com.splitoil'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 12
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
