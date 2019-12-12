@@ -26,3 +26,6 @@
 
 ### VS Code ###
 .vscode/
+/splitoil-mono-core/build/
+/splitoil-mono-c4/build/
+/.gradle/
