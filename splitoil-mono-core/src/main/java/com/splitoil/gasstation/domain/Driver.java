@@ -1,17 +1,15 @@
 package com.splitoil.gasstation.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 
 @Getter
 @Embeddable
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class Driver {
 
-    private Long id;
+    private Long driverId;
 }

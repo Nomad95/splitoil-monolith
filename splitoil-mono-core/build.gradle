@@ -40,6 +40,9 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
+    //postgresql
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.9'
+
     //spring
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.2.2.RELEASE'
 

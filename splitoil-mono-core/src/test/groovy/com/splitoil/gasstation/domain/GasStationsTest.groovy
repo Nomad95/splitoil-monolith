@@ -1,7 +1,9 @@
 package com.splitoil.gasstation.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.gasstation.domain.*
+import com.splitoil.gasstation.dto.AddGasStationToObservableInputDto
+import com.splitoil.gasstation.dto.GeoPointInputDto
+import com.splitoil.gasstation.dto.ObservedGasStationOutputDto
 import org.assertj.core.api.Assertions
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
@@ -25,26 +27,37 @@ class GasStationsTest extends Specification {
     //@See("http://spockframework.org/spec")
     //@Issue("http://my.issues.org/FOO-1")
 
+    public static final BigDecimal LONGITUDE = -75.56
+    public static final BigDecimal LATITUDE = 14.54
+    public static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
+    public static final long DRIVER_ID = 1L
     private Driver driver
     private GasStationId gasStation
     private GasStationsFacade gasStationsFacade
 
     def setup() {
         gasStationsFacade = new GasStationConfiguration().gasStationsFacade()
+
         given:
-            gasStation = new GasStationId(new GeoPoint(lat: 14.54, lon: -75.56), "Orlen Radziwiłłów 3")
+            gasStation = new GasStationId(new GeoPoint(lat: LATITUDE, lon: LONGITUDE), GAS_STATION_NAME)
 
         and: "a driver"
-            driver = new Driver(id: 1L)
+            driver = new Driver(driverId: DRIVER_ID)
     }
 
     def "should add gas station to observed"() {
+        given:
+            def command = new AddGasStationToObservableInputDto(new GeoPointInputDto(LONGITUDE, LATITUDE), GAS_STATION_NAME, DRIVER_ID)
+
         when: "driver observes a gas station"
-            gasStationsFacade.addToObservables(gasStation, driver)
+            gasStationsFacade.addToObservables(command)
 
         then: "driver sees gas station in observables"
-            def stations = gasStationsFacade.getObservedGasStations(driver)
-            Assertions.assertThat(stations).contains(gasStation)
+            def expected = ObservedGasStationOutputDto.builder()
+                    .location(new GeoPointInputDto(LONGITUDE, LATITUDE))
+                    .name(GAS_STATION_NAME).build()
+            def stations = gasStationsFacade.getObservedGasStations(DRIVER_ID)
+            Assertions.assertThat(stations).contains(expected)
     }
 
     def "driver should rate gas station"() {

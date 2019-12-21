@@ -1,10 +1,12 @@
 package com.splitoil.gasstation.domain;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-interface ObservedGasStationsRepository {
+@Repository
+interface ObservedGasStationsRepository extends CrudRepository<ObservedGasStation, Long> {
 
-    void addGasStationToObservables(ObservedGasStation observedGasStation);
-
-    List<ObservedGasStation> findByDriver(Driver driver);
+    List<ObservedGasStation> findAllByObserver(Driver observer);
 }

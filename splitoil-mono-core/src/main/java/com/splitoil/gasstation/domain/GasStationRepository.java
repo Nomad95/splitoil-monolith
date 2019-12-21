@@ -1,10 +1,12 @@
 package com.splitoil.gasstation.domain;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
-interface GasStationRepository {
+@Repository
+interface GasStationRepository extends CrudRepository<GasStation, Long> {
 
-    Optional<GasStation> findOne(final GasStationId gasStationId);
-
-    GasStation save(final GasStation gasStation);
+    Optional<GasStation> findOptionalByGasStation(final GasStationId gasStationId);
 }

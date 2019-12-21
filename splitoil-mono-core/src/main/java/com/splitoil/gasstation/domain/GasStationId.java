@@ -8,6 +8,7 @@ import javax.persistence.Embedded;
 @Getter
 @ToString
 @Embeddable
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class GasStationId {
