@@ -19,20 +19,12 @@ class GasStationCreator {
         return gasStationDtoBuilder.build();
     }
 
-    GasStationId createGasStationId(final AddToObservableDto command) {
-        return GasStationId.from(command.getGasStationId());
-    }
-
     Driver createDriver(final AddToObservableDto command) {
         return Driver.from(command.getDriver());
     }
 
     ObservedGasStation createObservedGasStation(final AddToObservableDto command) {
-        return ObservedGasStation.from(createGasStationId(command), createDriver(command));
-    }
-
-    GasStationId createGasStationId(final AddRatingDto command) {
-        return GasStationId.from(command.getGasStationId());
+        return ObservedGasStation.from(createGasStationId(command.getGasStationId()), createDriver(command));
     }
 
     Rating createRating(final int rating) {
@@ -41,5 +33,9 @@ class GasStationCreator {
 
     GasStationId createGasStationId(final GasStationIdDto gasStationIdDto) {
         return GasStationId.from(gasStationIdDto);
+    }
+
+    PetrolPrice createPetrolPrice(final AddPetrolPriceDto addPetrolPriceCommand) {
+        return PetrolPrice.of(addPetrolPriceCommand.getAmount(), Currency.valueOf(addPetrolPriceCommand.getCurrency()), PetrolType.valueOf(addPetrolPriceCommand.getPetrolType()));
     }
 }

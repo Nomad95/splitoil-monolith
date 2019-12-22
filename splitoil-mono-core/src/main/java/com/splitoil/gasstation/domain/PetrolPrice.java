@@ -1,9 +1,6 @@
 package com.splitoil.gasstation.domain;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -12,10 +9,12 @@ import java.util.UUID;
 
 @ToString(exclude = "uuid")
 @EqualsAndHashCode(of = "uuid")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 class PetrolPrice {
 
     static final Comparator<PetrolPrice> SORT_BY_NEWEST_FIRST = Comparator.comparing(PetrolPrice::getCreated).reversed();
 
+    @Getter(AccessLevel.PACKAGE)
     private UUID uuid = UUID.randomUUID();
 
     private BigDecimal amount;

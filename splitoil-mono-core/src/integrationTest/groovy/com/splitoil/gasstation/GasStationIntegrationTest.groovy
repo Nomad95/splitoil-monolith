@@ -19,10 +19,14 @@ class GasStationIntegrationTest extends IntegrationSpec {
     public static final int LATITUDE = 100
     public static final String NAME = "Name"
     public static final long DRIVER_ID = 1L
+    public static final BigDecimal DEFAULT_PRICE = new BigDecimal("4.59")
+    public static final String BENZINE_95_STR = "BENZINE_95"
+    public static final String CURRENCY_PLN_STR = "PLN"
+    public static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
 
     def "driver adds a gas station to observables"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def driverDto = DriverDto.of(DRIVER_ID)
             def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
@@ -37,7 +41,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
 
     def "driver gets his own observed gas station list"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def driverDto = DriverDto.of(DRIVER_ID)
             def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
@@ -64,7 +68,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
 
     def "driver can rate gas station"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
 
         when:
@@ -78,8 +82,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
 
     def "driver can see gas station rating"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
-            print(jackson.toJson(gasStationIdDto))
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
 
         when:
@@ -100,6 +103,47 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath('$').value(4.0))
+    }
+
+    def "driver adds petrol price to gas station"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addPetrolPriceCommand = new AddPetrolPriceDto(gasStationIdDto, DEFAULT_PRICE, CURRENCY_PLN_STR, BENZINE_95_STR)
+
+        when:
+            def result = mockMvc.perform(post("/gas-station/gas-price")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addPetrolPriceCommand)))
+
+        then:
+            result.andExpect(status().isAccepted())
+    }
+
+
+    //TODO: i think this should be done internally
+    def "system should accept gas price"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addPetrolPriceCommand = new AddPetrolPriceDto(gasStationIdDto, DEFAULT_PRICE, CURRENCY_PLN_STR, BENZINE_95_STR)
+
+        when:
+            def request = mockMvc.perform(post("/gas-station/gas-price")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addPetrolPriceCommand)))
+
+        then:
+            def resultUuid = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
+            print(resultUuid)
+
+        when:
+            def uuid = jackson.jsonDecode(resultUuid, UUID.class)
+            def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(uuid).build()
+            def nextRequest = mockMvc.perform(post("/gas-station/gas-price/accept")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(acceptCommand)))
+
+        then:
+            nextRequest.andExpect(status().isOk())
     }
 
 }

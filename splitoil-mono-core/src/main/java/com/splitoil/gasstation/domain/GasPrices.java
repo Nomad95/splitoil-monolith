@@ -25,9 +25,10 @@ class GasPrices implements JsonEntity {
         prices.computeIfAbsent(petrolPrice.getPetrolType(), k -> new ArrayList<>()).add(petrolPrice);
     }
 
-    void accept(final PetrolPrice petrolPrice) {
-        final Optional<PetrolPrice> priceOptional = prices.getOrDefault(petrolPrice.getPetrolType(), Collections.emptyList()).stream()
-            .filter(price -> price.equals(petrolPrice))
+    void accept(final UUID petrolPriceId) {
+        final Optional<PetrolPrice> priceOptional = prices.values().stream()
+            .flatMap(List::stream)
+            .filter(price -> price.getUuid().equals(petrolPriceId))
             .findFirst();
 
         if (priceOptional.isPresent()) {

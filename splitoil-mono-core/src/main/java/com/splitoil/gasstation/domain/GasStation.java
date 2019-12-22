@@ -10,6 +10,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 import static java.math.RoundingMode.HALF_UP;
 
@@ -49,12 +50,13 @@ class GasStation extends AbstractEntity {
         return rating;
     }
 
-    void addPetrolPrice(final PetrolPrice petrolPrice) {
+    UUID addPetrolPrice(final PetrolPrice petrolPrice) {
         gasPrices.add(petrolPrice);
+        return petrolPrice.getUuid();
     }
 
-    void acceptPetrolPrice(final PetrolPrice petrolPrice) {
-        gasPrices.accept(petrolPrice);
+    void acceptPetrolPrice(final UUID petrolPriceId) {
+        gasPrices.accept(petrolPriceId);
     }
 
     BigDecimal getCurrentPetrolPrice(final PetrolType petrolType, final Currency currency) {

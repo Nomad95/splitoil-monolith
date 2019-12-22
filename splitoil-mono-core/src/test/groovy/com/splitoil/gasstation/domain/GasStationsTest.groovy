@@ -29,6 +29,8 @@ class GasStationsTest extends Specification {
     public static final double LATITUDE = 14.54
     public static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
     public static final long DRIVER_ID = 1L
+    public static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+
     private Driver driver
     private GasStationId gasStation
     private GasStationsFacade gasStationsFacade
@@ -45,7 +47,7 @@ class GasStationsTest extends Specification {
 
     def "should add gas station to observed"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def driverDto = DriverDto.of(DRIVER_ID)
             def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
@@ -59,7 +61,7 @@ class GasStationsTest extends Specification {
 
     def "driver should rate gas station"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
 
         when: "gas station has a new rating added"
@@ -71,7 +73,7 @@ class GasStationsTest extends Specification {
 
     def "adding second rate should create average of rates"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
             def addRatingCommand2 = new AddRatingDto(gasStationIdDto, 2)
 
@@ -85,13 +87,19 @@ class GasStationsTest extends Specification {
 
     def "driver should add petrol price to gas station"() {
         given: "petrol price"
-            def petrolPrice = PetrolPrice.of(new BigDecimal("5.15"), Currency.PLN, PetrolType.BENZINE_95)
+            def addPetrolPriceDto = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.15"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
 
         when: "driver adds new petrol price"
-            gasStationsFacade.addPetrolPrice(gasStation, petrolPrice)
+            def petrolPriceUuid = gasStationsFacade.addPetrolPrice(addPetrolPriceDto)
+            def acceptCommand = defaultGasStationBuilder().priceUuid(petrolPriceUuid).build()
 
         and: "petrol price is accepted"
-            gasStationsFacade.acceptPetrolPrice(gasStation, petrolPrice)
+            gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then: "gas station has new price set in pending status"
             gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.PLN) == new BigDecimal("5.15")
@@ -104,25 +112,35 @@ class GasStationsTest extends Specification {
 
     def "no one should see pending petrol price"() {
         given: "petrol price"
-            def petrolPrice = PetrolPrice.of(new BigDecimal("5.15"), Currency.PLN, PetrolType.BENZINE_95)
+            def addPetrolPriceDto = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.15"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
 
         when: "driver adds new petrol price"
-            gasStationsFacade.addPetrolPrice(gasStation, petrolPrice)
+            gasStationsFacade.addPetrolPrice(addPetrolPriceDto)
 
         then: "new price cant be seen"
             gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.PLN) == BigDecimal.ZERO
     }
 
-    //TODO: added by driver
     def "driver should get price equal to zero if no one provided in this currency"() {
         given: "petrol price"
-            def petrolPrice = PetrolPrice.of(new BigDecimal("5.15"), Currency.PLN, PetrolType.BENZINE_95)
+            def addPetrolPriceDto = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.15"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
 
         when: "driver adds new petrol price"
-            gasStationsFacade.addPetrolPrice(gasStation, petrolPrice)
+            def petrolPriceUuid = gasStationsFacade.addPetrolPrice(addPetrolPriceDto)
+            def acceptCommand = defaultGasStationBuilder().priceUuid(petrolPriceUuid).build()
 
         and: "system accepts new price in PLN currency"
-            gasStationsFacade.acceptPetrolPrice(gasStation, petrolPrice)
+            gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then: "No price shown"
             gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.USD) == BigDecimal.ZERO
@@ -130,19 +148,24 @@ class GasStationsTest extends Specification {
 
     def "driver should get price equal to zero if no one provided price with this petrol type"() {
         given: "petrol price"
-            def petrolPrice = PetrolPrice.of(new BigDecimal("5.15"), Currency.PLN, PetrolType.BENZINE_95)
+            def addPetrolPriceDto = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.15"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
 
         when: "driver adds new petrol price"
-            gasStationsFacade.addPetrolPrice(gasStation, petrolPrice)
+            def priceUuid = gasStationsFacade.addPetrolPrice(addPetrolPriceDto)
+            def acceptCommand = defaultGasStationBuilder().priceUuid(priceUuid).build()
 
         and: "system accepts new BENZINE_95 price in PLN currency"
-            gasStationsFacade.acceptPetrolPrice(gasStation, petrolPrice)
+            gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then: "No price shown"
             gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.OIL, Currency.PLN) == BigDecimal.ZERO
     }
 
-    //todo: w facade DTOsy i dodaj service
     def "should show unrated gas station when no rate was added view"() {
         when: "checks petrol station"
             def gasStationBrief = gasStationsFacade.showGasStationBrief(gasStation, Currency.PLN);
@@ -164,7 +187,7 @@ class GasStationsTest extends Specification {
 
     def "should show rates at gas station"() {
         given:
-            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def gasStationIdDto = GAS_STATION_ID_DTO
             def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
             gasStationsFacade.rateGasStation(addRatingCommand)
 
@@ -177,41 +200,79 @@ class GasStationsTest extends Specification {
 
     def "should show gas station prices"() {
         given:
-            def benzine95 = PetrolPrice.of(new BigDecimal("5.15"), Currency.PLN, PetrolType.BENZINE_95)
-            def benzine98 = PetrolPrice.of(new BigDecimal("5.30"), Currency.PLN, PetrolType.BENZINE_98)
-            def oil = PetrolPrice.of(new BigDecimal("4.89"), Currency.PLN, PetrolType.OIL)
-            def lpg = PetrolPrice.of(new BigDecimal("3.15"), Currency.PLN, PetrolType.LPG)
-            gasStationsFacade.addPetrolPrice(gasStation, benzine95)
-            gasStationsFacade.addPetrolPrice(gasStation, benzine98)
-            gasStationsFacade.addPetrolPrice(gasStation, oil)
-            gasStationsFacade.addPetrolPrice(gasStation, lpg)
+            def benzine95 = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.15"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
+            def benzine98 = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.30"))
+                    .petrolType(PetrolType.BENZINE_98.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
+            def oil = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("4.89"))
+                    .petrolType(PetrolType.OIL.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
+            def lpg = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("3.15"))
+                    .petrolType(PetrolType.LPG.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
 
-            gasStationsFacade.acceptPetrolPrice(gasStation, benzine95)
-            gasStationsFacade.acceptPetrolPrice(gasStation, benzine98)
-            gasStationsFacade.acceptPetrolPrice(gasStation, oil)
-            gasStationsFacade.acceptPetrolPrice(gasStation, lpg)
+            def benzine95PriceUuid = gasStationsFacade.addPetrolPrice(benzine95)
+            def benzine98PriceUuid = gasStationsFacade.addPetrolPrice(benzine98)
+            def oilPriceUuid = gasStationsFacade.addPetrolPrice(oil)
+            def lpgPriceUuid = gasStationsFacade.addPetrolPrice(lpg)
+
+            def acceptCommand95 = defaultGasStationBuilder().priceUuid(benzine95PriceUuid).build()
+            def acceptCommand98 = defaultGasStationBuilder().priceUuid(benzine98PriceUuid).build()
+            def acceptCommandOil = defaultGasStationBuilder().priceUuid(oilPriceUuid).build()
+            def acceptCommandLpg = defaultGasStationBuilder().priceUuid(lpgPriceUuid).build()
+
+            gasStationsFacade.acceptPetrolPrice(acceptCommand95)
+            gasStationsFacade.acceptPetrolPrice(acceptCommand98)
+            gasStationsFacade.acceptPetrolPrice(acceptCommandOil)
+            gasStationsFacade.acceptPetrolPrice(acceptCommandLpg)
 
         when: "checks petrol station"
             def pricesList = gasStationsFacade.showGasStationBrief(gasStation, Currency.PLN).getPetrolPrices().stream()
                     .map({ e -> e.getValue() })
                     .collect(Collectors.toList())
 
-        then: "No prices shown"
-            pricesList.contains(benzine95.getPetrolPrice())
-            pricesList.contains(benzine98.getPetrolPrice())
-            pricesList.contains(oil.getPetrolPrice())
-            pricesList.contains(lpg.getPetrolPrice())
+        then: "Prices shown"
+            pricesList.contains(benzine95.getAmount())
+            pricesList.contains(benzine98.getAmount())
+            pricesList.contains(oil.getAmount())
+            pricesList.contains(lpg.getAmount())
     }
 
     def "should show newest gas station price"() {
         given:
-            def benzine95 = PetrolPrice.of(new BigDecimal("5.15"), Currency.PLN, PetrolType.BENZINE_95)
-            def benzine95_2 = PetrolPrice.of(new BigDecimal("5.30"), Currency.PLN, PetrolType.BENZINE_95)
-            gasStationsFacade.addPetrolPrice(gasStation, benzine95)
-            gasStationsFacade.addPetrolPrice(gasStation, benzine95_2)
+            def benzine95 = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.15"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
+            def benzine95_2 = AddPetrolPriceDto.builder()
+                    .currency(Currency.PLN.name())
+                    .amount(new BigDecimal("5.30"))
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .build()
+            def priceUUid = gasStationsFacade.addPetrolPrice(benzine95)
+            def price2Uuid = gasStationsFacade.addPetrolPrice(benzine95_2)
+            def acceptCommand = defaultGasStationBuilder().priceUuid(priceUUid).build()
+            def acceptCommand2 = defaultGasStationBuilder().priceUuid(price2Uuid).build()
 
-            gasStationsFacade.acceptPetrolPrice(gasStation, benzine95)
-            gasStationsFacade.acceptPetrolPrice(gasStation, benzine95_2)
+            gasStationsFacade.acceptPetrolPrice(acceptCommand)
+            gasStationsFacade.acceptPetrolPrice(acceptCommand2)
 
         when: "checks petrol station"
             def pricesList = gasStationsFacade.showGasStationBrief(gasStation, Currency.PLN).getPetrolPrices().stream()
@@ -219,8 +280,12 @@ class GasStationsTest extends Specification {
                     .map({ e -> e.value })
                     .collect(Collectors.toList())
 
-        then: "No prices shown"
-            pricesList.contains(benzine95_2.getPetrolPrice())
+        then: "Newest price shown"
+            pricesList.contains(benzine95_2.getAmount())
+    }
+
+    private static AcceptPetrolPriceDto.AcceptPetrolPriceDtoBuilder defaultGasStationBuilder() {
+        return AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO)
     }
 
 }

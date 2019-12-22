@@ -1,9 +1,6 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.gasstation.dto.AddRatingDto;
-import com.splitoil.gasstation.dto.AddToObservableDto;
-import com.splitoil.gasstation.dto.GasStationDto;
-import com.splitoil.gasstation.dto.GasStationIdDto;
+import com.splitoil.gasstation.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -38,7 +36,7 @@ public class GasStationsFacade {
     }
 
     public void rateGasStation(final AddRatingDto command) {
-        final GasStationId gasStationId = gasStationCreator.createGasStationId(command);
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(command.getGasStationId());
         final Rating rating = gasStationCreator.createRating(command.getRating());
 
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
@@ -58,7 +56,10 @@ public class GasStationsFacade {
             .orElse(BigDecimal.ZERO);
     }
 
-    public void addPetrolPrice(final GasStationId gasStationId, final PetrolPrice petrolPrice) {
+    public UUID addPetrolPrice(final AddPetrolPriceDto command) {
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(command.getGasStationIdDto());
+        final PetrolPrice petrolPrice = gasStationCreator.createPetrolPrice(command);
+
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
             gasStationOptional.get().addPetrolPrice(petrolPrice);
@@ -67,12 +68,16 @@ public class GasStationsFacade {
             gasStation.addPetrolPrice(petrolPrice);
             gasStationRepository.save(gasStation);
         }
+
+        return petrolPrice.getUuid();
     }
 
-    public void acceptPetrolPrice(final GasStationId gasStationId, final PetrolPrice petrolPrice) {
+    public void acceptPetrolPrice(final AcceptPetrolPriceDto command) {
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(command.getGasStationIdDto());
+
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
-            gasStationOptional.get().acceptPetrolPrice(petrolPrice);
+            gasStationOptional.get().acceptPetrolPrice(command.getPriceUuid());
         } else {
             throw new EntityNotFoundException("Gas station " + gasStationId + " doesnt exist");
         }
