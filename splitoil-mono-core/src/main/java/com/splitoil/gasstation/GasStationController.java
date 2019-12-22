@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -21,17 +22,22 @@ class GasStationController {
     private GasStationsFacade gasStationsFacade;
 
     @PostMapping(value = "/observe")
-    private void addGasStationToObservable(@RequestBody @NonNull @Valid final AddToObservableDto command) {
+    public void addGasStationToObservable(@RequestBody @NonNull @Valid final AddToObservableDto command) {
         gasStationsFacade.addToObservables(command);
     }
 
     @GetMapping(value = "/observe/driver/{driverId}")
-    private List<GasStationIdDto> getObservedGasStations(final @NonNull @PathVariable Long driverId) {
+    public List<GasStationIdDto> getObservedGasStations(final @NonNull @PathVariable Long driverId) {
         return gasStationsFacade.getObservedGasStations(driverId);
     }
 
     @PostMapping(value = "/rate")
-    private void rateGasStation(@RequestBody @NonNull @Valid final AddRatingDto command) {
+    public void rateGasStation(@RequestBody @NonNull @Valid final AddRatingDto command) {
         gasStationsFacade.rateGasStation(command);
+    }
+
+    @PostMapping(value = "/rating")
+    public BigDecimal getGasStationRating(final @RequestBody GasStationIdDto gasStationIdDto) {
+        return gasStationsFacade.getRating(gasStationIdDto);
     }
 }

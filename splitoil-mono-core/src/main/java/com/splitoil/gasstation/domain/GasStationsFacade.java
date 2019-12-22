@@ -51,7 +51,8 @@ public class GasStationsFacade {
         }
     }
 
-    public BigDecimal getRating(final GasStationId gasStationId) {
+    public BigDecimal getRating(final GasStationIdDto gasStationIdDto) {
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(gasStationIdDto);
         return gasStationRepository.findOptionalByGasStation(gasStationId)
             .map(GasStation::getOverallRating)
             .orElse(BigDecimal.ZERO);

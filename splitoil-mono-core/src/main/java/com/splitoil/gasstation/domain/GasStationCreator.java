@@ -1,9 +1,6 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.gasstation.dto.AddRatingDto;
-import com.splitoil.gasstation.dto.AddToObservableDto;
-import com.splitoil.gasstation.dto.GasStationDto;
-import com.splitoil.gasstation.dto.PetrolPriceDto;
+import com.splitoil.gasstation.dto.*;
 
 import java.math.BigDecimal;
 
@@ -42,4 +39,7 @@ class GasStationCreator {
         return Rating.of(rating);
     }
 
+    GasStationId createGasStationId(final GasStationIdDto gasStationIdDto) {
+        return GasStationId.from(gasStationIdDto);
+    }
 }

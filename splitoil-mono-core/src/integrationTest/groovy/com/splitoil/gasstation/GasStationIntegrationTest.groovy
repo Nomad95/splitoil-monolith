@@ -76,4 +76,30 @@ class GasStationIntegrationTest extends IntegrationSpec {
             result.andExpect(status().isOk())
     }
 
+    def "driver can see gas station rating"() {
+        given:
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            print(jackson.toJson(gasStationIdDto))
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
+
+        when:
+            def result = mockMvc.perform(post("/gas-station/rate")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addRatingCommand)))
+
+        then:
+            result.andExpect(status().isOk())
+
+        when:
+            def ratings = mockMvc.perform(post("/gas-station/rating")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(gasStationIdDto)))
+
+        then:
+            ratings
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$').value(4.0))
+    }
+
 }

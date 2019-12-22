@@ -1,12 +1,17 @@
 package com.splitoil.gasstation.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Value(staticConstructor = "of")
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode
 public class GeoPointDto {
 
     private double lon;
+
     private double lat;
 }

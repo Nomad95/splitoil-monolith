@@ -1,10 +1,11 @@
 package com.splitoil.gasstation.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.*;
 
 @EqualsAndHashCode
-@Value(staticConstructor = "of")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(staticName = "of")
 public class GasStationIdDto {
 
     private GeoPointDto location;

@@ -61,11 +61,12 @@ class GasStationsTest extends Specification {
         given:
             def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
             def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+
         when: "gas station has a new rating added"
             gasStationsFacade.rateGasStation(addRatingCommand)
 
         then: "have changed its rate value"
-            gasStationsFacade.getRating(gasStation) == new BigDecimal(5)
+            gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal(5)
     }
 
     def "adding second rate should create average of rates"() {
@@ -79,7 +80,7 @@ class GasStationsTest extends Specification {
             gasStationsFacade.rateGasStation(addRatingCommand2)
 
         then: "have changed its rate value"
-            gasStationsFacade.getRating(gasStation) == new BigDecimal("3.5")
+            gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal("3.5")
     }
 
     def "driver should add petrol price to gas station"() {
