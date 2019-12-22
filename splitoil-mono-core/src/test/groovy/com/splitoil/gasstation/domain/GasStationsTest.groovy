@@ -1,10 +1,7 @@
 package com.splitoil.gasstation.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.gasstation.dto.AddToObservableDto
-import com.splitoil.gasstation.dto.DriverDto
-import com.splitoil.gasstation.dto.GasStationIdDto
-import com.splitoil.gasstation.dto.GeoPointDto
+import com.splitoil.gasstation.dto.*
 import org.assertj.core.api.Assertions
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
@@ -61,17 +58,25 @@ class GasStationsTest extends Specification {
     }
 
     def "driver should rate gas station"() {
+        given:
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
         when: "gas station has a new rating added"
-            gasStationsFacade.rateGasStation(gasStation, new Rating(rating: 5))
+            gasStationsFacade.rateGasStation(addRatingCommand)
 
         then: "have changed its rate value"
             gasStationsFacade.getRating(gasStation) == new BigDecimal(5)
     }
 
     def "adding second rate should create average of rates"() {
+        given:
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+            def addRatingCommand2 = new AddRatingDto(gasStationIdDto, 2)
+
         when: "gas station has a new rating added"
-            gasStationsFacade.rateGasStation(gasStation, new Rating(rating: 5))
-            gasStationsFacade.rateGasStation(gasStation, new Rating(rating: 2))
+            gasStationsFacade.rateGasStation(addRatingCommand)
+            gasStationsFacade.rateGasStation(addRatingCommand2)
 
         then: "have changed its rate value"
             gasStationsFacade.getRating(gasStation) == new BigDecimal("3.5")
@@ -158,7 +163,9 @@ class GasStationsTest extends Specification {
 
     def "should show rates at gas station"() {
         given:
-            gasStationsFacade.rateGasStation(gasStation, Rating.of(4))
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
+            gasStationsFacade.rateGasStation(addRatingCommand)
 
         when: "checks petrol station"
             def gasStationBrief = gasStationsFacade.showGasStationBrief(gasStation, Currency.PLN)
@@ -207,7 +214,7 @@ class GasStationsTest extends Specification {
 
         when: "checks petrol station"
             def pricesList = gasStationsFacade.showGasStationBrief(gasStation, Currency.PLN).getPetrolPrices().stream()
-                    .filter({e -> (e.petrolType == "BENZINE_95") })
+                    .filter({ e -> (e.petrolType == "BENZINE_95") })
                     .map({ e -> e.value })
                     .collect(Collectors.toList())
 

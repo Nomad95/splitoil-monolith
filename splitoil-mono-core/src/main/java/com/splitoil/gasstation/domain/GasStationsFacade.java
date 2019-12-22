@@ -1,5 +1,6 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.gasstation.dto.AddRatingDto;
 import com.splitoil.gasstation.dto.AddToObservableDto;
 import com.splitoil.gasstation.dto.GasStationDto;
 import com.splitoil.gasstation.dto.GasStationIdDto;
@@ -36,7 +37,10 @@ public class GasStationsFacade {
             .collect(toUnmodifiableList());
     }
 
-    public void rateGasStation(final GasStationId gasStationId, final Rating rating) {
+    public void rateGasStation(final AddRatingDto command) {
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(command);
+        final Rating rating = gasStationCreator.createRating(command.getRating());
+
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
             gasStationOptional.get().addRating(rating);

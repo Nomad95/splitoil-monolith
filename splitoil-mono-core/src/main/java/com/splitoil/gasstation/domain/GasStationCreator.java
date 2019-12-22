@@ -1,5 +1,6 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.gasstation.dto.AddRatingDto;
 import com.splitoil.gasstation.dto.AddToObservableDto;
 import com.splitoil.gasstation.dto.GasStationDto;
 import com.splitoil.gasstation.dto.PetrolPriceDto;
@@ -31,6 +32,14 @@ class GasStationCreator {
 
     ObservedGasStation createObservedGasStation(final AddToObservableDto command) {
         return ObservedGasStation.from(createGasStationId(command), createDriver(command));
+    }
+
+    GasStationId createGasStationId(final AddRatingDto command) {
+        return GasStationId.from(command.getGasStationId());
+    }
+
+    Rating createRating(final int rating) {
+        return Rating.of(rating);
     }
 
 }

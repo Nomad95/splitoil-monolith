@@ -1,6 +1,7 @@
 package com.splitoil.gasstation;
 
 import com.splitoil.gasstation.domain.GasStationsFacade;
+import com.splitoil.gasstation.dto.AddRatingDto;
 import com.splitoil.gasstation.dto.AddToObservableDto;
 import com.splitoil.gasstation.dto.GasStationIdDto;
 import lombok.AllArgsConstructor;
@@ -27,5 +28,10 @@ class GasStationController {
     @GetMapping(value = "/observe/driver/{driverId}")
     private List<GasStationIdDto> getObservedGasStations(final @NonNull @PathVariable Long driverId) {
         return gasStationsFacade.getObservedGasStations(driverId);
+    }
+
+    @PostMapping(value = "/rate")
+    private void rateGasStation(@RequestBody @NonNull @Valid final AddRatingDto command) {
+        gasStationsFacade.rateGasStation(command);
     }
 }

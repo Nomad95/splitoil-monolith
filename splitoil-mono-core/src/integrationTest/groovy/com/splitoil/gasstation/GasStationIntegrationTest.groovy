@@ -2,10 +2,7 @@ package com.splitoil.gasstation
 
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec
-import com.splitoil.gasstation.dto.AddToObservableDto
-import com.splitoil.gasstation.dto.DriverDto
-import com.splitoil.gasstation.dto.GasStationIdDto
-import com.splitoil.gasstation.dto.GeoPointDto
+import com.splitoil.gasstation.dto.*
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -63,6 +60,20 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$[0].name').value(NAME))
                     .andExpect(jsonPath('$[0].location.lon').value(LONGITUDE))
                     .andExpect(jsonPath('$[0].location.lat').value(LATITUDE))
+    }
+
+    def "driver can rate gas station"() {
+        given:
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
+
+        when:
+            def result = mockMvc.perform(post("/gas-station/rate")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addRatingCommand)))
+
+        then:
+            result.andExpect(status().isOk())
     }
 
 }
