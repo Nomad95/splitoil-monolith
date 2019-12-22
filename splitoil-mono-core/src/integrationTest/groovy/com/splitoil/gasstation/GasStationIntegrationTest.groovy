@@ -2,8 +2,10 @@ package com.splitoil.gasstation
 
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec
-import com.splitoil.gasstation.dto.AddGasStationToObservableInputDto
-import com.splitoil.gasstation.dto.GeoPointInputDto
+import com.splitoil.gasstation.dto.AddToObservableDto
+import com.splitoil.gasstation.dto.DriverDto
+import com.splitoil.gasstation.dto.GasStationIdDto
+import com.splitoil.gasstation.dto.GeoPointDto
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -16,9 +18,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Category(IntegrationTest)
 class GasStationIntegrationTest extends IntegrationSpec {
 
+    public static final int LONGITUDE = 25
+    public static final int LATITUDE = 100
+    public static final String NAME = "Name"
+    public static final long DRIVER_ID = 1L
+
     def "driver adds a gas station to observables"() {
         given:
-            def command = new AddGasStationToObservableInputDto(new GeoPointInputDto(25, 100), "Name", 1L)
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            def driverDto = DriverDto.of(DRIVER_ID)
+            def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
         when:
             def result = mockMvc.perform(post("/gas-station/observe")
@@ -31,7 +40,9 @@ class GasStationIntegrationTest extends IntegrationSpec {
 
     def "driver gets his own observed gas station list"() {
         given:
-            def command = new AddGasStationToObservableInputDto(new GeoPointInputDto(25, 100), "Name", 1L)
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), NAME)
+            def driverDto = DriverDto.of(DRIVER_ID)
+            def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
         when:
             def result = mockMvc.perform(post("/gas-station/observe")
@@ -49,9 +60,9 @@ class GasStationIntegrationTest extends IntegrationSpec {
             observables
                     .andExpect(status().isOk())
                     .andDo(MockMvcResultHandlers.print())
-                    .andExpect(jsonPath('$[0].name').value("Name"))
-                    .andExpect(jsonPath('$[0].location.lon').value(25))
-                    .andExpect(jsonPath('$[0].location.lat').value(100))
+                    .andExpect(jsonPath('$[0].name').value(NAME))
+                    .andExpect(jsonPath('$[0].location.lon').value(LONGITUDE))
+                    .andExpect(jsonPath('$[0].location.lat').value(LATITUDE))
     }
 
 }

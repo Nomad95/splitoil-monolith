@@ -1,6 +1,8 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.gasstation.dto.*;
+import com.splitoil.gasstation.dto.AddToObservableDto;
+import com.splitoil.gasstation.dto.GasStationDto;
+import com.splitoil.gasstation.dto.GasStationIdDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,23 +23,16 @@ public class GasStationsFacade {
 
     private final GasStationCreator gasStationCreator;
 
-    public void addToObservables(final AddToObservableCommand command) {
-        final var gasStationId = new GasStationId(GeoPoint.of(
-            command.getGeoPoint().getLon(),
-            command.getGeoPoint().getLat()),
-            command.getGasStationName());
-        final var driver = new Driver(command.getDriverId());
+    public void addToObservables(final AddToObservableDto command) {
+        final ObservedGasStation observedGasStation = gasStationCreator.createObservedGasStation(command);
 
-        observedGasStationsRepository.save(ObservedGasStation.from(gasStationId, driver));
+        observedGasStationsRepository.save(observedGasStation);
     }
 
-    public List<ObservedGasStationOutput> getObservedGasStations(final Long driverId) {
+    //TODO: test if any method public
+    public List<GasStationIdDto> getObservedGasStations(final Long driverId) {
         return observedGasStationsRepository.findAllByObserver(new Driver(driverId)).stream()
-            .map(gs -> ObservedGasStationOutputDto.builder()
-                .location(new GeoPointInputDto(
-                    gs.getGasStationId().getLocation().getLon(),
-                    gs.getGasStationId().getLocation().getLat()))
-                .name(gs.getGasStationId().getName()).build())
+            .map(ObservedGasStation::toDto)
             .collect(toUnmodifiableList());
     }
 

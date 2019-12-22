@@ -1,9 +1,10 @@
 package com.splitoil.gasstation.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.gasstation.dto.AddGasStationToObservableInputDto
-import com.splitoil.gasstation.dto.GeoPointInputDto
-import com.splitoil.gasstation.dto.ObservedGasStationOutputDto
+import com.splitoil.gasstation.dto.AddToObservableDto
+import com.splitoil.gasstation.dto.DriverDto
+import com.splitoil.gasstation.dto.GasStationIdDto
+import com.splitoil.gasstation.dto.GeoPointDto
 import org.assertj.core.api.Assertions
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
@@ -27,8 +28,8 @@ class GasStationsTest extends Specification {
     //@See("http://spockframework.org/spec")
     //@Issue("http://my.issues.org/FOO-1")
 
-    public static final BigDecimal LONGITUDE = -75.56
-    public static final BigDecimal LATITUDE = 14.54
+    public static final double LONGITUDE = -75.56
+    public static final double LATITUDE = 14.54
     public static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
     public static final long DRIVER_ID = 1L
     private Driver driver
@@ -47,17 +48,16 @@ class GasStationsTest extends Specification {
 
     def "should add gas station to observed"() {
         given:
-            def command = new AddGasStationToObservableInputDto(new GeoPointInputDto(LONGITUDE, LATITUDE), GAS_STATION_NAME, DRIVER_ID)
+            def gasStationIdDto = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+            def driverDto = DriverDto.of(DRIVER_ID)
+            def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
         when: "driver observes a gas station"
             gasStationsFacade.addToObservables(command)
 
         then: "driver sees gas station in observables"
-            def expected = ObservedGasStationOutputDto.builder()
-                    .location(new GeoPointInputDto(LONGITUDE, LATITUDE))
-                    .name(GAS_STATION_NAME).build()
             def stations = gasStationsFacade.getObservedGasStations(DRIVER_ID)
-            Assertions.assertThat(stations).contains(expected)
+            Assertions.assertThat(stations).contains(gasStationIdDto)
     }
 
     def "driver should rate gas station"() {

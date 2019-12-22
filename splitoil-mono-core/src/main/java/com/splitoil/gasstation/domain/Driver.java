@@ -1,5 +1,6 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.gasstation.dto.DriverDto;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -12,4 +13,8 @@ import javax.persistence.Embeddable;
 class Driver {
 
     private Long driverId;
+
+    static Driver from(final DriverDto dto) {
+        return new Driver(dto.getDriverId());
+    }
 }

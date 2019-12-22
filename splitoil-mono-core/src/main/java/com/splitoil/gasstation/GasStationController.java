@@ -1,8 +1,8 @@
 package com.splitoil.gasstation;
 
 import com.splitoil.gasstation.domain.GasStationsFacade;
-import com.splitoil.gasstation.dto.AddGasStationToObservableInputDto;
-import com.splitoil.gasstation.dto.ObservedGasStationOutput;
+import com.splitoil.gasstation.dto.AddToObservableDto;
+import com.splitoil.gasstation.dto.GasStationIdDto;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,12 @@ class GasStationController {
     private GasStationsFacade gasStationsFacade;
 
     @PostMapping(value = "/observe")
-    private void addGasStationToObservable(@RequestBody @NonNull @Valid final AddGasStationToObservableInputDto command) {
+    private void addGasStationToObservable(@RequestBody @NonNull @Valid final AddToObservableDto command) {
         gasStationsFacade.addToObservables(command);
     }
 
     @GetMapping(value = "/observe/driver/{driverId}")
-    private List<ObservedGasStationOutput> getObservedGasStations(final @NonNull @PathVariable Long driverId) {
+    private List<GasStationIdDto> getObservedGasStations(final @NonNull @PathVariable Long driverId) {
         return gasStationsFacade.getObservedGasStations(driverId);
     }
 }

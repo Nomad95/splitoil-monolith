@@ -1,5 +1,6 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.gasstation.dto.GasStationIdDto;
 import com.splitoil.shared.AbstractEntity;
 import lombok.*;
 
@@ -24,5 +25,9 @@ class ObservedGasStation extends AbstractEntity {
             .gasStationId(gasStationId)
             .observer(driver)
             .build();
+    }
+
+    GasStationIdDto toDto() {
+        return gasStationId.toDto();
     }
 }

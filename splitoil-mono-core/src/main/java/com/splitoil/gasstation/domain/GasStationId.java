@@ -1,5 +1,7 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.gasstation.dto.GasStationIdDto;
+import com.splitoil.gasstation.dto.GeoPointDto;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -17,4 +19,12 @@ class GasStationId {
     private GeoPoint location;
 
     private String name;
+
+    static GasStationId from(final GasStationIdDto dto) {
+        return new GasStationId(GeoPoint.of(dto.getLocation().getLon(), dto.getLocation().getLat()), dto.getName());
+    }
+
+    GasStationIdDto toDto() {
+        return GasStationIdDto.of(GeoPointDto.of(location.getLon(), location.getLat()), name);
+    }
 }

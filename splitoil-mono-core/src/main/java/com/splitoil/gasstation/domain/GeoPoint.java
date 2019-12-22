@@ -1,6 +1,5 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.gasstation.dto.Geo;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -10,7 +9,7 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(staticName = "of")
-class GeoPoint implements Geo {
+class GeoPoint {
 
     private double lon;
 
