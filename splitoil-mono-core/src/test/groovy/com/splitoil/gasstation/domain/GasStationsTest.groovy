@@ -102,12 +102,23 @@ class GasStationsTest extends Specification {
             gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then: "gas station has new price set in pending status"
-            gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.PLN) == new BigDecimal("5.15")
+            def query = GetPetrolPriceDto.builder()
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .currency(Currency.PLN.name())
+                    .build()
+            gasStationsFacade.getCurrentPetrolPrice(query) == new BigDecimal("5.15")
     }
 
     def "driver should get petrol price equal to zero when no petrol price was added"() {
+        given:
+            def query = GetPetrolPriceDto.builder()
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .currency(Currency.PLN.name())
+                    .build()
         expect: "price is zero bcuz no one added the price"
-            gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.USD) == BigDecimal.ZERO
+            gasStationsFacade.getCurrentPetrolPrice(query) == BigDecimal.ZERO
     }
 
     def "no one should see pending petrol price"() {
@@ -123,7 +134,12 @@ class GasStationsTest extends Specification {
             gasStationsFacade.addPetrolPrice(addPetrolPriceDto)
 
         then: "new price cant be seen"
-            gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.PLN) == BigDecimal.ZERO
+            def query = GetPetrolPriceDto.builder()
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .currency(Currency.PLN.name())
+                    .build()
+            gasStationsFacade.getCurrentPetrolPrice(query) == BigDecimal.ZERO
     }
 
     def "driver should get price equal to zero if no one provided in this currency"() {
@@ -143,7 +159,12 @@ class GasStationsTest extends Specification {
             gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then: "No price shown"
-            gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.BENZINE_95, Currency.USD) == BigDecimal.ZERO
+            def query = GetPetrolPriceDto.builder()
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .petrolType(PetrolType.BENZINE_95.name())
+                    .currency(Currency.USD.name())
+                    .build()
+            gasStationsFacade.getCurrentPetrolPrice(query) == BigDecimal.ZERO
     }
 
     def "driver should get price equal to zero if no one provided price with this petrol type"() {
@@ -163,7 +184,12 @@ class GasStationsTest extends Specification {
             gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then: "No price shown"
-            gasStationsFacade.getCurrentPetrolPrice(gasStation, PetrolType.OIL, Currency.PLN) == BigDecimal.ZERO
+            def query = GetPetrolPriceDto.builder()
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .petrolType(PetrolType.OIL.name())
+                    .currency(Currency.PLN.name())
+                    .build()
+            gasStationsFacade.getCurrentPetrolPrice(query) == BigDecimal.ZERO
     }
 
     def "should show unrated gas station when no rate was added view"() {

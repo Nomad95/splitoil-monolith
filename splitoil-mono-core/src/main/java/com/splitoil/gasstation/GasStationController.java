@@ -19,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/gas-station")
 class GasStationController {
 
+    //CQRS1 - dwa modele do query i read
     private GasStationsFacade gasStationsFacade;
 
     @PostMapping(value = "/observe")
@@ -50,5 +51,10 @@ class GasStationController {
     @PostMapping(value = "/gas-price/accept")
     public void acceptGasStationPrice(final @RequestBody AcceptPetrolPriceDto addPetrolPriceDto) {
         gasStationsFacade.acceptPetrolPrice(addPetrolPriceDto);
+    }
+
+    @PostMapping(value = "/gas-price/current")
+    public BigDecimal getPetrolPriceFromGasStation(final @RequestBody GetPetrolPriceDto getPetrolPriceDto) {
+        return gasStationsFacade.getCurrentPetrolPrice(getPetrolPriceDto);
     }
 }

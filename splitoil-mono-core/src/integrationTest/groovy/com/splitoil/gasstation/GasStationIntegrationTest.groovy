@@ -133,7 +133,6 @@ class GasStationIntegrationTest extends IntegrationSpec {
 
         then:
             def resultUuid = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
-            print(resultUuid)
 
         when:
             def uuid = jackson.jsonDecode(resultUuid, UUID.class)
@@ -146,4 +145,44 @@ class GasStationIntegrationTest extends IntegrationSpec {
             nextRequest.andExpect(status().isOk())
     }
 
+    //TODO: testy przestawiajace rzeczy
+    def "should get gas price from gas station by type and currency"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addPetrolPriceCommand = new AddPetrolPriceDto(gasStationIdDto, DEFAULT_PRICE, CURRENCY_PLN_STR, BENZINE_95_STR)
+            def query = GetPetrolPriceDto.builder()
+                    .gasStationIdDto(GAS_STATION_ID_DTO)
+                    .petrolType("BENZINE_95")
+                    .currency("PLN")
+                    .build()
+
+        when: "Adding new price"
+            def request = mockMvc.perform(post("/gas-station/gas-price")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addPetrolPriceCommand)))
+
+        then:
+            def resultUuid = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
+
+        when: "accepting new price"
+            def uuid = jackson.jsonDecode(resultUuid, UUID.class)
+            def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(uuid).build()
+            def nextRequest = mockMvc.perform(post("/gas-station/gas-price/accept")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(acceptCommand)))
+
+        then:
+            nextRequest.andExpect(status().isOk())
+
+        when: "querying for price"
+            def queryPrice = mockMvc.perform(post("/gas-station/gas-price/current")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(query)))
+
+        then:
+            queryPrice
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$').value(DEFAULT_PRICE))
+
+    }
 }

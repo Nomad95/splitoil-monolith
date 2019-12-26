@@ -83,7 +83,11 @@ public class GasStationsFacade {
         }
     }
 
-    public BigDecimal getCurrentPetrolPrice(final GasStationId gasStationId, final PetrolType petrolType, final Currency currency) {
+    public BigDecimal getCurrentPetrolPrice(final GetPetrolPriceDto query) {
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(query.getGasStationIdDto());
+        final PetrolType petrolType = PetrolType.valueOf(query.getPetrolType());
+        final Currency currency = Currency.valueOf(query.getCurrency());
+
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
             return gasStationOptional.get().getCurrentPetrolPrice(petrolType, currency);
