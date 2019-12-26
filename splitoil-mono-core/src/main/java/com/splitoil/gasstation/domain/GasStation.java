@@ -50,9 +50,8 @@ class GasStation extends AbstractEntity {
         return rating;
     }
 
-    UUID addPetrolPrice(final PetrolPrice petrolPrice) {
+    void addPetrolPrice(final @NonNull PetrolPrice petrolPrice) {
         gasPrices.add(petrolPrice);
-        return petrolPrice.getUuid();
     }
 
     void acceptPetrolPrice(final UUID petrolPriceId) {

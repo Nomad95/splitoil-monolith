@@ -63,4 +63,22 @@ class GasStationsEdgeCaseTest extends Specification {
             thrown(EntityNotFoundException)
     }
 
+    def "should not return null"() {
+        expect:
+            new Driver(1L).getDriverId() != null
+    }
+
+    def "driver id should not be equal to 0"() {
+        expect:
+            new Driver(1L).getDriverId() != 0
+    }
+
+    def "should throw NPE when adding null dto"() {
+        when:
+            gasStationsFacade.addPetrolPrice(null)
+
+        then:
+            thrown(NullPointerException)
+    }
+
 }

@@ -44,7 +44,7 @@ class GasStationController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping(value = "/gas-price")
-    public UUID addPetrolPriceToGasStation(final @RequestBody AddPetrolPriceDto addPetrolPriceDto) {
+    public UUID addPetrolPriceToGasStation(final @RequestBody @NonNull AddPetrolPriceDto addPetrolPriceDto) {
         return gasStationsFacade.addPetrolPrice(addPetrolPriceDto);
     }
 

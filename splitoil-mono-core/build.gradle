@@ -4,6 +4,8 @@ plugins {
     id 'java'
     id 'groovy'
     id 'org.unbroken-dome.test-sets' version '2.2.1'
+    id 'info.solidsoft.pitest' version '1.4.6'
+
 }
 
 
@@ -97,4 +99,9 @@ task cucumber() {
             args = ['--plugin', 'pretty', '--glue', 'classpath:com.splitoil', 'src/integrationTest/resources/cucumber']
         }
     }
+}
+
+pitest {
+    targetClasses = ['com.splitoil.gasstation.domain.*']  //by default "${project.group}.*"
+    mutators = ['DEFAULTS', 'EMPTY_RETURNS', 'NULL_RETURNS']
 }

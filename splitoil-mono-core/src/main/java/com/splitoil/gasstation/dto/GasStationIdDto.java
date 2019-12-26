@@ -8,7 +8,9 @@ import lombok.*;
 @AllArgsConstructor(staticName = "of")
 public class GasStationIdDto {
 
+    @NonNull
     private GeoPointDto location;
 
+    @NonNull
     private String name;
 }

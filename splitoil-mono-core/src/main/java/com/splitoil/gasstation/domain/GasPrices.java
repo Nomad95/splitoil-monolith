@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.splitoil.infrastructure.json.JsonEntity;
 import lombok.Builder;
+import lombok.NonNull;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -21,7 +22,7 @@ class GasPrices implements JsonEntity {
         this.prices = prices;
     }
 
-    void add(final PetrolPrice petrolPrice) {
+    void add(final @NonNull PetrolPrice petrolPrice) {
         prices.computeIfAbsent(petrolPrice.getPetrolType(), k -> new ArrayList<>()).add(petrolPrice);
     }
 
