@@ -28,7 +28,6 @@ public class GasStationsFacade {
         observedGasStationsRepository.save(observedGasStation);
     }
 
-    //TODO: test if any method public
     public List<GasStationIdDto> getObservedGasStations(final Long driverId) {
         return observedGasStationsRepository.findAllByObserver(new Driver(driverId)).stream()
             .map(ObservedGasStation::toDto)

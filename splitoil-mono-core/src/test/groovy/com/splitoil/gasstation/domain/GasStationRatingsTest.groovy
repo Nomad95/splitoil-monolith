@@ -1,10 +1,10 @@
 package com.splitoil.gasstation.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.gasstation.domain.*
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
 import spock.lang.Unroll
+
 
 @Category(UnitTest)
 class GasStationRatingsTest extends Specification {

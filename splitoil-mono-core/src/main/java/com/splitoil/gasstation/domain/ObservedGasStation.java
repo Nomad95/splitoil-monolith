@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 
 @Entity
 @Getter
-@Builder
+@Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class ObservedGasStation extends AbstractEntity {

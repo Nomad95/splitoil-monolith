@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Embeddable
 @EqualsAndHashCode
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class GasStationId {
 

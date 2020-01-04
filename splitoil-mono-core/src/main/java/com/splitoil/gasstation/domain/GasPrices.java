@@ -3,6 +3,7 @@ package com.splitoil.gasstation.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.splitoil.infrastructure.json.JsonEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -15,9 +16,9 @@ class GasPrices implements JsonEntity {
 
     private final Map<PetrolType, List<PetrolPrice>> prices;
 
-    @Builder
+    @Builder(access = AccessLevel.PACKAGE)
     @JsonCreator
-    public GasPrices(
+    GasPrices(
         @JsonProperty("prices") final Map<PetrolType, List<PetrolPrice>> prices) {
         this.prices = prices;
     }

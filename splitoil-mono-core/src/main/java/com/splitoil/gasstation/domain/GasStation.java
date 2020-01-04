@@ -15,7 +15,7 @@ import java.util.UUID;
 import static java.math.RoundingMode.HALF_UP;
 
 @Entity
-@Builder
+@Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class GasStation extends AbstractEntity {

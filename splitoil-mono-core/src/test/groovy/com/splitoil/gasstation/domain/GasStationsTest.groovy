@@ -25,11 +25,11 @@ class GasStationsTest extends Specification {
     //@See("http://spockframework.org/spec")
     //@Issue("http://my.issues.org/FOO-1")
 
-    public static final double LONGITUDE = -75.56
-    public static final double LATITUDE = 14.54
-    public static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
-    public static final long DRIVER_ID = 1L
-    public static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+    static final double LONGITUDE = -75.56
+    static final double LATITUDE = 14.54
+    static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
+    static final long DRIVER_ID = 1L
+    static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
 
     private Driver driver
     private GasStationId gasStation
