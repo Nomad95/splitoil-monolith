@@ -65,6 +65,9 @@ dependencies {
     //arch unit test
     testCompile 'com.tngtech.archunit:archunit:0.12.0'
 
+    //HATEOAS
+    compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version: '1.0.2.RELEASE'
+
 }
 
 testSets {

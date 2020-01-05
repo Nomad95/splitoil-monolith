@@ -1,6 +1,7 @@
 package com.splitoil.gasstation
 
 import com.splitoil.IntegrationTest
+import com.splitoil.TestUtils
 import com.splitoil.base.IntegrationSpec
 import com.splitoil.gasstation.dto.*
 import org.junit.experimental.categories.Category
@@ -36,7 +37,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .content(jackson.toJson(command)))
 
         then:
-            result.andExpect(status().isOk())
+            result.andDo(MockMvcResultHandlers.print()).andExpect(status().isOk())
     }
 
     def "driver gets his own observed gas station list"() {
@@ -61,9 +62,9 @@ class GasStationIntegrationTest extends IntegrationSpec {
             observables
                     .andExpect(status().isOk())
                     .andDo(MockMvcResultHandlers.print())
-                    .andExpect(jsonPath('$[0].name').value(NAME))
-                    .andExpect(jsonPath('$[0].location.lon').value(LONGITUDE))
-                    .andExpect(jsonPath('$[0].location.lat').value(LATITUDE))
+                    .andExpect(jsonPath('$._embedded.gasStationIdDtoList.[0].name').value(NAME))
+                    .andExpect(jsonPath('$._embedded.gasStationIdDtoList.[0].location.lon').value(LONGITUDE))
+                    .andExpect(jsonPath('$._embedded.gasStationIdDtoList.[0].location.lat').value(LATITUDE))
     }
 
     def "driver can rate gas station"() {
@@ -77,7 +78,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .content(jackson.toJson(addRatingCommand)))
 
         then:
-            result.andExpect(status().isOk())
+            result.andDo(MockMvcResultHandlers.print()).andExpect(status().isOk())
     }
 
     def "driver can see gas station rating"() {
@@ -102,7 +103,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
             ratings
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$').value(4.0))
+                    .andExpect(jsonPath('$.content').value(4.0))
     }
 
     def "driver adds petrol price to gas station"() {
@@ -132,10 +133,11 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .content(jackson.toJson(addPetrolPriceCommand)))
 
         then:
-            def resultUuid = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
+            def resultJson = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
+            String resultUuid = TestUtils.extractContent(resultJson)
 
         when:
-            def uuid = jackson.jsonDecode(resultUuid, UUID.class)
+            def uuid = UUID.fromString(resultUuid)
             def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(uuid).build()
             def nextRequest = mockMvc.perform(post("/gas-station/gas-price/accept")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +147,6 @@ class GasStationIntegrationTest extends IntegrationSpec {
             nextRequest.andExpect(status().isOk())
     }
 
-    //TODO: testy przestawiajace rzeczy
     def "should get gas price from gas station by type and currency"() {
         given:
             def gasStationIdDto = GAS_STATION_ID_DTO
@@ -162,10 +163,11 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .content(jackson.toJson(addPetrolPriceCommand)))
 
         then:
-            def resultUuid = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
+            def resultJson = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
+            String resultUuid = TestUtils.extractContent(resultJson)
 
         when: "accepting new price"
-            def uuid = jackson.jsonDecode(resultUuid, UUID.class)
+            def uuid = UUID.fromString(resultUuid)
             def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(uuid).build()
             def nextRequest = mockMvc.perform(post("/gas-station/gas-price/accept")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +184,6 @@ class GasStationIntegrationTest extends IntegrationSpec {
         then:
             queryPrice
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$').value(DEFAULT_PRICE))
-
+                    .andExpect(jsonPath('$.content').value(DEFAULT_PRICE))
     }
 }

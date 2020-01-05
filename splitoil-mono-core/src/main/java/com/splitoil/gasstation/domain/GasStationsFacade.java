@@ -22,10 +22,11 @@ public class GasStationsFacade {
 
     private final GasStationCreator gasStationCreator;
 
-    public void addToObservables(final AddToObservableDto command) {
+    public GasStationIdDto addToObservables(final AddToObservableDto command) {
         final ObservedGasStation observedGasStation = gasStationCreator.createObservedGasStation(command);
 
         observedGasStationsRepository.save(observedGasStation);
+        return observedGasStation.toDto();
     }
 
     public List<GasStationIdDto> getObservedGasStations(final Long driverId) {
@@ -34,17 +35,19 @@ public class GasStationsFacade {
             .collect(toUnmodifiableList());
     }
 
-    public void rateGasStation(final AddRatingDto command) {
+    public BigDecimal rateGasStation(final AddRatingDto command) {
         final GasStationId gasStationId = gasStationCreator.createGasStationId(command.getGasStationId());
         final Rating rating = gasStationCreator.createRating(command.getRating());
 
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
             gasStationOptional.get().addRating(rating);
+            return gasStationOptional.get().getOverallRating();
         } else {
             final GasStation gasStation = gasStationCreator.create(gasStationId);
             gasStation.addRating(rating);
             gasStationRepository.save(gasStation);
+            return gasStation.getOverallRating();
         }
     }
 
