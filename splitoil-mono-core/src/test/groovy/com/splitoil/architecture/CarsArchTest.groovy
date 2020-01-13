@@ -9,31 +9,31 @@ import spock.lang.Specification
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 
 @Category(UnitTest)
-class ArchTest extends Specification {
+class CarsArchTest extends Specification {
 
     def "domain is sealed"() {
         expect:
-            def domain = new ClassFileImporter().importPackages("com.splitoil.gasstation.domain")
+            def domain = new ClassFileImporter().importPackages("com.splitoil.car.domain")
 
             def domainRule = classes().that()
-                    .resideInAPackage("com.splitoil.gasstation.domain")
+                    .resideInAPackage("com.splitoil.car.domain")
                     .and()
-                    .doNotHaveSimpleName("GasStationsFacade")
+                    .doNotHaveSimpleName("CarFacade")
                     .should()
                     .onlyBeAccessed()
-                    .byAnyPackage("com.splitoil.gasstation.domain")
+                    .byAnyPackage("com.splitoil.car.domain")
 
             domainRule.check(domain)
     }
 
     def "domain is package scope"() {
         expect:
-            def domain = new ClassFileImporter().importPackages("com.splitoil.gasstation.domain")
+            def domain = new ClassFileImporter().importPackages("com.splitoil.car.domain")
 
             def domainRule = classes().that()
-                    .resideInAPackage("com.splitoil.gasstation.domain")
+                    .resideInAPackage("com.splitoil.car.domain")
                     .and()
-                    .doNotHaveSimpleName("GasStationsFacade")
+                    .doNotHaveSimpleName("CarFacade")
                     .and()
                     .haveNameNotMatching(".*Test")
                     .and()
@@ -49,7 +49,7 @@ class ArchTest extends Specification {
             def domain = new ClassFileImporter().importClasses(GasStationsFacade)
 
             def domainRule = classes().that()
-                    .haveNameMatching("GasStationsFacade")
+                    .haveNameMatching("CarFacade")
                     .should()
                     .bePublic()
 
@@ -58,10 +58,10 @@ class ArchTest extends Specification {
 
     def "controller is not referenced"() {
         expect:
-            def domain = new ClassFileImporter().importPackages("com.splitoil.gasstation")
+            def domain = new ClassFileImporter().importPackages("com.splitoil.car")
 
             def domainRule = classes().that()
-                    .haveNameMatching("GasStationController")
+                    .haveNameMatching("CarController")
                     .should()
                     .bePackagePrivate()
 

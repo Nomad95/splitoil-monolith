@@ -1,10 +1,7 @@
 package com.splitoil.car.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.car.dto.AddCarCostDto
-import com.splitoil.car.dto.AddCarDto
-import com.splitoil.car.dto.AddCarMileageDto
-import com.splitoil.car.dto.DriverDto
+import com.splitoil.car.dto.*
 import com.splitoil.gasstation.dto.GasStationIdDto
 import com.splitoil.gasstation.dto.GeoPointDto
 import org.junit.experimental.categories.Category
@@ -76,6 +73,32 @@ class CarsEdgeCaseTest extends Specification {
             carFacade.addCarCost(dto)
 
         then: 'exception is thrown'
+            thrown(EntityNotFoundException)
+    }
+
+    def "Fuel capacity should not return null"() {
+        when: "I add my first car"
+            def newCar = carFacade.addNewCarToCollection(CAR_INPUT_DTO)
+
+        then:
+            newCar.fuelCapacity != null
+    }
+
+    def "Should throw when adding refuel with non existing car"() {
+        given: "chosen car"
+            def refuelCommand = RefuelCarDto.builder()
+                    .carId(100L)
+                    .petrolType("BENZINE_95")
+                    .amount(new BigDecimal("25.0"))
+                    .gasStation(GAS_STATION_ID_DTO)
+                    .cost(new BigDecimal("100.0"))
+                    .date(NOW)
+                    .build()
+
+        when: "driver adds a refuel to his car"
+            carFacade.addCarRefuel(refuelCommand)
+
+        then:
             thrown(EntityNotFoundException)
     }
 

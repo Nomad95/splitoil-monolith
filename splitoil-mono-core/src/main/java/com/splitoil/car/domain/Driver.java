@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 @AllArgsConstructor(staticName = "of", access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Driver {
+class Driver {
 
     private Long driverId;
 

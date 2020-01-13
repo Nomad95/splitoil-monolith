@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class InMemoryCarCostRepository implements CarCostRepository {
+class InMemoryCarCostRepository implements CarCostRepository {
 
     private Map<Long, CarCost> map = new HashMap<>();
 

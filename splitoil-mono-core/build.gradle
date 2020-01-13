@@ -108,6 +108,6 @@ task cucumber() {
 }
 
 pitest {
-    targetClasses = ['com.splitoil.gasstation.domain.*']  //by default "${project.group}.*"
+    targetClasses = ['com.splitoil.gasstation.domain.*', 'com.splitoil.car.domain.*']
     mutators = ['DEFAULTS', 'EMPTY_RETURNS', 'NULL_RETURNS']
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CarsRepository extends CrudRepository<Car, Long> {
+interface CarsRepository extends CrudRepository<Car, Long> {
 
     List<Car> findAllByOwner(Driver owner);
 

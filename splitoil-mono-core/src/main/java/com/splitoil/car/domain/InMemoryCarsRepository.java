@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class InMemoryCarsRepository implements CarsRepository {
+class InMemoryCarsRepository implements CarsRepository {
 
     private Map<Long, Car> map = new HashMap<>();
 

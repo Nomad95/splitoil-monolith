@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class FuelTank {
+class FuelTank {
 
     @Enumerated(value = EnumType.STRING)
     private PetrolType petrolType;

@@ -16,7 +16,7 @@ import static java.math.RoundingMode.HALF_UP;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Car extends AbstractEntity {
+class Car extends AbstractEntity {
 
     private String brand;
 

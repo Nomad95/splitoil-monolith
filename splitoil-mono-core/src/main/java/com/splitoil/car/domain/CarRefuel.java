@@ -15,7 +15,7 @@ import java.time.Instant;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class CarRefuel extends AbstractEntity {
+class CarRefuel extends AbstractEntity {
 
     private Long carId;
 

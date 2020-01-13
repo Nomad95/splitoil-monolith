@@ -195,6 +195,7 @@ class CarsTest extends Specification {
         then: 'car state was changed'
             def car = carFacade.getOneCar(addedCar.id)
             car.mileage == 600L
+            car.numberOfTravels == 1
     }
 
 
@@ -225,5 +226,8 @@ class CarsTest extends Specification {
             car.mileage == 600L
             car.avgFuelConsumption == new BigDecimal("416.7")
             car.avgCostPer1Km == new BigDecimal("1.7")
+            car.id == addedCar.id
+            car.brand == "Audi"
+            car.name == "A4"
     }
 }

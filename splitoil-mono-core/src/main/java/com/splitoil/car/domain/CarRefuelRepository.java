@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 
 @Repository
-public interface CarRefuelRepository extends CrudRepository<CarRefuel, Long> {
+interface CarRefuelRepository extends CrudRepository<CarRefuel, Long> {
 
     @Query("SELECT new com.splitoil.car.dto.RefuelCarOutputDto(cr.id, cr.costDate, cr.gasStation.name, cr.value, cr.fuelAmountInLitres, CAST(cr.petrolType as text)) "
                + "FROM CarRefuel cr WHERE cr.carId = :carId ORDER BY cr.costDate DESC")

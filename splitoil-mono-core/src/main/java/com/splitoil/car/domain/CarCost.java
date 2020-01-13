@@ -12,7 +12,7 @@ import java.time.Instant;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class CarCost extends AbstractEntity {
+class CarCost extends AbstractEntity {
 
     private String name;
 

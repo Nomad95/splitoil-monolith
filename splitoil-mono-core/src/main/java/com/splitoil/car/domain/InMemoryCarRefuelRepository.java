@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
-public class InMemoryCarRefuelRepository implements CarRefuelRepository {
+class InMemoryCarRefuelRepository implements CarRefuelRepository {
 
     private Map<Long, CarRefuel> map = new HashMap<>();
 
