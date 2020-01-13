@@ -41,3 +41,8 @@ Feature: Driver manages his car
     Given a travel that sum 500km
     When system calculates average fuel cost per 1 KM
     Then average fuel cost is calculated
+
+  Scenario: The travel has ended and system saves the information to particular car
+    Given an ended travel
+    When system processes the event
+    Then car state was changed
