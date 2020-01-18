@@ -7,12 +7,14 @@ import org.springframework.context.annotation.Configuration;
 class GasStationConfiguration {
 
     GasStationsFacade gasStationsFacade() {
-        return new GasStationsFacade(new InMemoryObservedGasStationsRepository(), new InMemoryGasStationRepository(), new GasStationCreator());
+        return new GasStationsFacade(new InMemoryObservedGasStationsRepository(), new InMemoryGasStationRepository(), new GasStationCreator(),
+            new InMemoryPetrolPriceRepository());
     }
 
     @Bean
-    GasStationsFacade gasStationsFacade(final ObservedGasStationsRepository observedGasStationsRepository, final GasStationRepository gasStationRepository) {
+    GasStationsFacade gasStationsFacade(final ObservedGasStationsRepository observedGasStationsRepository, final GasStationRepository gasStationRepository,
+        final PetrolPriceRepository petrolPriceRepository) {
         final GasStationCreator gasStationCreator = new GasStationCreator();
-        return new GasStationsFacade(observedGasStationsRepository, gasStationRepository, gasStationCreator);
+        return new GasStationsFacade(observedGasStationsRepository, gasStationRepository, gasStationCreator, petrolPriceRepository);
     }
 }

@@ -18,3 +18,16 @@ I ignored testing lombok's generated methods.
 4. I have made some architecture tests to make sure my domain is not leaking outside the package.
 
 5. Added my first HATEOAS links
+
+6. I have decided that petrol price should be an separate entity by the need to be easily searchable.
+ GasStation entity doesn't have to have consistent prices
+ 
+#### Cars
+
+1. I made three aggregates: Car itself (definition, and travel summaries), car cost (how much we spend on car maintenance)
+ and a car refuel (how much we spend on refuels). I think costs and refuels do not have
+to be consistent - this data doesn't change together so it doesn't have to be inside Car aggregate 
+
+2. I made all necessary tests just like in GasStations module
+
+3. I have created sqls for tests

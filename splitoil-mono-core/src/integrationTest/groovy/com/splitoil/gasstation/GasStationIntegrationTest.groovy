@@ -1,11 +1,11 @@
 package com.splitoil.gasstation
 
 import com.splitoil.IntegrationTest
-import com.splitoil.TestUtils
 import com.splitoil.base.IntegrationSpec
 import com.splitoil.gasstation.dto.*
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
+import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -40,20 +40,8 @@ class GasStationIntegrationTest extends IntegrationSpec {
             result.andDo(MockMvcResultHandlers.print()).andExpect(status().isOk())
     }
 
+    @Sql(scripts = '/db/gas_station/default_observed_gas_station.sql')
     def "driver gets his own observed gas station list"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def driverDto = DriverDto.of(DRIVER_ID)
-            def command = new AddToObservableDto(gasStationIdDto, driverDto)
-
-        when:
-            def result = mockMvc.perform(post("/gas-station/observe")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(jackson.toJson(command)))
-
-        then:
-            result.andExpect(status().isOk())
-
         when:
             def observables = mockMvc.perform(get("/gas-station/observe/driver/1")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -67,10 +55,9 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$._embedded.gasStationIdDtoList.[0].location.lat').value(LATITUDE))
     }
 
-    def "driver can rate gas station"() {
+    def "Driver can rate gas station"() {
         given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
+            def addRatingCommand = new AddRatingDto(GAS_STATION_ID_DTO, 4)
 
         when:
             def result = mockMvc.perform(post("/gas-station/rate")
@@ -78,26 +65,16 @@ class GasStationIntegrationTest extends IntegrationSpec {
                     .content(jackson.toJson(addRatingCommand)))
 
         then:
-            result.andDo(MockMvcResultHandlers.print()).andExpect(status().isOk())
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
     }
 
+    @Sql(scripts = '/db/gas_station/gas_station_with_rating_4.sql')
     def "driver can see gas station rating"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addRatingCommand = new AddRatingDto(gasStationIdDto, 4)
-
-        when:
-            def result = mockMvc.perform(post("/gas-station/rate")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(jackson.toJson(addRatingCommand)))
-
-        then:
-            result.andExpect(status().isOk())
-
         when:
             def ratings = mockMvc.perform(post("/gas-station/rating")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jackson.toJson(gasStationIdDto)))
+                    .content(jackson.toJson(GAS_STATION_ID_DTO)))
 
         then:
             ratings
@@ -122,23 +99,13 @@ class GasStationIntegrationTest extends IntegrationSpec {
 
 
     //TODO: i think this should be done internally
+    @Sql(scripts = '/db/gas_station/default_petrol_price_not_accepted.sql')
     def "system should accept gas price"() {
         given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addPetrolPriceCommand = new AddPetrolPriceDto(gasStationIdDto, DEFAULT_PRICE, CURRENCY_PLN_STR, BENZINE_95_STR)
+            def uuid = UUID.fromString('e0cbe344-b095-4621-a1ce-69351175daab')
+            def acceptCommand = AcceptPetrolPriceDto.builder().priceUuid(uuid).build()
 
         when:
-            def request = mockMvc.perform(post("/gas-station/gas-price")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(jackson.toJson(addPetrolPriceCommand)))
-
-        then:
-            def resultJson = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
-            String resultUuid = TestUtils.extractContent(resultJson)
-
-        when:
-            def uuid = UUID.fromString(resultUuid)
-            def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(uuid).build()
             def nextRequest = mockMvc.perform(post("/gas-station/gas-price/accept")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(jackson.toJson(acceptCommand)))
@@ -147,34 +114,14 @@ class GasStationIntegrationTest extends IntegrationSpec {
             nextRequest.andExpect(status().isOk())
     }
 
+    @Sql(scripts = '/db/gas_station/default_petrol_price.sql')
     def "should get gas price from gas station by type and currency"() {
         given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addPetrolPriceCommand = new AddPetrolPriceDto(gasStationIdDto, DEFAULT_PRICE, CURRENCY_PLN_STR, BENZINE_95_STR)
             def query = GetPetrolPriceDto.builder()
                     .gasStationIdDto(GAS_STATION_ID_DTO)
                     .petrolType("BENZINE_95")
                     .currency("PLN")
                     .build()
-
-        when: "Adding new price"
-            def request = mockMvc.perform(post("/gas-station/gas-price")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(jackson.toJson(addPetrolPriceCommand)))
-
-        then:
-            def resultJson = request.andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()
-            String resultUuid = TestUtils.extractContent(resultJson)
-
-        when: "accepting new price"
-            def uuid = UUID.fromString(resultUuid)
-            def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(uuid).build()
-            def nextRequest = mockMvc.perform(post("/gas-station/gas-price/accept")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(jackson.toJson(acceptCommand)))
-
-        then:
-            nextRequest.andExpect(status().isOk())
 
         when: "querying for price"
             def queryPrice = mockMvc.perform(post("/gas-station/gas-price/current")

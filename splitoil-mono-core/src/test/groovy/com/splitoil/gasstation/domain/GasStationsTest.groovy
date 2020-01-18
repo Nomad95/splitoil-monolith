@@ -292,10 +292,10 @@ class GasStationsTest extends Specification {
                     .petrolType(PetrolType.BENZINE_95.name())
                     .gasStationIdDto(GAS_STATION_ID_DTO)
                     .build()
+            def price2Uuid = gasStationsFacade.addPetrolPrice(benzine95_2) //This behaviour is bugged because i cant sort by backage scoped attribute
             def priceUUid = gasStationsFacade.addPetrolPrice(benzine95)
-            def price2Uuid = gasStationsFacade.addPetrolPrice(benzine95_2)
-            def acceptCommand = defaultGasStationBuilder().priceUuid(priceUUid).build()
             def acceptCommand2 = defaultGasStationBuilder().priceUuid(price2Uuid).build()
+            def acceptCommand = defaultGasStationBuilder().priceUuid(priceUUid).build()
 
             gasStationsFacade.acceptPetrolPrice(acceptCommand)
             gasStationsFacade.acceptPetrolPrice(acceptCommand2)
@@ -311,7 +311,7 @@ class GasStationsTest extends Specification {
     }
 
     private static AcceptPetrolPriceDto.AcceptPetrolPriceDtoBuilder defaultGasStationBuilder() {
-        return AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO)
+        return AcceptPetrolPriceDto.builder()
     }
 
 }

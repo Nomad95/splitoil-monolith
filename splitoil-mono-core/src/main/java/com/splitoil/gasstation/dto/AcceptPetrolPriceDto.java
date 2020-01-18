@@ -1,20 +1,16 @@
 package com.splitoil.gasstation.dto;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.*;
 
 import java.util.UUID;
 
-@Value
 @Builder
+@Getter
 @EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AcceptPetrolPriceDto {
 
-    private GasStationIdDto gasStationIdDto;
-
     private UUID priceUuid;
-
-    private String petrolType;
 
 }

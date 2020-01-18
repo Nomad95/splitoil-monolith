@@ -8,8 +8,6 @@ import com.splitoil.gasstation.dto.GeoPointDto
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
 
-import javax.persistence.EntityNotFoundException
-
 @Category(UnitTest)
 class GasStationsEdgeCaseTest extends Specification {
 
@@ -36,11 +34,11 @@ class GasStationsEdgeCaseTest extends Specification {
                     .gasStationIdDto(GAS_STATION_ID_DTO)
                     .build()
             def priceUuid = gasStationsFacade.addPetrolPrice(addPetrolPriceDto)
-            def acceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(priceUuid).build()
+            def acceptCommand = AcceptPetrolPriceDto.builder().priceUuid(priceUuid).build()
 
             gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
-            def wrongAcceptCommand = AcceptPetrolPriceDto.builder().gasStationIdDto(GAS_STATION_ID_DTO).priceUuid(UUID.randomUUID()).build()
+            def wrongAcceptCommand = AcceptPetrolPriceDto.builder().priceUuid(UUID.randomUUID()).build()
 
         when:
             gasStationsFacade.acceptPetrolPrice(wrongAcceptCommand)
@@ -52,7 +50,6 @@ class GasStationsEdgeCaseTest extends Specification {
     def "should throw while accepting price when gas station doesnt exist"() {
         given:
             def acceptCommand = AcceptPetrolPriceDto.builder()
-                    .gasStationIdDto(GasStationIdDto.of(GeoPointDto.of(200, 100), "Another name"))
                     .priceUuid(UUID.randomUUID())
                     .build()
 
@@ -60,7 +57,7 @@ class GasStationsEdgeCaseTest extends Specification {
             gasStationsFacade.acceptPetrolPrice(acceptCommand)
 
         then:
-            thrown(EntityNotFoundException)
+            thrown(GasPriceNotFoundException)
     }
 
     def "should not return null"() {

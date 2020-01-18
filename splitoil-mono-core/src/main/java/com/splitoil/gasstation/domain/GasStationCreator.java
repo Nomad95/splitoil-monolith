@@ -36,6 +36,7 @@ class GasStationCreator {
     }
 
     PetrolPrice createPetrolPrice(final AddPetrolPriceDto addPetrolPriceCommand) {
-        return PetrolPrice.of(addPetrolPriceCommand.getAmount(), Currency.valueOf(addPetrolPriceCommand.getCurrency()), PetrolType.valueOf(addPetrolPriceCommand.getPetrolType()));
+        return PetrolPrice.of(createGasStationId(addPetrolPriceCommand.getGasStationIdDto()), addPetrolPriceCommand.getAmount(),
+            Currency.valueOf(addPetrolPriceCommand.getCurrency()), PetrolType.valueOf(addPetrolPriceCommand.getPetrolType()));
     }
 }

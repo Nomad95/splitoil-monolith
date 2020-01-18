@@ -19,8 +19,4 @@ public class GasStationDto extends RepresentationModel<GasStationDto> {
 
     private BigDecimal stationRate;
 
-    public List<PetrolPriceDto> getPetrolPrices() {
-        return List.copyOf(petrolPrices);
-    }
-
 }
