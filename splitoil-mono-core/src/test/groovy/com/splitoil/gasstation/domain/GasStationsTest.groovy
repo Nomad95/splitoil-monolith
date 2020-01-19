@@ -52,6 +52,22 @@ class GasStationsTest extends Specification {
             def command = new AddToObservableDto(gasStationIdDto, driverDto)
 
         when: "driver observes a gas station"
+            def dto = gasStationsFacade.addToObservables(command)
+
+        then:
+            dto != null
+            dto.name == GAS_STATION_NAME
+            dto.location.lat == LATITUDE
+            dto.location.lon == LONGITUDE
+    }
+
+    def "should get observed gas stations"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def driverDto = DriverDto.of(DRIVER_ID)
+            def command = new AddToObservableDto(gasStationIdDto, driverDto)
+
+        when: "driver observes a gas station"
             gasStationsFacade.addToObservables(command)
 
         then: "driver sees gas station in observables"
@@ -67,8 +83,33 @@ class GasStationsTest extends Specification {
         when: "gas station has a new rating added"
             gasStationsFacade.rateGasStation(addRatingCommand)
 
-        then: "have changed its rate value"
+        then: "have changed its rate value when asked"
             gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal(5)
+    }
+
+    def "rating gas station returns rating immediately"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+
+        when: "gas station has a new rating added"
+            def rating = gasStationsFacade.rateGasStation(addRatingCommand)
+
+        then: "have changed its rate value"
+            rating == new BigDecimal(5)
+    }
+
+    def "driver should rate existing gas station"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+            gasStationsFacade.rateGasStation(addRatingCommand)
+
+        when: "gas station has a second rating added"
+            def rating = gasStationsFacade.rateGasStation(addRatingCommand)
+
+        then: "have changed its rate value"
+            rating == new BigDecimal(5)
     }
 
     def "adding second rate should create average of rates"() {
