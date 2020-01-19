@@ -7,9 +7,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
+import org.springframework.hateoas.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,13 +36,19 @@ public class CarController {
         final Link addFuelTank = linkTo(CarController.class).slash("fuel-tank").withRel("addFuelTank");
         final Link addInitialMileage = linkTo(CarController.class).slash("initial-mileage").withRel("addInitialMileage");
         final Link addAvgFuelConsumpt = linkTo(CarController.class).slash("avg-fuel-consumption").withRel("avgFuelConsumption");
+        final Link addCarCost = linkTo(CarController.class).slash("cost").withRel("addCarCost");
+        final Link addCarRefuel = linkTo(CarController.class).slash("refuel").withRel("addCarRefuel");
+        final Link getOne = linkTo(CarController.class).slash(carOutputDto.getId()).withRel("getOne");
 
         return new EntityModel<>(carOutputDto)
             .add(self)
             .add(getAll)
             .add(addAvgFuelConsumpt)
             .add(addFuelTank)
-            .add(addInitialMileage);
+            .add(addInitialMileage)
+            .add(addCarCost)
+            .add(addCarRefuel)
+            .add(getOne);
     }
 
     @GetMapping("/driver/{id}")
@@ -65,52 +69,89 @@ public class CarController {
     public EntityModel<CarOutputDto> defineCarsFuelTank(@RequestBody @Valid @NonNull final FuelTankDto fuelTankDto) {
         final CarOutputDto carOutputDto = carFacade.editCarsFuelTank(fuelTankDto);
 
-        final Link getAll = linkTo(methodOn(CarController.class).getAllDriverCars(carOutputDto.getDriver().getId())).withRel("getAll");
+        final Link getOne = linkTo(CarController.class).slash(carOutputDto.getId()).withRel("getOne");
         final Link self = linkTo(CarController.class).slash("fuel-tank").withSelfRel();
 
-        return new EntityModel<>(carOutputDto).add(self).add(getAll);
+        return new EntityModel<>(carOutputDto)
+            .add(self)
+            .add(getOne);
     }
 
     @PostMapping("/initial-mileage")
     public EntityModel<CarOutputDto> defineCarsInitialMileage(@RequestBody @Valid @NonNull final AddCarMileageDto addCarMileageDto) {
         final CarOutputDto carOutputDto = carFacade.setCarsInitialMileage(addCarMileageDto);
 
-        final Link getAll = linkTo(methodOn(CarController.class).getAllDriverCars(carOutputDto.getDriver().getId())).withRel("getAll");
+        final Link getOne = linkTo(CarController.class).slash(carOutputDto.getId()).withRel("getOne");
         final Link self = linkTo(CarController.class).slash("initial-mileage").withSelfRel();
 
-        return new EntityModel<>(carOutputDto).add(self).add(getAll);
+        return new EntityModel<>(carOutputDto)
+            .add(self)
+            .add(getOne);
     }
 
     @PostMapping("/avg-fuel-consumption")
     public EntityModel<CarOutputDto> defineCarsAverageFuelConsumptionManually(@RequestBody @Valid @NonNull final AddCarAverageFuelConsumptionDto consumptionDto) {
         final CarOutputDto carOutputDto = carFacade.editCarsAverageFuelConsumptionManually(consumptionDto);
 
-        final Link getAll = linkTo(methodOn(CarController.class).getAllDriverCars(carOutputDto.getDriver().getId())).withRel("getAll");
+        final Link getOne = linkTo(CarController.class).slash(carOutputDto.getId()).withRel("getOne");
         final Link self = linkTo(CarController.class).slash("avg-fuel-consumption").withSelfRel();
 
-        return new EntityModel<>(carOutputDto).add(self).add(getAll);
+        return new EntityModel<>(carOutputDto)
+            .add(self)
+            .add(getOne);
     }
 
     @PostMapping("/cost")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addCarCost(@RequestBody @Valid @NonNull final AddCarCostDto costDto) {
+    public Links addCarCost(@RequestBody @Valid @NonNull final AddCarCostDto costDto) {
         carFacade.addCarCost(costDto);
+
+        final Link getOne = linkTo(CarController.class).slash(costDto.getCarId()).withRel("getOne");
+        final Link getOverallCosts = linkTo(CarController.class).slash(costDto.getCarId()).slash("cost").withRel("getOverallCosts");
+        final Link addCarCost = linkTo(CarController.class).slash("cost").withSelfRel();
+
+        return Links.of(getOne, getOverallCosts, addCarCost);
     }
 
     @GetMapping("/{id}/cost")
-    public BigDecimal getCarOverallCostSum(@PathVariable Long id) {
-        return carFacade.getTotalCarCostsSum(id);
+    public EntityModel<BigDecimal> getCarOverallCostSum(@PathVariable Long id) {
+        final BigDecimal totalCarCostsSum = carFacade.getTotalCarCostsSum(id);
+
+        final Link getOne = linkTo(CarController.class).slash(id).withRel("getOne");
+        final Link getOverallCosts = linkTo(CarController.class).slash(id).slash("cost").withSelfRel();
+        final Link addCarCost = linkTo(CarController.class).slash("cost").withRel("addCarCost");
+
+        return new EntityModel<>(totalCarCostsSum)
+            .add(getOne)
+            .add(getOverallCosts)
+            .add(addCarCost);
     }
 
     @PostMapping("/refuel")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addRefuelToCar(@RequestBody @Valid @NonNull final RefuelCarDto refuelCarDto) {
+    public Links addRefuelToCar(@RequestBody @Valid @NonNull final RefuelCarDto refuelCarDto) {
         carFacade.addCarRefuel(refuelCarDto);
+
+        final Link getOne = linkTo(CarController.class).slash(refuelCarDto.getCarId()).withRel("getOne");
+        final Link getCarRefuels = linkTo(CarController.class).slash(refuelCarDto.getCarId()).slash("refuel").withRel("getCarRefuels");
+        final Link addCarRefuel = linkTo(CarController.class).slash("refuel").withSelfRel();
+
+        return Links.of(getOne, getCarRefuels, addCarRefuel);
     }
 
     @GetMapping("/{id}/refuel")
-    public Page<RefuelCarOutputDto> getCarRefuels(@PathVariable @NonNull Long id, Pageable page) {
-        return carFacade.getRefuels(id, page);
+    public CollectionModel<EntityModel<RefuelCarOutputDto>> getCarRefuels(@PathVariable @NonNull Long id, Pageable page) {
+        final Page<RefuelCarOutputDto> refuels = carFacade.getRefuels(id, page);
+
+        final Link getOne = linkTo(CarController.class).slash(id).withRel("getOne");
+        final Link getCarRefuels = linkTo(CarController.class).slash(id).slash("refuel").withSelfRel();
+        final Link addCarRefuel = linkTo(CarController.class).slash("refuel").withRel("addCarRefuel");
+
+        final PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(refuels.getSize(), refuels.getNumber(), refuels.getTotalElements());
+        return PagedModel.wrap(refuels.getContent(), pageMetadata)
+            .add(getOne)
+            .add(getCarRefuels)
+            .add(addCarRefuel);
     }
 
     @GetMapping("/{id}")

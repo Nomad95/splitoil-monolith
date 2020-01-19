@@ -30,6 +30,7 @@ class GasStationController {
     @PostMapping(value = "/observe")
     public GasStationIdDto addGasStationToObservable(@RequestBody @NonNull @Valid final AddToObservableDto command) {
         final GasStationIdDto gasStationIdDto = gasStationsFacade.addToObservables(command);
+
         final Link getObservedLink = linkTo(methodOn(GasStationController.class).getObservedGasStations(command.getDriver().getDriverId())).withRel("observed");
         gasStationIdDto.add(getObservedLink);
 
@@ -39,6 +40,7 @@ class GasStationController {
     @GetMapping(value = "/observe/driver/{driverId}")
     public CollectionModel<EntityModel<GasStationIdDto>> getObservedGasStations(final @NonNull @PathVariable Long driverId) {
         final List<GasStationIdDto> observedGasStations = gasStationsFacade.getObservedGasStations(driverId);
+
         return CollectionModel.wrap(observedGasStations);
     }
 

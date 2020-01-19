@@ -157,7 +157,7 @@ class CarIntegrationTest extends IntegrationSpec {
         then:
             overallCostResult
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$').value("1125.53"))
+                    .andExpect(jsonPath('$.content').value("1125.53"))
     }
 
     @Sql(scripts = '/db/car/default_car.sql')
@@ -185,9 +185,10 @@ class CarIntegrationTest extends IntegrationSpec {
         then:
             refuels
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.content.[0].amount').value("25.0"))
-                    .andExpect(jsonPath('$.content.[0].cost').value("100.0"))
-                    .andExpect(jsonPath('$.content.[0].petrolType').value("BENZINE_95"))
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(jsonPath('$._embedded.refuelCarOutputDtoList.[0].amount').value("25.0"))
+                    .andExpect(jsonPath('$._embedded.refuelCarOutputDtoList.[0].cost').value("100.0"))
+                    .andExpect(jsonPath('$._embedded.refuelCarOutputDtoList.[0].petrolType').value("BENZINE_95"))
     }
 
     @Sql(scripts = '/db/car/default_car.sql')
