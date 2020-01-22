@@ -48,7 +48,7 @@ class PetrolPrice extends AbstractEntity {
         return new PetrolPrice(gasStationId, amount, currency, petrolType, PetrolPriceStatus.PENDING);
     }
 
-    void setAccepted() {
+    void acceptPrice() {
         this.status = PetrolPriceStatus.ACCEPTED;
     }
 
@@ -64,7 +64,7 @@ class PetrolPrice extends AbstractEntity {
         return amount;
     }
 
-    boolean isInInThisPlace(final @NonNull GasStationId gasStationId) {
+    boolean isInThisPlace(final @NonNull GasStationId gasStationId) {
         return this.gasStationId.equals(gasStationId);
     }
 

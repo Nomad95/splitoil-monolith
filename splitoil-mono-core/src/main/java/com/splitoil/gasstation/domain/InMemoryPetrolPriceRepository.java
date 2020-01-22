@@ -77,7 +77,7 @@ class InMemoryPetrolPriceRepository implements PetrolPriceRepository {
     public Page<PetrolPrice> getLatestPrice(final GasStationId gasStationId, final PetrolType petrolType, final Currency currency, final Pageable pageable) {
         final PetrolPrice petrolPrice = map.values().stream()
             .filter(PetrolPrice::isAccepted)
-            .filter((v -> v.isInInThisPlace(gasStationId)))
+            .filter((v -> v.isInThisPlace(gasStationId)))
             .filter(v -> v.isOfCurrency(currency))
             .filter(v -> v.isOfPetrolType(petrolType))
             .findFirst().orElse(null);
@@ -88,7 +88,7 @@ class InMemoryPetrolPriceRepository implements PetrolPriceRepository {
     @Override public Stream<PetrolPrice> findAllByGasStationIdAndCurrencyOrderByCreatedDesc(final GasStationId gasStationId, final Currency currency) {
         return map.values().stream()//.sorted(Comparator.comparing(p -> p.getCreated())) ???
             .filter(PetrolPrice::isAccepted)
-            .filter((v -> v.isInInThisPlace(gasStationId)))
+            .filter((v -> v.isInThisPlace(gasStationId)))
             .filter(v -> v.isOfCurrency(currency))
             ;
     }

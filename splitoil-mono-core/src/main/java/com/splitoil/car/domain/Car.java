@@ -70,7 +70,6 @@ class Car extends AbstractEntity {
         numberOfTravels++;
     }
 
-    //TODO: zastanow sie czy nie lepiej to wyliczyć z lista refueli ?
     void calculateAvgFuelConsumption(final BigDecimal totalFuelInLitres) {
         final long mileagePer100km = mileage / 100;
         calculatedAvgFuelConsumption = totalFuelInLitres.divide(new BigDecimal(mileagePer100km).setScale(2, HALF_UP), HALF_UP);
@@ -78,6 +77,10 @@ class Car extends AbstractEntity {
 
     void calculateAvg1kmCost(final BigDecimal totalFuelCost) {
         calculatedAvg1kmCost = totalFuelCost.divide(new BigDecimal(mileage).setScale(2, HALF_UP), HALF_UP);
+    }
+
+    boolean isAbleToCalculateAverages() {
+        return mileage > 500;
     }
 
     CarOutputDto toDto() {

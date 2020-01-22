@@ -38,9 +38,9 @@ public class GasStationsFacade {
             .collect(toUnmodifiableList());
     }
 
-    public BigDecimal rateGasStation(final AddRatingDto command) {
-        final GasStationId gasStationId = gasStationCreator.createGasStationId(command.getGasStationId());
-        final Rating rating = gasStationCreator.createRating(command.getRating());
+    public BigDecimal rateGasStation(final AddRatingDto addRatingToGasStationCommand) {
+        final GasStationId gasStationId = gasStationCreator.createGasStationId(addRatingToGasStationCommand.getGasStationId());
+        final Rating rating = gasStationCreator.createRating(addRatingToGasStationCommand.getRating());
 
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
@@ -61,8 +61,8 @@ public class GasStationsFacade {
             .orElse(BigDecimal.ZERO);
     }
 
-    public UUID addPetrolPrice(final AddPetrolPriceDto command) {
-        final PetrolPrice petrolPrice = gasStationCreator.createPetrolPrice(command);
+    public UUID addPetrolPrice(final AddPetrolPriceDto addPetrolPriceToGasStationCommand) {
+        final PetrolPrice petrolPrice = gasStationCreator.createPetrolPrice(addPetrolPriceToGasStationCommand);
         petrolPriceRepository.save(petrolPrice);
 
         return petrolPrice.getUuid();
@@ -70,7 +70,7 @@ public class GasStationsFacade {
 
     public void acceptPetrolPrice(final AcceptPetrolPriceDto command) {
         final PetrolPrice petrolPrice = petrolPriceRepository.findByUuid(command.getPriceUuid()).orElseThrow(GasPriceNotFoundException::new);
-        petrolPrice.setAccepted();
+        petrolPrice.acceptPrice();
     }
 
     public BigDecimal getCurrentPetrolPrice(final GetPetrolPriceDto query) {
@@ -88,7 +88,7 @@ public class GasStationsFacade {
     }
 
     public GasStationDto showGasStationBrief(final GasStationId gasStationId, final Currency currency) {
-        final BigDecimal rating = getRatingIfGasStationExist(gasStationId);
+        final BigDecimal rating = getRatingIfGasStationExistOrZero(gasStationId);
         final List<PetrolPriceDto> prices = petrolPriceRepository.findAllByGasStationIdAndCurrencyOrderByCreatedDesc(gasStationId, currency)
             .filter(PetrolPrice::isAccepted)
             .collect(Collectors.groupingBy(PetrolPrice::getPetrolType))
@@ -106,7 +106,7 @@ public class GasStationsFacade {
             .build();
     }
 
-    private BigDecimal getRatingIfGasStationExist(final GasStationId gasStationId) {
+    private BigDecimal getRatingIfGasStationExistOrZero(final GasStationId gasStationId) {
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
 
         if (gasStationOptional.isPresent()) {

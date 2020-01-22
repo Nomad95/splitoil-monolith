@@ -28,10 +28,10 @@ class GasStationController {
     private GasStationsFacade gasStationsFacade;
 
     @PostMapping(value = "/observe")
-    public GasStationIdDto addGasStationToObservable(@RequestBody @NonNull @Valid final AddToObservableDto command) {
-        final GasStationIdDto gasStationIdDto = gasStationsFacade.addToObservables(command);
+    public GasStationIdDto addGasStationToObservable(@RequestBody @NonNull @Valid final AddToObservableDto addToObservableCommand) {
+        final GasStationIdDto gasStationIdDto = gasStationsFacade.addToObservables(addToObservableCommand);
 
-        final Link getObservedLink = linkTo(methodOn(GasStationController.class).getObservedGasStations(command.getDriver().getDriverId())).withRel("observed");
+        final Link getObservedLink = linkTo(methodOn(GasStationController.class).getObservedGasStations(addToObservableCommand.getDriver().getDriverId())).withRel("observed");
         gasStationIdDto.add(getObservedLink);
 
         return gasStationIdDto;
@@ -45,13 +45,15 @@ class GasStationController {
     }
 
     @PostMapping(value = "/rate")
-    public EntityModel<BigDecimal> rateGasStation(@RequestBody @NonNull @Valid final AddRatingDto command) {
-        final BigDecimal newRating = gasStationsFacade.rateGasStation(command);
+    public EntityModel<BigDecimal> rateGasStation(@RequestBody @NonNull @Valid final AddRatingDto addRatingToGasStationCommand) {
+        final BigDecimal newRating = gasStationsFacade.rateGasStation(addRatingToGasStationCommand);
 
         final Link getRating = linkTo(GasStationController.class).slash("rating").withRel("rating");
         final Link self = linkTo(GasStationController.class).slash("rate").withSelfRel();
 
-        return new EntityModel<>(newRating).add(getRating).add(self);
+        return new EntityModel<>(newRating)
+            .add(getRating)
+            .add(self);
     }
 
     @PostMapping(value = "/rating")

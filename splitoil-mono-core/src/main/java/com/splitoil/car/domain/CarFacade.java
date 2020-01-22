@@ -109,11 +109,14 @@ public class CarFacade {
     public void handleTravelEnded(final TravelEndedEvent travelEndedEvent) {
         final Car car = getCarByIdOrThrow(travelEndedEvent.getCarId());
         car.addTravelInfo(travelEndedEvent);
-        //TODO: another event that new travel has benn processed. Should trigger the calculation
-        //TODO: to service
-        final BigDecimal totalRefuelCost = carRefuelRepository.getTotalRefuelCostForCar(car.getId());
-        final BigDecimal totalRefuelAmountInLitres = carRefuelRepository.getTotalRefuelAmountInLitres(car.getId());
-        car.calculateAvg1kmCost(totalRefuelCost);
-        car.calculateAvgFuelConsumption(totalRefuelAmountInLitres);
+
+        if (car.isAbleToCalculateAverages()) {
+            //TODO: another event that new travel has benn processed. Should trigger the calculation
+            //TODO: to service
+            final BigDecimal totalRefuelCost = carRefuelRepository.getTotalRefuelCostForCar(car.getId());
+            final BigDecimal totalRefuelAmountInLitres = carRefuelRepository.getTotalRefuelAmountInLitres(car.getId());
+            car.calculateAvg1kmCost(totalRefuelCost);
+            car.calculateAvgFuelConsumption(totalRefuelAmountInLitres);
+        }
     }
 }
