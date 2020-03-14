@@ -19,7 +19,7 @@ class GasStationRatingsTest extends Specification {
             gasStation.addRating(Rating.of(r3))
             gasStation.addRating(Rating.of(r4))
         then:
-            gasStation.getOverallRating() == new BigDecimal(expected).setScale(2, GasStation.ROUNDING_MODE)
+            gasStation.getOverallRating() == new BigDecimal(expected).setScale(2, GasStation.RATING_ROUNDING)
         where:
             r1 | r2 | r3 | r4 | expected
             5  | 5  | 4  | 4  | 4.5
@@ -46,12 +46,12 @@ class GasStationRatingsTest extends Specification {
             gasStation.addRating(Rating.of(5))
             gasStation.addRating(Rating.of(5))
         then:
-            gasStation.getOverallRating() == new BigDecimal(3.31).setScale(2, GasStation.ROUNDING_MODE)
+            gasStation.getOverallRating() == new BigDecimal(3.31).setScale(2, GasStation.RATING_ROUNDING)
     }
 
     def "should rate gas station no rating case"() {
         expect:
-            new GasStationCreator().create(new GasStationId(new GeoPoint(lon: 22.5, lat: 100.0), "Orlen")).getOverallRating() == new BigDecimal(0).setScale(2, GasStation.ROUNDING_MODE)
+            new GasStationCreator().create(new GasStationId(new GeoPoint(lon: 22.5, lat: 100.0), "Orlen")).getOverallRating() == new BigDecimal(0).setScale(2, GasStation.RATING_ROUNDING)
     }
 
     @Unroll

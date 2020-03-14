@@ -1,6 +1,7 @@
 package com.splitoil.gasstation.domain;
 
 import com.splitoil.gasstation.dto.*;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,55 +26,58 @@ public class GasStationsFacade {
 
     private final PetrolPriceRepository petrolPriceRepository;
 
-    public GasStationIdDto addToObservables(final AddToObservableDto command) {
+    public GasStationIdDto addToObservables(final @NonNull AddToObservableDto command) {
         final ObservedGasStation observedGasStation = gasStationCreator.createObservedGasStation(command);
 
         observedGasStationsRepository.save(observedGasStation);
         return observedGasStation.toDto();
     }
 
-    public List<GasStationIdDto> getObservedGasStations(final Long driverId) {
+    public List<GasStationIdDto> getObservedGasStations(final @NonNull Long driverId) {
         return observedGasStationsRepository.findAllByObserver(new Driver(driverId)).stream()
             .map(ObservedGasStation::toDto)
             .collect(toUnmodifiableList());
     }
 
-    public BigDecimal rateGasStation(final AddRatingDto addRatingToGasStationCommand) {
+    public BigDecimal rateGasStation(final @NonNull AddRatingDto addRatingToGasStationCommand) {
         final GasStationId gasStationId = gasStationCreator.createGasStationId(addRatingToGasStationCommand.getGasStationId());
-        final Rating rating = gasStationCreator.createRating(addRatingToGasStationCommand.getRating());
+        final Rating gasStationRating = gasStationCreator.createRating(addRatingToGasStationCommand.getRating());
 
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
         if (gasStationOptional.isPresent()) {
-            gasStationOptional.get().addRating(rating);
+            gasStationOptional.get().addRating(gasStationRating);
             return gasStationOptional.get().getOverallRating();
         } else {
             final GasStation gasStation = gasStationCreator.create(gasStationId);
-            gasStation.addRating(rating);
+            gasStation.addRating(gasStationRating);
             gasStationRepository.save(gasStation);
             return gasStation.getOverallRating();
         }
     }
 
-    public BigDecimal getRating(final GasStationIdDto gasStationIdDto) {
+    public BigDecimal getRating(final @NonNull GasStationIdDto gasStationIdDto) {
         final GasStationId gasStationId = gasStationCreator.createGasStationId(gasStationIdDto);
+
         return gasStationRepository.findOptionalByGasStation(gasStationId)
             .map(GasStation::getOverallRating)
-            .orElse(BigDecimal.ZERO);
+            .orElse(GasStation.NO_RATING);
     }
 
-    public UUID addPetrolPrice(final AddPetrolPriceDto addPetrolPriceToGasStationCommand) {
+    public UUID addPetrolPrice(final @NonNull AddPetrolPriceDto addPetrolPriceToGasStationCommand) {
         final PetrolPrice petrolPrice = gasStationCreator.createPetrolPrice(addPetrolPriceToGasStationCommand);
+
         petrolPriceRepository.save(petrolPrice);
 
         return petrolPrice.getUuid();
     }
 
-    public void acceptPetrolPrice(final AcceptPetrolPriceDto command) {
+    //Strategia sprawdzania czy cena jest poprawna itp.
+    public void acceptPetrolPrice(final @NonNull AcceptPetrolPriceDto command) {
         final PetrolPrice petrolPrice = petrolPriceRepository.findByUuid(command.getPriceUuid()).orElseThrow(GasPriceNotFoundException::new);
         petrolPrice.acceptPrice();
     }
 
-    public BigDecimal getCurrentPetrolPrice(final GetPetrolPriceDto query) {
+    public BigDecimal getCurrentPetrolPrice(final @NonNull GetPetrolPriceDto query) {
         final GasStationId gasStationId = gasStationCreator.createGasStationId(query.getGasStationIdDto());
         final PetrolType petrolType = PetrolType.valueOf(query.getPetrolType());
         final Currency currency = Currency.valueOf(query.getCurrency());
@@ -82,12 +86,12 @@ public class GasStationsFacade {
             .getContent();
 
         if (lastPrice.isEmpty())
-            return BigDecimal.ZERO;
+            return PetrolPrice.NO_PRICE;
 
         return lastPrice.get(0).getPetrolPrice();
     }
 
-    public GasStationDto showGasStationBrief(final GasStationId gasStationId, final Currency currency) {
+    public GasStationDto showGasStationBrief(final @NonNull GasStationId gasStationId, final @NonNull Currency currency) {
         final BigDecimal rating = getRatingIfGasStationExistOrZero(gasStationId);
         final List<PetrolPriceDto> prices = petrolPriceRepository.findAllByGasStationIdAndCurrencyOrderByCreatedDesc(gasStationId, currency)
             .filter(PetrolPrice::isAccepted)
@@ -100,19 +104,20 @@ public class GasStationsFacade {
         if (prices.isEmpty() && rating.equals(BigDecimal.ZERO)) {
             return gasStationCreator.createEmptyGasStationDtoView();
         }
+
         return GasStationDto.builder()
             .petrolPrices(prices)
             .stationRate(rating)
             .build();
     }
 
-    private BigDecimal getRatingIfGasStationExistOrZero(final GasStationId gasStationId) {
+    private BigDecimal getRatingIfGasStationExistOrZero(final @NonNull GasStationId gasStationId) {
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
 
         if (gasStationOptional.isPresent()) {
             return gasStationOptional.get().getRating();
         }
 
-        return BigDecimal.ZERO;
+        return GasStation.NO_RATING;
     }
 }

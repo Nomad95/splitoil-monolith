@@ -262,7 +262,7 @@ class GasStationsTest extends Specification {
             def gasStationBrief = gasStationsFacade.showGasStationBrief(gasStation, Currency.PLN)
 
         then: "No rate shown"
-            gasStationBrief.stationRate == new BigDecimal("4").setScale(2, GasStation.ROUNDING_MODE)
+            gasStationBrief.stationRate == new BigDecimal("4").setScale(2, GasStation.RATING_ROUNDING)
     }
 
     def "should show gas station prices"() {

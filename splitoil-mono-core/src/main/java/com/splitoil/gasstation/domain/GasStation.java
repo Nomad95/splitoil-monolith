@@ -15,7 +15,9 @@ import static java.math.RoundingMode.HALF_UP;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class GasStation extends AbstractEntity {
 
-    static final RoundingMode ROUNDING_MODE = HALF_UP;
+    static final RoundingMode RATING_ROUNDING = HALF_UP;
+
+    static final BigDecimal NO_RATING = BigDecimal.ZERO;
 
     @Getter
     private GasStationId gasStation;
@@ -31,8 +33,8 @@ class GasStation extends AbstractEntity {
         rating = rating
             .multiply(new BigDecimal(numberOfRatings))
             .add(new BigDecimal(newRating.getRating()))
-            .setScale(2, ROUNDING_MODE)
-            .divide(new BigDecimal(++numberOfRatings), ROUNDING_MODE);
+            .setScale(2, RATING_ROUNDING)
+            .divide(new BigDecimal(++numberOfRatings), RATING_ROUNDING);
     }
 
     BigDecimal getOverallRating() {

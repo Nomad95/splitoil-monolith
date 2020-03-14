@@ -18,6 +18,8 @@ class PetrolPrice extends AbstractEntity {
 
     static final Comparator<PetrolPrice> SORT_BY_NEWEST_FIRST = Comparator.comparing(PetrolPrice::getCreated).reversed();
 
+    static final BigDecimal NO_PRICE = BigDecimal.ZERO;
+
     private GasStationId gasStationId;
 
     private BigDecimal amount;
