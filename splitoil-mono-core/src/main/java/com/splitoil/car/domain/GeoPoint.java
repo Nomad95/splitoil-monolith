@@ -1,15 +1,16 @@
 package com.splitoil.car.domain;
 
+import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
 
 @Getter
 @Embeddable
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(staticName = "of")
-class GeoPoint {
+class GeoPoint extends AbstractValue {
 
     private double lon;
 

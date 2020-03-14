@@ -1,5 +1,6 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.shared.AbstractValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-class Rating {
+class Rating extends AbstractValue {
 
     private static final Set<Integer> allowedRatings;
 

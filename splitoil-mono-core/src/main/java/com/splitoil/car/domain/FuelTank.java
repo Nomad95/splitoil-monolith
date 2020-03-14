@@ -1,5 +1,6 @@
 package com.splitoil.car.domain;
 
+import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -9,11 +10,11 @@ import java.math.BigDecimal;
 
 @Getter
 @Embeddable
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class FuelTank {
+class FuelTank extends AbstractValue {
 
     @Enumerated(value = EnumType.STRING)
     private PetrolType petrolType;

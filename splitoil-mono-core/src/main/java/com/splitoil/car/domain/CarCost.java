@@ -1,6 +1,6 @@
 package com.splitoil.car.domain;
 
-import com.splitoil.shared.AbstractEntity;
+import com.splitoil.shared.AbstractAggregate;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import java.time.Instant;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class CarCost extends AbstractEntity {
+class CarCost extends AbstractAggregate {
 
     private String name;
 

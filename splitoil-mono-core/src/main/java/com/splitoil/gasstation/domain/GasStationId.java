@@ -2,6 +2,7 @@ package com.splitoil.gasstation.domain;
 
 import com.splitoil.gasstation.dto.GasStationIdDto;
 import com.splitoil.gasstation.dto.GeoPointDto;
+import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -12,10 +13,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 @Embeddable
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class GasStationId {
+class GasStationId extends AbstractValue {
 
     @Embedded
     @NotNull

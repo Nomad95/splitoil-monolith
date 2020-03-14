@@ -1,16 +1,17 @@
 package com.splitoil.gasstation.domain;
 
 import com.splitoil.gasstation.dto.DriverDto;
+import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
 
 @Getter
 @Embeddable
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class Driver {
+class Driver extends AbstractValue {
 
     private Long driverId;
 
