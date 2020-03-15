@@ -1,7 +1,7 @@
 package com.splitoil.gasstation.domain;
 
 import com.splitoil.gasstation.dto.GasStationIdDto;
-import com.splitoil.shared.AbstractAggregate;
+import com.splitoil.shared.AbstractAggregateRoot;
 import lombok.*;
 
 import javax.persistence.Embedded;
@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class ObservedGasStation extends AbstractAggregate {
+class ObservedGasStation extends AbstractAggregateRoot {
 
     @Embedded
     private GasStationId gasStationId;

@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 @Repository
 interface PetrolPriceRepository extends CrudRepository<PetrolPrice, Long> {
 
-    Optional<PetrolPrice> findByUuid(final UUID uuid);
+    Optional<PetrolPrice> findByAggregateId(final UUID uuid);
 
     @Query("SELECT pp FROM PetrolPrice pp WHERE pp.gasStationId = :gasStationId AND pp.petrolType = :petrolType AND pp.currency = :currency AND pp.status = 'ACCEPTED' "
                + "ORDER BY pp.created DESC")

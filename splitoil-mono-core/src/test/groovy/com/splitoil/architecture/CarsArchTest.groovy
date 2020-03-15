@@ -1,7 +1,9 @@
 package com.splitoil.architecture
 
+
 import com.splitoil.UnitTest
 import com.splitoil.gasstation.domain.GasStationsFacade
+import com.splitoil.shared.event.DomainEvent
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
@@ -19,6 +21,8 @@ class CarsArchTest extends Specification {
                     .resideInAPackage("com.splitoil.car.domain")
                     .and()
                     .doNotHaveSimpleName("CarFacade")
+                    .and()
+                    .doNotImplement(DomainEvent)
                     .should()
                     .onlyBeAccessed()
                     .byAnyPackage("com.splitoil.car.domain")
@@ -34,6 +38,8 @@ class CarsArchTest extends Specification {
                     .resideInAPackage("com.splitoil.car.domain")
                     .and()
                     .doNotHaveSimpleName("CarFacade")
+                    .and()
+                    .doNotImplement(DomainEvent)
                     .and()
                     .haveNameNotMatching(".*Test")
                     .and()

@@ -1,6 +1,6 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.shared.AbstractAggregate;
+import com.splitoil.shared.AbstractAggregateRoot;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import static java.math.RoundingMode.HALF_UP;
 @Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class GasStation extends AbstractAggregate {
+class GasStation extends AbstractAggregateRoot {
 
     static final RoundingMode RATING_ROUNDING = HALF_UP;
 
@@ -35,11 +35,11 @@ class GasStation extends AbstractAggregate {
             .add(new BigDecimal(newRating.getRating()))
             .setScale(2, RATING_ROUNDING)
             .divide(new BigDecimal(++numberOfRatings), RATING_ROUNDING);
+
     }
 
     BigDecimal getOverallRating() {
         return rating;
     }
-
 
 }

@@ -69,8 +69,8 @@ class InMemoryPetrolPriceRepository implements PetrolPriceRepository {
 
     }
 
-    @Override public Optional<PetrolPrice> findByUuid(final UUID uuid) {
-        return map.values().stream().filter(e -> uuid.equals(e.getUuid())).findFirst();
+    @Override public Optional<PetrolPrice> findByAggregateId(final UUID uuid) {
+        return map.values().stream().filter(e -> uuid.equals(e.getAggregateId())).findFirst();
     }
 
     @Override

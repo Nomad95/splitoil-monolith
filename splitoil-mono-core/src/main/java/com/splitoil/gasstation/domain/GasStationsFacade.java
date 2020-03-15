@@ -1,6 +1,11 @@
 package com.splitoil.gasstation.domain;
 
+import com.splitoil.gasstation.domain.event.GasStationRated;
+import com.splitoil.gasstation.domain.event.PetrolPriceAdded;
+import com.splitoil.gasstation.domain.event.StationAddedToObserved;
 import com.splitoil.gasstation.dto.*;
+import com.splitoil.shared.annotation.ApplicationService;
+import com.splitoil.shared.event.EventPublisher;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +20,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 @Transactional
+@ApplicationService
 @RequiredArgsConstructor
 public class GasStationsFacade {
 
@@ -26,10 +32,14 @@ public class GasStationsFacade {
 
     private final PetrolPriceRepository petrolPriceRepository;
 
+    private final EventPublisher eventPublisher;
+
     public GasStationIdDto addToObservables(final @NonNull AddToObservableDto command) {
         final ObservedGasStation observedGasStation = gasStationCreator.createObservedGasStation(command);
 
         observedGasStationsRepository.save(observedGasStation);
+        eventPublisher.publish(new StationAddedToObserved(observedGasStation.getAggregateId(), command.getDriver().getDriverId()));
+
         return observedGasStation.toDto();
     }
 
@@ -44,15 +54,14 @@ public class GasStationsFacade {
         final Rating gasStationRating = gasStationCreator.createRating(addRatingToGasStationCommand.getRating());
 
         final Optional<GasStation> gasStationOptional = gasStationRepository.findOptionalByGasStation(gasStationId);
-        if (gasStationOptional.isPresent()) {
-            gasStationOptional.get().addRating(gasStationRating);
-            return gasStationOptional.get().getOverallRating();
-        } else {
-            final GasStation gasStation = gasStationCreator.create(gasStationId);
-            gasStation.addRating(gasStationRating);
-            gasStationRepository.save(gasStation);
-            return gasStation.getOverallRating();
-        }
+        final GasStation gasStation = gasStationOptional.orElseGet(() -> gasStationCreator.create(gasStationId));
+
+        gasStation.addRating(gasStationRating);
+
+        gasStationRepository.save(gasStation);
+        eventPublisher.publish(new GasStationRated(gasStation.getAggregateId(), addRatingToGasStationCommand.getRating(), gasStation.getOverallRating()));
+
+        return gasStation.getOverallRating();
     }
 
     public BigDecimal getRating(final @NonNull GasStationIdDto gasStationIdDto) {
@@ -67,13 +76,14 @@ public class GasStationsFacade {
         final PetrolPrice petrolPrice = gasStationCreator.createPetrolPrice(addPetrolPriceToGasStationCommand);
 
         petrolPriceRepository.save(petrolPrice);
+        eventPublisher.publish(new PetrolPriceAdded(petrolPrice.getAggregateId()));
 
-        return petrolPrice.getUuid();
+        return petrolPrice.getAggregateId();
     }
 
     //Strategia sprawdzania czy cena jest poprawna itp.
     public void acceptPetrolPrice(final @NonNull AcceptPetrolPriceDto command) {
-        final PetrolPrice petrolPrice = petrolPriceRepository.findByUuid(command.getPriceUuid()).orElseThrow(GasPriceNotFoundException::new);
+        final PetrolPrice petrolPrice = petrolPriceRepository.findByAggregateId(command.getPriceUuid()).orElseThrow(GasPriceNotFoundException::new);
         petrolPrice.acceptPrice();
     }
 

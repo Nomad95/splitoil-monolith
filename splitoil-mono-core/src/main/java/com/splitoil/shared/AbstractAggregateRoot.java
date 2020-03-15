@@ -10,8 +10,8 @@ import java.util.UUID;
 
 @Getter
 @MappedSuperclass
-@EqualsAndHashCode(of = { "uuid" })
-public abstract class AbstractAggregate {
+@EqualsAndHashCode(of = { "aggregateId" })
+public abstract class AbstractAggregateRoot {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -19,5 +19,5 @@ public abstract class AbstractAggregate {
     private Long id;
 
     @Column(nullable = false, updatable = false, unique = true)
-    private UUID uuid = UUID.randomUUID();
+    private UUID aggregateId = UUID.randomUUID();
 }

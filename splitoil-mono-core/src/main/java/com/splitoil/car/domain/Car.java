@@ -1,7 +1,7 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.car.dto.*;
-import com.splitoil.shared.AbstractAggregate;
+import com.splitoil.shared.AbstractAggregateRoot;
 import lombok.*;
 
 import javax.persistence.Embedded;
@@ -16,7 +16,7 @@ import static java.math.RoundingMode.HALF_UP;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class Car extends AbstractAggregate {
+class Car extends AbstractAggregateRoot {
 
     private String brand;
 

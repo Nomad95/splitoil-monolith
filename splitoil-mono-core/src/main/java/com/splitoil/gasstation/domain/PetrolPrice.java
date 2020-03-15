@@ -1,6 +1,6 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.shared.AbstractAggregate;
+import com.splitoil.shared.AbstractAggregateRoot;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import java.util.Comparator;
 @Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class PetrolPrice extends AbstractAggregate {
+class PetrolPrice extends AbstractAggregateRoot {
 
     static final Comparator<PetrolPrice> SORT_BY_NEWEST_FIRST = Comparator.comparing(PetrolPrice::getCreated).reversed();
 

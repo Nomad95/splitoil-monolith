@@ -1,6 +1,10 @@
 package com.splitoil.car.domain;
 
+import com.splitoil.car.domain.events.CarAddedToCollection;
+import com.splitoil.car.domain.events.CarDeleted;
 import com.splitoil.car.dto.*;
+import com.splitoil.shared.annotation.ApplicationService;
+import com.splitoil.shared.event.EventPublisher;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -13,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Transactional
+@ApplicationService
 @AllArgsConstructor
 public class CarFacade {
 
@@ -23,6 +28,8 @@ public class CarFacade {
     private CarCostRepository carCostRepository;
 
     private CarRefuelRepository carRefuelRepository;
+
+    private EventPublisher eventPublisher;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public CarOutputDto addNewCarToCollection(final @NonNull AddCarDto addCarDto) {
@@ -35,6 +42,7 @@ public class CarFacade {
         }
 
         carsRepository.save(car);
+        eventPublisher.publish(new CarAddedToCollection(car.getAggregateId(), driver.getDriverId()));
 
         return car.toDto();
     }
@@ -47,6 +55,8 @@ public class CarFacade {
     public void deleteCar(final @NonNull Long carId) {
         final Car carToDelete = getCarByIdOrThrow(carId);
         carsRepository.delete(carToDelete);
+
+        eventPublisher.publish(new CarDeleted(carToDelete.getAggregateId()));
     }
 
     public CarOutputDto editCarsFuelTank(final @NonNull FuelTankDto fuelTankDto) {
@@ -111,8 +121,9 @@ public class CarFacade {
         car.addTravelInfo(travelEndedEvent);
 
         if (car.isAbleToCalculateAverages()) {
-            //TODO: another event that new travel has benn processed. Should trigger the calculation
-            //TODO: to service
+            //TODO: another event that new travel has been processed. Should trigger the calculation
+            //TODO: to domain service
+            //TODO: need events?
             final BigDecimal totalRefuelCost = carRefuelRepository.getTotalRefuelCostForCar(car.getId());
             final BigDecimal totalRefuelAmountInLitres = carRefuelRepository.getTotalRefuelAmountInLitres(car.getId());
             car.calculateAvg1kmCost(totalRefuelCost);

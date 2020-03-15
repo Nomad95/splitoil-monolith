@@ -13,12 +13,4 @@ class SpringBootExampleTest extends Specification {
             1 + 1 == 2
     }
 
-    def "Lombok works here"() {
-        given:
-            def clazz = new SomeClass()
-            clazz.value = "siemanko"
-
-        expect:
-            clazz.value == "siemanko"
-    }
 }
