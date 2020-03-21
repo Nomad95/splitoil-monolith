@@ -54,7 +54,7 @@ public class CarController {
     @GetMapping("/driver/{id}")
     public CollectionModel<EntityModel<CarView>> getAllDriverCars(@PathVariable Long id) {
         final List<CarView> allCars = carFacade.getAllCars(id);
-        final Link self = linkTo(CarController.class).withSelfRel();
+        final Link self = linkTo(CarController.class).slash("driver").slash(id).withSelfRel();
 
         return CollectionModel.wrap(allCars).add(self);
     }

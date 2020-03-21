@@ -1,7 +1,7 @@
 package com.splitoil.car.domain;
 
-import com.splitoil.car.domain.events.CarAddedToCollection;
-import com.splitoil.car.domain.events.CarDeleted;
+import com.splitoil.car.domain.event.CarAddedToCollection;
+import com.splitoil.car.domain.event.CarDeleted;
 import com.splitoil.car.dto.*;
 import com.splitoil.shared.annotation.ApplicationService;
 import com.splitoil.shared.event.EventPublisher;

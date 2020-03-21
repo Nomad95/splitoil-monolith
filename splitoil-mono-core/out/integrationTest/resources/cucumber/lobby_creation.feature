@@ -5,7 +5,8 @@ Feature: Driver with car can create travel by defining a lobby
     And driver does not have another lobby created simultaneously
     When driver creates new lobby
     And have chosen a car
-    Then lobby has been created
+    Then car has been created
+    And lobby is ready for configuration
 
   Scenario Driver configures lobby for new travel
     Given a new lobby

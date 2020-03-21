@@ -1,6 +1,7 @@
 package com.splitoil.gasstation.domain;
 
 import com.splitoil.shared.AbstractAggregateRoot;
+import com.splitoil.shared.model.Currency;
 import lombok.*;
 
 import javax.persistence.Entity;

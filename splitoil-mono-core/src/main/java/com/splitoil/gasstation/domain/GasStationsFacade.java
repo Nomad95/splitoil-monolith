@@ -6,6 +6,7 @@ import com.splitoil.gasstation.domain.event.StationAddedToObserved;
 import com.splitoil.gasstation.dto.*;
 import com.splitoil.shared.annotation.ApplicationService;
 import com.splitoil.shared.event.EventPublisher;
+import com.splitoil.shared.model.Currency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

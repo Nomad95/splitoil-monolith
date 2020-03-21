@@ -1,6 +1,7 @@
 package com.splitoil.gasstation.domain;
 
 import com.splitoil.gasstation.dto.*;
+import com.splitoil.shared.model.Currency;
 
 import java.math.BigDecimal;
 

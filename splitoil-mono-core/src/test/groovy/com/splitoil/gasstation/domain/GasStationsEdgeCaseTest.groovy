@@ -5,6 +5,7 @@ import com.splitoil.gasstation.dto.AcceptPetrolPriceDto
 import com.splitoil.gasstation.dto.AddPetrolPriceDto
 import com.splitoil.gasstation.dto.GasStationIdDto
 import com.splitoil.gasstation.dto.GeoPointDto
+import com.splitoil.shared.model.Currency
 import org.junit.experimental.categories.Category
 import spock.lang.Specification
 

@@ -31,3 +31,14 @@ to be consistent - this data doesn't change together so it doesn't have to be in
 2. I made all necessary tests just like in GasStations module
 
 3. I have created sqls for tests
+
+4. I have added the domain events as well as a publisher class
+
+
+#### Lobby 
+
+Lobby need to be created before travel starts and remains until it ends. Lobby is used
+for participants chat, and for brief travel configuration. Additionally lobby is used to 
+send invitations for users and to add participants manually (When they are not registered 
+in application but are needed for fee distribution). In lobby, lobby creator defines travel plan that is 
+visible to other users in lobby. When lobby creator accepts plan a Travel is created.  

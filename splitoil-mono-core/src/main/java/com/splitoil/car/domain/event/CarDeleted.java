@@ -1,4 +1,4 @@
-package com.splitoil.car.domain.events;
+package com.splitoil.car.domain.event;
 
 import com.splitoil.shared.event.DomainEvent;
 import lombok.NonNull;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Value
 public class CarDeleted implements DomainEvent {
-    @NonNull final UUID eventId = UUID.randomUUID();
-    @NonNull final UUID aggregateId;
-    @NonNull final Instant createdAt = Instant.now();
+    @NonNull UUID eventId = UUID.randomUUID();
+    @NonNull UUID aggregateId;
+    @NonNull Instant createdAt = Instant.now();
 }

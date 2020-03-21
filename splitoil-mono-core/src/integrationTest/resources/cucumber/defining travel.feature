@@ -65,3 +65,11 @@ Feature: Driver defines a travel route
     Then travel is started
     And notification is sent to passengers
     And gps route calculation is started
+
+  Scenario Driver configures road section cost
+    Given a travel route
+    When driver selects a section
+    And adds a rate for section
+    And selects another section
+    And adds a rate for section
+    Then travel has different costs for different sections

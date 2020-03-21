@@ -2,6 +2,7 @@ package com.splitoil.gasstation.domain
 
 import com.splitoil.UnitTest
 import com.splitoil.gasstation.dto.*
+import com.splitoil.shared.model.Currency
 import org.assertj.core.api.Assertions
 import org.junit.experimental.categories.Category
 import spock.lang.Specification

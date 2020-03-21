@@ -74,7 +74,7 @@ class InMemoryPetrolPriceRepository implements PetrolPriceRepository {
     }
 
     @Override
-    public Page<PetrolPrice> getLatestPrice(final GasStationId gasStationId, final PetrolType petrolType, final Currency currency, final Pageable pageable) {
+    public Page<PetrolPrice> getLatestPrice(final GasStationId gasStationId, final PetrolType petrolType, final com.splitoil.shared.model.Currency currency, final Pageable pageable) {
         final PetrolPrice petrolPrice = map.values().stream()
             .filter(PetrolPrice::isAccepted)
             .filter((v -> v.isInThisPlace(gasStationId)))
@@ -85,7 +85,7 @@ class InMemoryPetrolPriceRepository implements PetrolPriceRepository {
         return new PageImpl<>(Objects.isNull(petrolPrice) ? List.of() : List.of(petrolPrice));
     }
 
-    @Override public Stream<PetrolPrice> findAllByGasStationIdAndCurrencyOrderByCreatedDesc(final GasStationId gasStationId, final Currency currency) {
+    @Override public Stream<PetrolPrice> findAllByGasStationIdAndCurrencyOrderByCreatedDesc(final GasStationId gasStationId, final com.splitoil.shared.model.Currency currency) {
         return map.values().stream()//.sorted(Comparator.comparing(p -> p.getCreated())) ???
             .filter(PetrolPrice::isAccepted)
             .filter((v -> v.isInThisPlace(gasStationId)))
