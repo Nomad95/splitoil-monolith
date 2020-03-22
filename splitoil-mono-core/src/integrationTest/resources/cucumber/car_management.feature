@@ -1,9 +1,10 @@
 Feature: Driver manages his car
 
-  Scenario Driver adds a car into the system
+  Scenario User adds a car into the system
     Given a empty car storage
     When I add my first car
     Then car is added into my car storage
+    And user is now a driver
 
   Scenario: Driver adds parameters to his car
     Given chosen car

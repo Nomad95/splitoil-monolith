@@ -3,28 +3,16 @@ package com.splitoil.gasstation.domain
 import com.splitoil.UnitTest
 import com.splitoil.gasstation.dto.*
 import com.splitoil.shared.model.Currency
-import org.assertj.core.api.Assertions
 import org.junit.experimental.categories.Category
+import spock.lang.Narrative
 import spock.lang.Specification
 
 import java.util.stream.Collectors
 
 @Category(UnitTest)
-class GasStationsTest extends Specification {
-
-    //@PendingFeature
-    //@IgnoreIf
-    //@Requires
-    //@Retry
-    //@Stepwise
-    //@Title("This is easy to read")
-    //@Narrative("""
-    //As a user
-    //I want foo
-    //So that bar
-    //""")
-    //@See("http://spockframework.org/spec")
-    //@Issue("http://my.issues.org/FOO-1")
+@Narrative("""
+As a driver i want to add a petrol price to show others what price is in this station""")
+class GasStationsPetrolPricesTest extends Specification {
 
     static final double LONGITUDE = -75.56
     static final double LATITUDE = 14.54
@@ -44,87 +32,6 @@ class GasStationsTest extends Specification {
 
         and: "a driver"
             driver = new Driver(driverId: DRIVER_ID)
-    }
-
-    def "should add gas station to observed"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def driverDto = DriverDto.of(DRIVER_ID)
-            def command = new AddToObservableDto(gasStationIdDto, driverDto)
-
-        when: "driver observes a gas station"
-            def dto = gasStationsFacade.addToObservables(command)
-
-        then:
-            dto != null
-            dto.name == GAS_STATION_NAME
-            dto.location.lat == LATITUDE
-            dto.location.lon == LONGITUDE
-    }
-
-    def "should get observed gas stations"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def driverDto = DriverDto.of(DRIVER_ID)
-            def command = new AddToObservableDto(gasStationIdDto, driverDto)
-
-        when: "driver observes a gas station"
-            gasStationsFacade.addToObservables(command)
-
-        then: "driver sees gas station in observables"
-            def stations = gasStationsFacade.getObservedGasStations(DRIVER_ID)
-            Assertions.assertThat(stations).contains(gasStationIdDto)
-    }
-
-    def "driver should rate gas station"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
-
-        when: "gas station has a new rating added"
-            gasStationsFacade.rateGasStation(addRatingCommand)
-
-        then: "have changed its rate value when asked"
-            gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal(5)
-    }
-
-    def "rating gas station returns rating immediately"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
-
-        when: "gas station has a new rating added"
-            def rating = gasStationsFacade.rateGasStation(addRatingCommand)
-
-        then: "have changed its rate value"
-            rating == new BigDecimal(5)
-    }
-
-    def "driver should rate existing gas station"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
-            gasStationsFacade.rateGasStation(addRatingCommand)
-
-        when: "gas station has a second rating added"
-            def rating = gasStationsFacade.rateGasStation(addRatingCommand)
-
-        then: "have changed its rate value"
-            rating == new BigDecimal(5)
-    }
-
-    def "adding second rate should create average of rates"() {
-        given:
-            def gasStationIdDto = GAS_STATION_ID_DTO
-            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
-            def addRatingCommand2 = new AddRatingDto(gasStationIdDto, 2)
-
-        when: "gas station has a new rating added"
-            gasStationsFacade.rateGasStation(addRatingCommand)
-            gasStationsFacade.rateGasStation(addRatingCommand2)
-
-        then: "have changed its rate value"
-            gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal("3.5")
     }
 
     def "driver should add petrol price to gas station"() {

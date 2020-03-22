@@ -1,13 +1,91 @@
 package com.splitoil.gasstation.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.gasstation.dto.AddRatingDto
+import com.splitoil.gasstation.dto.GasStationIdDto
+import com.splitoil.gasstation.dto.GeoPointDto
 import org.junit.experimental.categories.Category
+import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Unroll
 
 
 @Category(UnitTest)
+@Narrative("""
+As a driver i want to rate gas station that is on the map
+""")
 class GasStationRatingsTest extends Specification {
+
+    static final double LONGITUDE = -75.56
+    static final double LATITUDE = 14.54
+    static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
+    static final long DRIVER_ID = 1L
+    static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
+
+    private Driver driver
+    private GasStationId gasStation
+    private GasStationsFacade gasStationsFacade
+
+    def setup() {
+        gasStationsFacade = new GasStationConfiguration().gasStationsFacade()
+
+        given:
+            gasStation = new GasStationId(new GeoPoint(lat: LATITUDE, lon: LONGITUDE), GAS_STATION_NAME)
+
+        and: "a driver"
+            driver = new Driver(driverId: DRIVER_ID)
+    }
+
+    def "driver should rate gas station"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+
+        when: "gas station has a new rating added"
+            gasStationsFacade.rateGasStation(addRatingCommand)
+
+        then: "have changed its rate value when asked"
+            gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal(5)
+    }
+
+    def "rating gas station returns rating immediately"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+
+        when: "gas station has a new rating added"
+            def rating = gasStationsFacade.rateGasStation(addRatingCommand)
+
+        then: "have changed its rate value"
+            rating == new BigDecimal(5)
+    }
+
+    def "driver should rate existing gas station"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+            gasStationsFacade.rateGasStation(addRatingCommand)
+
+        when: "gas station has a second rating added"
+            def rating = gasStationsFacade.rateGasStation(addRatingCommand)
+
+        then: "have changed its rate value"
+            rating == new BigDecimal(5)
+    }
+
+    def "adding second rate should create average of rates"() {
+        given:
+            def gasStationIdDto = GAS_STATION_ID_DTO
+            def addRatingCommand = new AddRatingDto(gasStationIdDto, 5)
+            def addRatingCommand2 = new AddRatingDto(gasStationIdDto, 2)
+
+        when: "gas station has a new rating added"
+            gasStationsFacade.rateGasStation(addRatingCommand)
+            gasStationsFacade.rateGasStation(addRatingCommand2)
+
+        then: "have changed its rate value"
+            gasStationsFacade.getRating(gasStationIdDto) == new BigDecimal("3.5")
+    }
 
     @Unroll
     def "should rate gas station"(int r1, int r2, int r3, int r4, String expected) {
