@@ -3,8 +3,10 @@ package com.splitoil.gasstation
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec
 import com.splitoil.gasstation.dto.*
+import com.splitoil.infrastructure.security.WithMockSecurityContext
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
@@ -14,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Category(IntegrationTest)
+@WithMockUser("admin")
+@WithMockSecurityContext
 class GasStationIntegrationTest extends IntegrationSpec {
 
     public static final int LONGITUDE = 25
@@ -96,7 +100,6 @@ class GasStationIntegrationTest extends IntegrationSpec {
         then:
             result.andExpect(status().isAccepted())
     }
-
 
     //TODO: i think this should be done internally
     @Sql(scripts = '/db/gas_station/default_petrol_price_not_accepted.sql')

@@ -5,8 +5,10 @@ import com.splitoil.base.IntegrationSpec
 import com.splitoil.car.dto.*
 import com.splitoil.gasstation.dto.GasStationIdDto
 import com.splitoil.gasstation.dto.GeoPointDto
+import com.splitoil.infrastructure.security.WithMockSecurityContext
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
@@ -17,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Category(IntegrationTest)
+@WithMockUser("admin")
+@WithMockSecurityContext
 class CarIntegrationTest extends IntegrationSpec {
 
     public static final DriverDto DRIVER_DTO = DriverDto.of(1L)

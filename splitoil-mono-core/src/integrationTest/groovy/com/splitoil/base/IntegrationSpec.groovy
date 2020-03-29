@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 import spock.lang.Specification
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
+
 @TypeChecked
 @SpringBootTest(classes = SplitoilMonoApplication)
 @ActiveProfiles("test")
@@ -31,6 +33,7 @@ class IntegrationSpec extends Specification {
     @Before
     void setupMockMvc() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
                 .build()
     }
 }

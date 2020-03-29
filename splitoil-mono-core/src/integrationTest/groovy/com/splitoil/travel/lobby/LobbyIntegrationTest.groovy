@@ -2,12 +2,14 @@ package com.splitoil.travel.lobby
 
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec
+import com.splitoil.infrastructure.security.WithMockSecurityContext
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.ChangeTravelDefaultCurrencyCommand
 import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
 import com.splitoil.travel.lobby.web.dto.SetTravelTopRatePer1kmCommand
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 
@@ -17,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Category(IntegrationTest)
+@WithMockUser("admin")
+@WithMockSecurityContext
 class LobbyIntegrationTest extends IntegrationSpec {
 
     private static final String LOBBY_NAME = "Some lobby name"
