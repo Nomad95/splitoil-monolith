@@ -5,6 +5,7 @@ import com.splitoil.shared.dto.Result;
 import com.splitoil.user.domain.ApplicationUser;
 import com.splitoil.user.domain.UserCreator;
 import com.splitoil.user.domain.UserRepository;
+import com.splitoil.user.dto.ApplicationUserDto;
 import com.splitoil.user.web.dto.RegisterUserCommand;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,5 +24,9 @@ public class UserService {
         userRepository.save(applicationUser);
 
         return Result.Success;
+    }
+
+    public ApplicationUserDto getUserByLogin(final String login) {
+        return userRepository.getOneByLogin(login).toDetailsDto();
     }
 }

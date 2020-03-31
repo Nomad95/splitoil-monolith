@@ -3,7 +3,9 @@ package com.splitoil.travel.lobby.domain
 import com.splitoil.UnitTest
 import com.splitoil.shared.dto.Result
 import com.splitoil.travel.lobby.application.LobbyService
+import com.splitoil.travel.lobby.application.UserTranslator
 import com.splitoil.travel.lobby.domain.model.CarId
+import com.splitoil.travel.lobby.domain.model.Driver
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
@@ -25,9 +27,13 @@ class LobbyCreationTest extends Specification {
     private CarId carId
 
     private LobbyService lobbyService;
+    private UserTranslator userTranslator;
 
     def setup() {
-        lobbyService = new LobbyConfiguration().lobbyService()
+        userTranslator = Stub()
+        lobbyService = new LobbyConfiguration().lobbyService(userTranslator)
+
+        userTranslator.currentLoggedDriver() >> new Driver(DRIVER_ID)
     }
 
     def "Driver should create lobby for new travel"() {
@@ -38,7 +44,7 @@ class LobbyCreationTest extends Specification {
             // TODO: check lobby saga
 
         when: "Driver creates new lobby"
-            def lobbyOutput = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME, DRIVER_ID))
+            def lobbyOutput = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
 
         then:
             lobbyOutput.lobbyId != null

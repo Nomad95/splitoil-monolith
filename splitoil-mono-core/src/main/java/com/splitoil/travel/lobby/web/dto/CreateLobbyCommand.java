@@ -6,6 +6,5 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PUBLIC, staticName = "of")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateLobbyCommand {
-    @NonNull private String name;
-    @NonNull private Long driverId;
+    @NonNull private String lobbyName;
 }

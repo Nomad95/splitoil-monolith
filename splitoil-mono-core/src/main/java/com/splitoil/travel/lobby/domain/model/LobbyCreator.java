@@ -1,15 +1,18 @@
 package com.splitoil.travel.lobby.domain.model;
 
-import com.splitoil.shared.model.Currency;
-import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand;
+import com.splitoil.shared.UserCurrencyProvider;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 import java.util.UUID;
 
+@AllArgsConstructor
 public class LobbyCreator {
 
-    public Lobby createNewLobby(final CreateLobbyCommand createLobbyCommand) {
-        //TODO: currency!
-        return new Lobby(createLobbyCommand.getName(), createDriver(createLobbyCommand.getDriverId()), Currency.PLN);
+    private final UserCurrencyProvider userCurrencyProvider;
+
+    public Lobby createNewLobby(final @NonNull String lobbyName, final @NonNull Driver driver) {
+        return new Lobby(lobbyName, driver, userCurrencyProvider.getCurrentUserDefaultCurrency());
     }
 
     public Driver createDriver(final Long driverId) {

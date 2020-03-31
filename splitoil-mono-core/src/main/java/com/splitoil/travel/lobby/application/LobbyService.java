@@ -5,10 +5,7 @@ import com.splitoil.shared.dto.Result;
 import com.splitoil.shared.event.EventPublisher;
 import com.splitoil.shared.model.Currency;
 import com.splitoil.travel.lobby.domain.event.LobbyCreated;
-import com.splitoil.travel.lobby.domain.model.CarId;
-import com.splitoil.travel.lobby.domain.model.Lobby;
-import com.splitoil.travel.lobby.domain.model.LobbyCreator;
-import com.splitoil.travel.lobby.domain.model.LobbyRepository;
+import com.splitoil.travel.lobby.domain.model.*;
 import com.splitoil.travel.lobby.web.dto.*;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,24 +17,26 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LobbyService {
 
-    private LobbyCreator lobbyCreator;
+    private LobbyCreator creator;
 
     private LobbyRepository lobbyRepository;
 
     private EventPublisher eventPublisher;
 
+    private UserTranslator userTranslator;
+
     //TODO: przez ile lobby moze byc w tym stanie?
     public LobbyOutputDto createLobby(final CreateLobbyCommand createLobbyCommand) {
-        final Lobby lobby = lobbyCreator.createNewLobby(createLobbyCommand);
+        final Driver lobbyCreator = userTranslator.getCurrentLoggedDriver();
+        final Lobby lobby = creator.createNewLobby(createLobbyCommand.getLobbyName(), lobbyCreator);
 
-        //TODO: get current user not from dto!!
         lobbyRepository.save(lobby);
 
         return lobby.toDto();
     }
 
     public Result addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
-        final CarId car = lobbyCreator.createCar(addCarToTravelCommand.getCarId());
+        final CarId car = creator.createCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
 
         lobby.addCar(car);

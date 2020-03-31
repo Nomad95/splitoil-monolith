@@ -3,6 +3,7 @@ package com.splitoil.user.domain;
 import com.splitoil.infrastructure.json.JsonUserType;
 import com.splitoil.shared.AbstractAggregateRoot;
 import com.splitoil.shared.model.Currency;
+import com.splitoil.user.dto.ApplicationUserDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,6 +44,15 @@ public class ApplicationUser extends AbstractAggregateRoot {
         return roles.getRoles().stream()
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public ApplicationUserDto toDetailsDto() {
+        return ApplicationUserDto.builder()
+            .id(getId())
+            .defaultCurrency(defaultCurrency.name())
+            .email(email)
+            .login(login)
+            .build();
     }
 
 //    public static ApplicationUser create(final UserInputDTO userInputDTO) {

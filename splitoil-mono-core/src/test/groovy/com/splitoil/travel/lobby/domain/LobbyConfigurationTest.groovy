@@ -2,7 +2,9 @@ package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
 import com.splitoil.travel.lobby.application.LobbyService
+import com.splitoil.travel.lobby.application.UserTranslator
 import com.splitoil.travel.lobby.domain.model.CarId
+import com.splitoil.travel.lobby.domain.model.Driver
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.ChangeTravelDefaultCurrencyCommand
@@ -25,10 +27,14 @@ class LobbyConfigurationTest extends Specification {
     public static final String USD = 'USD'
     public static final String PLN = 'PLN'
 
-    private LobbyService lobbyService;
+    private LobbyService lobbyService
+    private UserTranslator userTranslator
 
     def setup() {
-        lobbyService = new LobbyConfiguration().lobbyService()
+        userTranslator = Stub()
+        lobbyService = new LobbyConfiguration().lobbyService(userTranslator)
+
+        userTranslator.currentLoggedDriver() >> new Driver(DRIVER_ID)
     }
 
     def "Driver configures top rate per 1 km lobby for new travel"() {
@@ -106,20 +112,19 @@ class LobbyConfigurationTest extends Specification {
             lobby.travelCurrency == PLN
     }
 
-    //TODO: posegreguj testy
     //not setting top rate makes that price can be anything later and null rate should be handled
     //should get default driver currency for travel
 
     private def aNewLobby() {
         def carId = CarId.of(UUID.randomUUID())
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME, DRIVER_ID))
+        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
         lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, carId.carId))
 
         return lobby;
     }
 
     private def carlessLobby() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME, DRIVER_ID))
+        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
 
         return lobby;
     }
