@@ -4,6 +4,7 @@ import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.util.UUID;
 
 @Getter
 @Embeddable
@@ -12,6 +13,6 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Driver extends AbstractValue {
 
-    private Long driverId;
+    private UUID driverId;
 
 }

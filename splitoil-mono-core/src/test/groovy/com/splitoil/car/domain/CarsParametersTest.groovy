@@ -12,7 +12,8 @@ import java.time.Instant
 @Category(UnitTest)
 class CarsParametersTest extends Specification {
 
-    static final DriverDto DRIVER_DTO = DriverDto.of(1L)
+    static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
+    static final DriverDto DRIVER_DTO = DriverDto.of(DRIVER_ID)
     static final AddCarDto CAR_INPUT_DTO = AddCarDto.builder().name("A4").brand("Audi").driver(DRIVER_DTO).build()
     static final double LONGITUDE = -75.56
     static final double LATITUDE = 14.54

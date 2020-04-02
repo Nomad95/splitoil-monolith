@@ -3,6 +3,7 @@ package com.splitoil.car.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarOutputDto {
 
-    private Long id;
+    private UUID id;
 
     private String brand;
 

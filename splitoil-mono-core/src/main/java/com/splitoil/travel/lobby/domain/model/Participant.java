@@ -1,4 +1,4 @@
-package com.splitoil.car.domain;
+package com.splitoil.travel.lobby.domain.model;
 
 import com.splitoil.shared.AbstractValue;
 import lombok.*;
@@ -11,8 +11,8 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor(staticName = "of", access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class Driver extends AbstractValue {
-
-    private UUID driverId;
-
+public class Participant extends AbstractValue {
+    private UUID participantId;
+    private String displayName;
+    private ParticipantType participantType;
 }

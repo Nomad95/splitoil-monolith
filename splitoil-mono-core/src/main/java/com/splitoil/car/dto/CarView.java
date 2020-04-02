@@ -5,19 +5,21 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 @Builder
 @EqualsAndHashCode
 @AllArgsConstructor
 public class CarView {
 
-    private Long id;
+    private UUID id;
 
     private String brand;
 
     private String name;
 
-    private Long driverId;
+    private UUID driverId;
 
     private Long mileage;
 }

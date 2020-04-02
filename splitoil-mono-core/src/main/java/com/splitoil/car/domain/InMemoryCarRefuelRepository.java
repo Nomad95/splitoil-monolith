@@ -9,10 +9,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -85,7 +82,7 @@ class InMemoryCarRefuelRepository implements CarRefuelRepository {
     }
 
     @Override
-    public Page<RefuelCarOutputDto> getRefuels(final Long carId, final Pageable page) {
+    public Page<RefuelCarOutputDto> getRefuels(final UUID carId, final Pageable page) {
         final List<RefuelCarOutputDto> view = map.values().stream()
             .filter(v -> v.getCarId().equals(carId))
             .map(v -> RefuelCarOutputDto.builder()
@@ -102,7 +99,7 @@ class InMemoryCarRefuelRepository implements CarRefuelRepository {
     }
 
     @Override
-    public BigDecimal getTotalRefuelCostForCar(final Long carId) {
+    public BigDecimal getTotalRefuelCostForCar(final UUID carId) {
         return map.values().stream()
             .filter(v -> v.getCarId().equals(carId))
             .map(CarRefuel::getValue)
@@ -110,7 +107,7 @@ class InMemoryCarRefuelRepository implements CarRefuelRepository {
                 BigDecimal::add);
     }
 
-    @Override public BigDecimal getTotalRefuelAmountInLitres(final Long carId) {
+    @Override public BigDecimal getTotalRefuelAmountInLitres(final UUID carId) {
         return map.values().stream()
             .filter(v -> v.getCarId().equals(carId))
             .map(CarRefuel::getFuelAmountInLitres)

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 class InMemoryCarCostRepository implements CarCostRepository {
 
@@ -78,7 +79,7 @@ class InMemoryCarCostRepository implements CarCostRepository {
     }
 
     @Override
-    public BigDecimal getSumCostForCarId(final Long carId) {
+    public BigDecimal getSumCostForCarId(final UUID carId) {
         return map.values().stream()
             .filter(v -> v.getCarId().equals(carId))
             .map(CarCost::getValue)

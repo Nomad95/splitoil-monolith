@@ -13,7 +13,8 @@ import java.time.Instant
 @Category(UnitTest)
 class CarsEdgeCaseTest extends Specification {
 
-    static final DriverDto DRIVER_DTO = DriverDto.of(1L)
+    static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
+    static final DriverDto DRIVER_DTO = DriverDto.of(DRIVER_ID)
     static final AddCarDto CAR_INPUT_DTO = AddCarDto.builder().name("A4").brand("Audi").driver(DRIVER_DTO).build()
     static final double LONGITUDE = -75.56
     static final double LATITUDE = 14.54
@@ -63,7 +64,7 @@ class CarsEdgeCaseTest extends Specification {
     def "Should throw when car is not found"() {
         given: 'car cost with non existing car id'
             def dto = AddCarCostDto.builder()
-                    .carId(100L)
+                    .carId(UUID.randomUUID())
                     .value(new BigDecimal("13.40"))
                     .name("Engine oil 2L")
                     .date(Instant.now())
@@ -87,7 +88,7 @@ class CarsEdgeCaseTest extends Specification {
     def "Should throw when adding refuel with non existing car"() {
         given: "chosen car"
             def refuelCommand = RefuelCarDto.builder()
-                    .carId(100L)
+                    .carId(UUID.randomUUID())
                     .petrolType("BENZINE_95")
                     .amount(new BigDecimal("25.0"))
                     .gasStation(GAS_STATION_ID_DTO)

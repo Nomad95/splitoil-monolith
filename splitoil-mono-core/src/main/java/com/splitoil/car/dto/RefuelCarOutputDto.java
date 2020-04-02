@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -15,7 +16,7 @@ import java.time.Instant;
 public class RefuelCarOutputDto {
 
     @NotNull
-    private Long carId;
+    private UUID carId;
 
     @NotNull
     private Instant date;

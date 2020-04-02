@@ -12,5 +12,5 @@ public class CarAddedToCollection implements DomainEvent {
     @NonNull UUID eventId = UUID.randomUUID();
     @NonNull UUID aggregateId;
     @NonNull Instant createdAt = Instant.now();
-    @NonNull Long driverId;
+    @NonNull UUID driverId;
 }

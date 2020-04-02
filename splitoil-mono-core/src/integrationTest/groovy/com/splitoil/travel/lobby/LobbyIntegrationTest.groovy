@@ -29,7 +29,6 @@ class LobbyIntegrationTest extends IntegrationSpec {
     private static final BigDecimal TOP_RATE = new BigDecimal("3.50")
     private static final String USD = 'USD'
 
-
     def "Driver creates lobby"() {
         given:
             def command = CreateLobbyCommand.of(LOBBY_NAME)
@@ -44,7 +43,6 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath('$.lobbyId').exists())
                     .andExpect(jsonPath('$.lobbyStatus').value("IN_CREATION"))
-
     }
 
     @Sql(scripts = '/db/travel/lobby/new_lobby.sql')

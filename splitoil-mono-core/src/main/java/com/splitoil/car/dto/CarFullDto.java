@@ -3,6 +3,7 @@ package com.splitoil.car.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarFullDto {
 
-    private Long id;
+    private UUID id;
 
     private String brand;
 
@@ -27,4 +28,7 @@ public class CarFullDto {
     private Integer numberOfTravels;
 
     private BigDecimal avgCostPer1Km;
+
+    private int seatsCount;
+
 }

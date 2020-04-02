@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -52,7 +53,7 @@ public class CarController {
     }
 
     @GetMapping("/driver/{id}")
-    public CollectionModel<EntityModel<CarView>> getAllDriverCars(@PathVariable Long id) {
+    public CollectionModel<EntityModel<CarView>> getAllDriverCars(@PathVariable UUID id) {
         final List<CarView> allCars = carFacade.getAllCars(id);
         final Link self = linkTo(CarController.class).slash("driver").slash(id).withSelfRel();
 
@@ -61,7 +62,7 @@ public class CarController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCar(@PathVariable Long id) {
+    public void deleteCar(@PathVariable UUID id) {
         carFacade.deleteCar(id);
     }
 
@@ -114,7 +115,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}/cost")
-    public EntityModel<BigDecimal> getCarOverallCostSum(@PathVariable Long id) {
+    public EntityModel<BigDecimal> getCarOverallCostSum(@PathVariable UUID id) {
         final BigDecimal totalCarCostsSum = carFacade.getTotalCarCostsSum(id);
 
         final Link getOne = linkTo(CarController.class).slash(id).withRel("getOne");
@@ -140,7 +141,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}/refuel")
-    public CollectionModel<EntityModel<RefuelCarOutputDto>> getCarRefuels(@PathVariable @NonNull Long id, Pageable page) {
+    public CollectionModel<EntityModel<RefuelCarOutputDto>> getCarRefuels(@PathVariable @NonNull UUID id, Pageable page) {
         final Page<RefuelCarOutputDto> refuels = carFacade.getRefuels(id, page);
 
         final Link getOne = linkTo(CarController.class).slash(id).withRel("getOne");
@@ -155,7 +156,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public CarFullDto getOneCar(@PathVariable Long id) {
+    public CarFullDto getOneCar(@PathVariable UUID id) {
         return carFacade.getOneCar(id);
     }
 }

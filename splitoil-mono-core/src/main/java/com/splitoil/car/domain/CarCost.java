@@ -1,18 +1,19 @@
 package com.splitoil.car.domain;
 
-import com.splitoil.shared.AbstractAggregateRoot;
+import com.splitoil.shared.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Entity
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class CarCost extends AbstractAggregateRoot {
+class CarCost extends AbstractEntity {
 
     private String name;
 
@@ -20,6 +21,6 @@ class CarCost extends AbstractAggregateRoot {
 
     private BigDecimal value;
 
-    private Long carId;
+    private UUID carId;
 
 }

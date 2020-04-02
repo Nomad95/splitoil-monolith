@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -12,7 +13,7 @@ import java.time.Instant;
 public class TravelEndedEvent {
 
     @NotNull
-    private Long carId;
+    private UUID carId;
 
     @NotNull
     private Instant dateStarted;

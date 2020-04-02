@@ -26,6 +26,7 @@ public class LobbyService {
     private UserTranslator userTranslator;
 
     //TODO: przez ile lobby moze byc w tym stanie?
+    //TODO: pousuwaj te id z drivera na UUID zamien
     public LobbyOutputDto createLobby(final CreateLobbyCommand createLobbyCommand) {
         final Driver lobbyCreator = userTranslator.getCurrentLoggedDriver();
         final Lobby lobby = creator.createNewLobby(createLobbyCommand.getLobbyName(), lobbyCreator);
@@ -36,7 +37,7 @@ public class LobbyService {
     }
 
     public Result addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
-        final CarId car = creator.createCar(addCarToTravelCommand.getCarId());
+        final CarId car = creator.createCarId(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
 
         lobby.addCar(car);
@@ -62,6 +63,24 @@ public class LobbyService {
         final Currency currency = Currency.valueOf(changeTravelDefaultCurrencyCommand.getCurrency());
 
         lobby.changeDefaultCurrency(currency);
+
+        return lobby.toDto();
+    }
+
+    public LobbyOutputDto addPassenger(final AddPassengerToLobbyCommand addPassengerToLobbyCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(addPassengerToLobbyCommand.getLobbyId());
+        final Participant passenger = userTranslator.getPassenger(addPassengerToLobbyCommand.getUserId());
+
+        lobby.addPassenger(passenger);
+
+        return lobby.toDto();
+    }
+
+    public LobbyOutputDto addExternalPassenger(final AddExternalPassengerToLobbyCommand addExternalPassengerToLobbyCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(addExternalPassengerToLobbyCommand.getLobbyId());
+        final Participant passenger = creator.createAdHocPassenger(UUID.randomUUID(), addExternalPassengerToLobbyCommand.getDisplayName());
+
+        lobby.addPassenger(passenger);
 
         return lobby.toDto();
     }

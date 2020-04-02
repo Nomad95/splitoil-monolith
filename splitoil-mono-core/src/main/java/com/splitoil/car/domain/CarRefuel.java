@@ -1,6 +1,6 @@
 package com.splitoil.car.domain;
 
-import com.splitoil.shared.AbstractAggregateRoot;
+import com.splitoil.shared.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.Embedded;
@@ -9,15 +9,16 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Entity
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class CarRefuel extends AbstractAggregateRoot {
+class CarRefuel extends AbstractEntity {
 
-    private Long carId;
+    private UUID carId;
 
     private Instant costDate;
 

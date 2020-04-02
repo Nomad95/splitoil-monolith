@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockSecurityContext
 class CarIntegrationTest extends IntegrationSpec {
 
-    public static final DriverDto DRIVER_DTO = DriverDto.of(1L)
+    static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
+    static final UUID CAR_ID = UUID.fromString('b9574b12-8ca1-4779-aab8-a25192e33739')
+    public static final DriverDto DRIVER_DTO = DriverDto.of(DRIVER_ID)
     public static final AddCarDto CAR_INPUT_DTO = AddCarDto.builder().name("A4").brand("Audi").driver(DRIVER_DTO).build()
     static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(100, 200), "Station")
     static final Instant NOW = Instant.now()
@@ -49,17 +51,17 @@ class CarIntegrationTest extends IntegrationSpec {
 
         then: "drivers cars are present"
             listResult
-                    .andExpect(jsonPath('$._embedded.carViewList.[0].id').value(1L))
+                    .andExpect(jsonPath('$._embedded.carViewList.[0].id').value(CAR_ID.toString()))
                     .andExpect(jsonPath('$._embedded.carViewList.[0].name').value("A4"))
                     .andExpect(jsonPath('$._embedded.carViewList.[0].brand').value("Audi"))
-                    .andExpect(jsonPath('$._embedded.carViewList.[0].driverId').value(1))
+                    .andExpect(jsonPath('$._embedded.carViewList.[0].driverId').value(DRIVER_ID.toString()))
     }
 
 
     @Sql(scripts = '/db/car/default_car.sql')
     def "Driver deletes his car"() {
         when: "driver deletes his car"
-            def deleteResult = mockMvc.perform(delete("/car/" + 1)
+            def deleteResult = mockMvc.perform(delete("/car/" + CAR_ID.toString())
                     .contentType(MediaType.APPLICATION_JSON))
 
         then: "is deleted"
@@ -72,7 +74,7 @@ class CarIntegrationTest extends IntegrationSpec {
     def "Driver adds initial mileage to his car"() {
         given:
              def addMileageDto = AddCarMileageDto.builder()
-                    .carId(1L)
+                    .carId(CAR_ID)
                     .mileage(150_000)
                     .build()
 
@@ -85,7 +87,7 @@ class CarIntegrationTest extends IntegrationSpec {
             addResult
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.id').value(1))
+                    .andExpect(jsonPath('$.id').value(CAR_ID.toString()))
                     .andExpect(jsonPath('$.mileage').value(150_000))
 
     }
@@ -94,7 +96,7 @@ class CarIntegrationTest extends IntegrationSpec {
     def "Driver defines his car's fuel tank"() {
         given:
             def addCarTank = FuelTankDto.builder()
-                    .carId(1L)
+                    .carId(CAR_ID)
                     .capacity(new BigDecimal("65"))
                     .fuelType("BENZINE_95")
                     .build()
@@ -108,7 +110,7 @@ class CarIntegrationTest extends IntegrationSpec {
             addResult
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.id').value(1))
+                    .andExpect(jsonPath('$.id').value(CAR_ID.toString()))
                     .andExpect(jsonPath('$.fuelCapacity').value("65.0"))
     }
 
@@ -116,7 +118,7 @@ class CarIntegrationTest extends IntegrationSpec {
     def "Driver defines his car's avg fuel consumption"() {
         given:
             def fuelConsumption = AddCarAverageFuelConsumptionDto.builder()
-                    .carId(1L)
+                    .carId(CAR_ID)
                     .avgFuelConsumption(new BigDecimal("11.5"))
                     .build()
 
@@ -129,7 +131,7 @@ class CarIntegrationTest extends IntegrationSpec {
             addResult
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.id').value(1))
+                    .andExpect(jsonPath('$.id').value(CAR_ID.toString()))
                     .andExpect(jsonPath('$.avgFuelConsumption').value("11.5"))
     }
 
@@ -137,12 +139,12 @@ class CarIntegrationTest extends IntegrationSpec {
     def "Driver adds cost to his car"() {
        given:
             def addCostDto = AddCarCostDto.builder()
-                    .carId(1l)
+                    .carId(CAR_ID)
                     .value(new BigDecimal("125.53")) //TODO: currency
                     .name("Window repair")
                     .build()
             def addCostDto2 = AddCarCostDto.builder()
-                    .carId(1L)
+                    .carId(CAR_ID)
                     .value(new BigDecimal("1000.0"))
                     .name("Engine repair")
                     .build()
@@ -155,7 +157,7 @@ class CarIntegrationTest extends IntegrationSpec {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(jackson.toJson(addCostDto2)))
 
-            def overallCostResult = mockMvc.perform(get("/car/{id}/cost", 1)
+            def overallCostResult = mockMvc.perform(get("/car/{id}/cost", CAR_ID)
                     .contentType(MediaType.APPLICATION_JSON))
 
         then:
@@ -168,7 +170,7 @@ class CarIntegrationTest extends IntegrationSpec {
     def "Driver refuels his car and enters its info to system"() {
         given:
             def refuelCommand = RefuelCarDto.builder()
-                    .carId(1L)
+                    .carId(CAR_ID)
                     .petrolType("BENZINE_95")
                     .amount(new BigDecimal("25.0"))
                     .gasStation(GAS_STATION_ID_DTO)
@@ -183,7 +185,7 @@ class CarIntegrationTest extends IntegrationSpec {
                     .param("page", "0")
                     .param("size", "20"))
 
-            def refuels = mockMvc.perform(get("/car/{id}/refuel", 1)
+            def refuels = mockMvc.perform(get("/car/{id}/refuel", CAR_ID)
                     .contentType(MediaType.APPLICATION_JSON))
 
         then:
@@ -198,13 +200,13 @@ class CarIntegrationTest extends IntegrationSpec {
     @Sql(scripts = '/db/car/default_car.sql')
     def "Should get one car"() {
         when:
-            def car = mockMvc.perform(get("/car/{id}", 1)
+            def car = mockMvc.perform(get("/car/{id}", CAR_ID)
                     .contentType(MediaType.APPLICATION_JSON))
 
         then:
             car
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.id').value(1))
+                    .andExpect(jsonPath('$.id').value(CAR_ID.toString()))
                     .andExpect(jsonPath('$.brand').value("Audi"))
     }
 

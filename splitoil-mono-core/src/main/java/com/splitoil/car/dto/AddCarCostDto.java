@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -11,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AddCarCostDto {
 
-    private Long carId;
+    private UUID carId;
 
     private Instant date;
 

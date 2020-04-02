@@ -10,6 +10,8 @@ import com.splitoil.user.web.dto.RegisterUserCommand;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Transactional
 @ApplicationService
 @AllArgsConstructor
@@ -28,5 +30,9 @@ public class UserService {
 
     public ApplicationUserDto getUserByLogin(final String login) {
         return userRepository.getOneByLogin(login).toDetailsDto();
+    }
+
+    public ApplicationUserDto getUserById(final UUID userId) {
+        return userRepository.getOneById(userId).toDetailsDto();
     }
 }

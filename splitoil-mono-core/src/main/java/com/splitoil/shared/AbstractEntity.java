@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @MappedSuperclass
 @EqualsAndHashCode(of = { "aggregateId" })
-public abstract class AbstractAggregateRoot {
+public abstract class AbstractEntity {
 
     @Id
     @Setter(AccessLevel.NONE)

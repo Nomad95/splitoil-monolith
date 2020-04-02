@@ -1,6 +1,6 @@
 package com.splitoil.gasstation.domain;
 
-import com.splitoil.shared.AbstractAggregateRoot;
+import com.splitoil.shared.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import static java.math.RoundingMode.HALF_UP;
 @Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-class GasStation extends AbstractAggregateRoot {
+class GasStation extends AbstractEntity {
 
     static final RoundingMode RATING_ROUNDING = HALF_UP;
 

@@ -5,10 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class InMemoryCarsRepository implements CarsRepository {
@@ -24,9 +21,14 @@ class InMemoryCarsRepository implements CarsRepository {
     public List<CarView> findAllByOwnerView(final Driver owner) {
         return map.entrySet().stream().filter(c -> c.getValue().getOwner().equals(owner))
             .map(c ->
-                CarView.builder().brand(c.getValue().getBrand()).name(c.getValue().getName()).driverId(c.getValue().getOwner().getDriverId()).id(c.getKey()).build()
+                CarView.builder().brand(c.getValue().getBrand()).name(c.getValue().getName()).driverId(c.getValue().getOwner().getDriverId()).id(c.getValue().getAggregateId()).build()
             )
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Car> findByAggregateId(final UUID aggregateId) {
+        return map.values().stream().filter(e -> e.getAggregateId().equals(aggregateId)).findFirst();
     }
 
     @Override

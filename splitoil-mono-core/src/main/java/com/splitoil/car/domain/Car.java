@@ -1,7 +1,7 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.car.dto.*;
-import com.splitoil.shared.AbstractAggregateRoot;
+import com.splitoil.shared.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.Embedded;
@@ -16,7 +16,7 @@ import static java.math.RoundingMode.HALF_UP;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class Car extends AbstractAggregateRoot {
+class Car extends AbstractEntity {
 
     private String brand;
 
@@ -87,7 +87,7 @@ class Car extends AbstractAggregateRoot {
         return CarOutputDto.builder()
             .brand(brand)
             .driver(DriverDto.of(owner.getDriverId()))
-            .id(getId())
+            .id(getAggregateId())
             .name(name)
             .mileage(mileage)
             .avgFuelConsumption(manualAvgFuelConsumption)
@@ -99,7 +99,7 @@ class Car extends AbstractAggregateRoot {
         return CarFullDto.builder()
             .brand(brand)
             .driver(DriverDto.of(owner.getDriverId()))
-            .id(getId())
+            .id(getAggregateId())
             .name(name)
             .mileage(mileage)
             .avgFuelConsumption(calculatedAvgFuelConsumption)
@@ -111,7 +111,7 @@ class Car extends AbstractAggregateRoot {
 
     public CarView toViewDto() {
         return CarView.builder()
-            .id(getId())
+            .id(getAggregateId())
             .driverId(owner.getDriverId())
             .name(name)
             .brand(brand)

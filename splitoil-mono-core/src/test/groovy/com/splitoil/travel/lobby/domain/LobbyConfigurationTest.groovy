@@ -23,7 +23,7 @@ As a driver i want to configure my newly created lobby
 class LobbyConfigurationTest extends Specification {
 
     private static final String LOBBY_NAME = "Some lobby name"
-    private static final Long DRIVER_ID = 1L
+    private static final UUID DRIVER_ID = UUID.fromString('f24a60d3-d8f3-4a6d-8f2f-cacd68586b59')
     public static final String USD = 'USD'
     public static final String PLN = 'PLN'
 

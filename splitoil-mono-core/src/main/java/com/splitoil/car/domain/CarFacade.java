@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Transactional
 @ApplicationService
@@ -47,13 +48,13 @@ public class CarFacade {
         return car.toDto();
     }
 
-    public List<CarView> getAllCars(final @NonNull Long driverId) {
+    public List<CarView> getAllCars(final @NonNull UUID driverId) {
         final Driver driver = carCreator.createDriver(DriverDto.of(driverId));
         return carsRepository.findAllByOwnerView(driver);
     }
 
-    public void deleteCar(final @NonNull Long carId) {
-        final Car carToDelete = getCarByIdOrThrow(carId);
+    public void deleteCar(final @NonNull UUID carId) {
+        final Car carToDelete = carsRepository.getOneByAggregateId(carId);
         carsRepository.delete(carToDelete);
 
         eventPublisher.publish(new CarDeleted(carToDelete.getAggregateId()));
@@ -61,32 +62,28 @@ public class CarFacade {
 
     public CarOutputDto editCarsFuelTank(final @NonNull FuelTankDto fuelTankDto) {
         final FuelTank fuelTank = carCreator.createFuelTank(fuelTankDto);
-        final Car car = getCarByIdOrThrow(fuelTankDto.getCarId());
+        final Car car = carsRepository.getOneByAggregateId(fuelTankDto.getCarId());
         car.addFuelTank(fuelTank);
 
         return car.toDto();
     }
 
     public CarOutputDto setCarsInitialMileage(final @NonNull AddCarMileageDto addCarMileageDto) {
-        final Car car = getCarByIdOrThrow(addCarMileageDto.getCarId());
+        final Car car = carsRepository.getOneByAggregateId(addCarMileageDto.getCarId());
         car.setCarsInitialMileage(addCarMileageDto.getMileage());
 
         return car.toDto();
     }
 
     public CarOutputDto editCarsAverageFuelConsumptionManually(final @NonNull AddCarAverageFuelConsumptionDto fuelConsumptionDto) {
-        final Car car = getCarByIdOrThrow(fuelConsumptionDto.getCarId());
+        final Car car = carsRepository.getOneByAggregateId(fuelConsumptionDto.getCarId());
         car.setAverageFuelConsumption(fuelConsumptionDto.getAvgFuelConsumption());
 
         return car.toDto();
     }
 
-    private Car getCarByIdOrThrow(final @NonNull Long carId) {
-        return carsRepository.findById(carId).orElseThrow(() -> new EntityNotFoundException("No car found"));
-    }
-
-    private void checkCarExistsOrThrow(final @NonNull Long carId) {
-        carsRepository.findById(carId).ifPresentOrElse(e -> {
+    private void checkCarExistsOrThrow(final @NonNull UUID carId) {
+        carsRepository.findByAggregateId(carId).ifPresentOrElse(e -> {
         }, () -> {
             throw new EntityNotFoundException("No car found");
         });
@@ -98,7 +95,7 @@ public class CarFacade {
         carCostRepository.save(carCost);
     }
 
-    public BigDecimal getTotalCarCostsSum(final Long carId) {
+    public BigDecimal getTotalCarCostsSum(final UUID carId) {
         return carCostRepository.getSumCostForCarId(carId);
     }
 
@@ -108,24 +105,24 @@ public class CarFacade {
         carRefuelRepository.save(carRefuel);
     }
 
-    public Page<RefuelCarOutputDto> getRefuels(final Long carId, final Pageable page) {
+    public Page<RefuelCarOutputDto> getRefuels(final UUID carId, final Pageable page) {
         return carRefuelRepository.getRefuels(carId, page);
     }
 
-    public CarFullDto getOneCar(final Long carId) {
-        return getCarByIdOrThrow(carId).toFullDto();
+    public CarFullDto getOneCar(final UUID carId) {
+        return carsRepository.getOneByAggregateId(carId).toFullDto();
     }
 
     public void handleTravelEnded(final TravelEndedEvent travelEndedEvent) {
-        final Car car = getCarByIdOrThrow(travelEndedEvent.getCarId());
+        final Car car = carsRepository.getOneByAggregateId(travelEndedEvent.getCarId());
         car.addTravelInfo(travelEndedEvent);
 
         if (car.isAbleToCalculateAverages()) {
             //TODO: another event that new travel has been processed. Should trigger the calculation
             //TODO: to domain service
             //TODO: need events?
-            final BigDecimal totalRefuelCost = carRefuelRepository.getTotalRefuelCostForCar(car.getId());
-            final BigDecimal totalRefuelAmountInLitres = carRefuelRepository.getTotalRefuelAmountInLitres(car.getId());
+            final BigDecimal totalRefuelCost = carRefuelRepository.getTotalRefuelCostForCar(car.getAggregateId());
+            final BigDecimal totalRefuelAmountInLitres = carRefuelRepository.getTotalRefuelAmountInLitres(car.getAggregateId());
             car.calculateAvg1kmCost(totalRefuelCost);
             car.calculateAvgFuelConsumption(totalRefuelAmountInLitres);
         }

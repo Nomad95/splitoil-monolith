@@ -1,7 +1,7 @@
 package com.splitoil.user.domain;
 
 import com.splitoil.infrastructure.json.JsonUserType;
-import com.splitoil.shared.AbstractAggregateRoot;
+import com.splitoil.shared.AbstractEntity;
 import com.splitoil.shared.model.Currency;
 import com.splitoil.user.dto.ApplicationUserDto;
 import lombok.*;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ApplicationUser extends AbstractAggregateRoot {
+public class ApplicationUser extends AbstractEntity {
 
     @Column(nullable = false, unique = true)
     private String login;
@@ -48,7 +48,7 @@ public class ApplicationUser extends AbstractAggregateRoot {
 
     public ApplicationUserDto toDetailsDto() {
         return ApplicationUserDto.builder()
-            .id(getId())
+            .id(getAggregateId())
             .defaultCurrency(defaultCurrency.name())
             .email(email)
             .login(login)
