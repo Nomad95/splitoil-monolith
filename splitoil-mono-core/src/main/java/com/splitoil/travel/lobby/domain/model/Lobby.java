@@ -12,7 +12,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity
@@ -28,8 +30,7 @@ public class Lobby extends AbstractEntity {
         IN_CREATION,
         IN_CONFIGURATION,
         IN_TRAVEL,
-        ENDED;
-
+        ENDED
     }
 
     @NotBlank
@@ -58,10 +59,11 @@ public class Lobby extends AbstractEntity {
 
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
           parameters = {
-              @org.hibernate.annotations.Parameter(name = JsonUserType.LIST, value = "java.util.List"),
-              @org.hibernate.annotations.Parameter(name = JsonUserType.ELEM_TYPE, value = "com.splitoil.travel.lobby.domain.model.Car")
+              @org.hibernate.annotations.Parameter(name = JsonUserType.MAP, value = "java.util.HashMap"),
+              @org.hibernate.annotations.Parameter(name = JsonUserType.ELEM_TYPE, value = "com.splitoil.travel.lobby.domain.model.Car"),
+              @org.hibernate.annotations.Parameter(name = JsonUserType.KEY_TYPE, value = "com.splitoil.travel.lobby.domain.model.CarId")
           })
-    private List<Car> cars;
+    private Map<CarId, Car> cars;
 
     Lobby(final @NonNull String name, final @NonNull Driver lobbyCreator, final @NonNull Currency currency) {
         this.lobbyCreator = lobbyCreator;
@@ -69,7 +71,7 @@ public class Lobby extends AbstractEntity {
         this.lobbyStatus = LobbyStatus.IN_CREATION;
         this.topRatePer1km = NO_MAX_RATE;
         this.travelCurrency = currency;
-        cars = new ArrayList<>();
+        cars = new HashMap<>();
         participants = new ArrayList<>();
     }
 
@@ -87,10 +89,11 @@ public class Lobby extends AbstractEntity {
         if (cars.isEmpty()) {
             lobbyStatus = LobbyStatus.IN_CONFIGURATION;
         }
-        if (cars.contains(car)) {
+        if (cars.containsValue(car)) {
             throw new IllegalStateException("Car already exists in this lobby");
         }
-        cars.add(car);
+
+        cars.put(car.getCarId(), car);
     }
 
     public void setTravelTopRatePer1km(final @NonNull BigDecimal rate) {
@@ -115,16 +118,6 @@ public class Lobby extends AbstractEntity {
             throw new IllegalStateException("Cant add passengers in this stage");
         }
 
-        final Car car = cars.stream()
-            .filter(c -> c.getCarId().equals(carId))
-            .findFirst().orElseThrow(() -> new IllegalStateException("Car doesn't exist in this lobby"));
-
-        if (car.isFull()) {
-            throw new IllegalStateException("Can't add another passenger to this car. Car is full");
-        }
-
-        cars.set(cars.indexOf(car), car.occupySeat());
-
         final TravelParticipant participant = TravelParticipant.builder()
             .displayName(travelParticipant.getDisplayName())
             .travelCurrency(travelCurrency)
@@ -138,6 +131,17 @@ public class Lobby extends AbstractEntity {
             throw new IllegalStateException("This passenger is already in this lobby");
         }
 
+        if (!cars.containsKey(carId)) {
+            throw new IllegalStateException("Car doesn't exist in this lobby");
+        }
+
+        final Car car = cars.get(carId);
+
+        if (car.isFull()) {
+            throw new IllegalStateException("Can't add another passenger to this car. Car is full");
+        }
+
+        cars.put(carId, car.occupySeat());
         participants.add(participant);
     }
 }

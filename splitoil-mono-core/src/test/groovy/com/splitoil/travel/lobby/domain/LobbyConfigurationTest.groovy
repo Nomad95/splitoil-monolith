@@ -1,11 +1,7 @@
 package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.travel.lobby.application.CarService
-import com.splitoil.travel.lobby.application.LobbyService
-import com.splitoil.travel.lobby.application.UserService
-import com.splitoil.travel.lobby.domain.model.CarId
-import com.splitoil.travel.lobby.domain.model.Driver
+import com.splitoil.shared.model.Currency
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.ChangeTravelDefaultCurrencyCommand
@@ -14,30 +10,17 @@ import com.splitoil.travel.lobby.web.dto.SetTravelTopRatePer1kmCommand
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See
-import spock.lang.Specification
 
 @Category(UnitTest)
 @Narrative("""
 As a driver i want to configure my newly created lobby
 """)
 @See('resources/cucumber/lobby_creation.feature')
-class LobbyConfigurationTest extends Specification {
-
-    private static final String LOBBY_NAME = "Some lobby name"
-    private static final UUID DRIVER_ID = UUID.fromString('f24a60d3-d8f3-4a6d-8f2f-cacd68586b59')
-    public static final String USD = 'USD'
-    public static final String PLN = 'PLN'
-
-    private LobbyService lobbyService
-    private UserService userTranslator
-    private CarService carService
+class LobbyConfigurationTest extends LobbyTest {
 
     def setup() {
-        userTranslator = Stub()
-        carService = Stub()
-        lobbyService = new LobbyConfiguration().lobbyService(userTranslator, carService)
-
-        userTranslator.currentLoggedDriver() >> new Driver(DRIVER_ID)
+        loggedDriver(DRIVER_ID, DRIVER_LOGIN)
+        addCar(CAR_ID, DRIVER_ID, 5, 1)
     }
 
     def "Driver configures top rate per 1 km lobby for new travel"() {
@@ -106,22 +89,44 @@ class LobbyConfigurationTest extends Specification {
             thrown(IllegalStateException)
     }
 
-    //TODO will change
-    def "Travel currency should be set to driver default currency when is newly created"() {
-        given:
+    def "Travel currency should be set to driver default currency when is newly created"(Currency setCurrency, String checkCurrency) {
+        given: 'Set explicitly driver default currency'
+            LobbyConfiguration.StubCurrencyProvider.setDefaultCurrency(setCurrency)
+
+        when: 'Create new lobby'
             def lobby = aNewLobby()
 
-        expect: 'Travel currency is set to driver default'
-            lobby.travelCurrency == PLN
+        then: 'Travel currency is set to driver default'
+            lobby.travelCurrency == checkCurrency
+
+        where:
+            setCurrency  | checkCurrency
+            Currency.PLN | PLN
+            Currency.EUR | EUR
+            Currency.USD | USD
+    }
+
+    def "Driver is present as a participant when added a car to lobby"() {
+        setup: 'A new lobby'
+            def lobby = carlessLobby()
+
+        when: 'Adding a car to lobby'
+            lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID))
+            def alteredLobby = lobbyService.getLobby(lobby.lobbyId)
+
+        then: 'Driver is added as a participant'
+            alteredLobby.lobbyId == lobby.lobbyId
+            alteredLobby.participants.size() == 1
+            alteredLobby.participants[0].displayName == DRIVER_LOGIN
+            alteredLobby.participants[0].participantType == 'CAR_DRIVER'
     }
 
     //not setting top rate makes that price can be anything later and null rate should be handled
     //should get default driver currency for travel
 
     private def aNewLobby() {
-        def carId = CarId.of(UUID.randomUUID())
         def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, carId.carId))
+        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID))
 
         return lobby;
     }

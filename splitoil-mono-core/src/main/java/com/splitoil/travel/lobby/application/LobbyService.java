@@ -28,7 +28,6 @@ public class LobbyService {
     private CarService carService;
 
     //TODO: przez ile lobby moze byc w tym stanie?
-    //TODO: pousuwaj te id z drivera na UUID zamien
     public LobbyOutputDto createLobby(final CreateLobbyCommand createLobbyCommand) {
         final Driver lobbyCreator = userService.getCurrentLoggedDriver();
         final Lobby lobby = creator.createNewLobby(createLobbyCommand.getLobbyName(), lobbyCreator);
@@ -38,11 +37,14 @@ public class LobbyService {
         return lobby.toDto();
     }
 
+    //TODO: e tam chuyba mozna zmienic teraz
     public Result addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
         final Car car = carService.getCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
+        final Participant carDriver = userService.getCurrentUserAsDriver();
 
         lobby.addCar(car);
+        lobby.addPassengerToCar(carDriver, car.getCarId());
         eventPublisher.publish(new LobbyCreated(lobby.getAggregateId()));
 
         return Result.Success;

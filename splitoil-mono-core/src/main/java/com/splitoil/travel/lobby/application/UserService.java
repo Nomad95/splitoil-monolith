@@ -27,6 +27,12 @@ public class UserService {
         return lobbyCreator.createDriver(userByLogin.getId());
     }
 
+    public Participant getCurrentUserAsDriver() {
+        final String currentUserLogin = SecurityUtils.getCurrentUserLogin();
+        final ApplicationUserDto userByLogin = userFacade.getUserByLogin(currentUserLogin);
+        return lobbyCreator.createCarDriver(userByLogin.getId(), userByLogin.getLogin());
+    }
+
     public Participant getPassenger(final UUID userId) {
         final ApplicationUserDto user = userFacade.getUserById(userId);
         return lobbyCreator.createPassenger(user.getId(), user.getLogin());

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class LobbyConfiguration {
 
     public LobbyService lobbyService(final UserService userService, final CarService carService) {
-        return new LobbyService(new LobbyCreator(new StubCurrencyProvider()), new InMemoryLobbyRepository(), new NoopEventPublisher(), userService, carService);
+        return new LobbyService(new LobbyCreator(StubCurrencyProvider.getInstance()), new InMemoryLobbyRepository(), new NoopEventPublisher(), userService, carService);
     }
 
     @Bean
@@ -33,16 +33,28 @@ public class LobbyConfiguration {
     }
 
     public static class StubCurrencyProvider implements UserCurrencyProvider {
+        private static StubCurrencyProvider INSTANCE;
 
         private Currency currency = Currency.PLN;
+
+        public static StubCurrencyProvider getInstance() {
+            if (INSTANCE == null)
+                INSTANCE = new StubCurrencyProvider();
+            return INSTANCE;
+        }
 
         @Override
         public Currency getCurrentUserDefaultCurrency() {
             return currency;
         }
 
-        public void setDefaultCurrency(final Currency currency) {
+        void set(final Currency currency) {
             this.currency = currency;
+        }
+
+        public static void setDefaultCurrency(final Currency currency) {
+            final StubCurrencyProvider instance = getInstance();
+            instance.set(currency);
         }
     }
 
