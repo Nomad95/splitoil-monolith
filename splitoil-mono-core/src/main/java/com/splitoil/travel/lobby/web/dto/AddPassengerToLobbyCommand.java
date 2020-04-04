@@ -10,4 +10,5 @@ import java.util.UUID;
 public class AddPassengerToLobbyCommand {
     @NonNull private UUID lobbyId;
     @NonNull private UUID userId;
+    @NonNull private UUID carId;
 }

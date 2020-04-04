@@ -17,7 +17,7 @@ Feature: Driver with car can create travel by defining a lobby
   Scenario Driver manages passengers
     Given a new lobby
     When driver adds a passenger
-#    And passenger has accepted invitation
+#    And passenger has accepted invitation let's not do invitations th
     Then passenger is joined to the lobby
     When driver adds passenger ad hoc
     Then passenger is joined to the lobby

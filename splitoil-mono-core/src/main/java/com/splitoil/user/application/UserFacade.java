@@ -15,7 +15,7 @@ import java.util.UUID;
 @Transactional
 @ApplicationService
 @AllArgsConstructor
-public class UserService {
+public class UserFacade {
 
     private final UserRepository userRepository;
 

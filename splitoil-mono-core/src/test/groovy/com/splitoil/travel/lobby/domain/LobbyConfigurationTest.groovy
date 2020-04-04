@@ -1,8 +1,9 @@
 package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.lobby.application.CarService
 import com.splitoil.travel.lobby.application.LobbyService
-import com.splitoil.travel.lobby.application.UserTranslator
+import com.splitoil.travel.lobby.application.UserService
 import com.splitoil.travel.lobby.domain.model.CarId
 import com.splitoil.travel.lobby.domain.model.Driver
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
@@ -28,11 +29,13 @@ class LobbyConfigurationTest extends Specification {
     public static final String PLN = 'PLN'
 
     private LobbyService lobbyService
-    private UserTranslator userTranslator
+    private UserService userTranslator
+    private CarService carService
 
     def setup() {
         userTranslator = Stub()
-        lobbyService = new LobbyConfiguration().lobbyService(userTranslator)
+        carService = Stub()
+        lobbyService = new LobbyConfiguration().lobbyService(userTranslator, carService)
 
         userTranslator.currentLoggedDriver() >> new Driver(DRIVER_ID)
     }

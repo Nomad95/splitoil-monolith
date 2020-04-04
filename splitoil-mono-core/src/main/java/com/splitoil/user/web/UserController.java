@@ -1,7 +1,7 @@
 package com.splitoil.user.web;
 
 import com.splitoil.shared.dto.Result;
-import com.splitoil.user.application.UserService;
+import com.splitoil.user.application.UserFacade;
 import com.splitoil.user.web.dto.RegisterUserCommand;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -18,12 +18,12 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
+    private final UserFacade userFacade;
 
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> register(@RequestBody @Valid @NonNull final RegisterUserCommand registerUserCommand) {
-        final Result result = userService.registerUser(registerUserCommand);
+        final Result result = userFacade.registerUser(registerUserCommand);
         if (result == Result.Success) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {

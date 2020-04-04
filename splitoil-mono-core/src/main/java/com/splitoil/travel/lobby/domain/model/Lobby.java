@@ -31,6 +31,7 @@ public class Lobby extends AbstractEntity {
         ENDED;
 
     }
+
     @NotBlank
     private String name;
 
@@ -53,22 +54,23 @@ public class Lobby extends AbstractEntity {
         orphanRemoval = true,
         fetch = FetchType.EAGER
     )
-    private List<TravelParticipant> participants = new ArrayList<>();
+    private List<TravelParticipant> participants;
 
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
           parameters = {
               @org.hibernate.annotations.Parameter(name = JsonUserType.LIST, value = "java.util.List"),
-              @org.hibernate.annotations.Parameter(name = JsonUserType.ELEM_TYPE, value = "com.splitoil.travel.lobby.domain.model.CarId")
+              @org.hibernate.annotations.Parameter(name = JsonUserType.ELEM_TYPE, value = "com.splitoil.travel.lobby.domain.model.Car")
           })
-    private List<CarId> cars;//TODO: car seats
+    private List<Car> cars;
 
-    Lobby(final String name, final Driver lobbyCreator, final Currency currency) {
+    Lobby(final @NonNull String name, final @NonNull Driver lobbyCreator, final @NonNull Currency currency) {
         this.lobbyCreator = lobbyCreator;
         this.name = name;
         this.lobbyStatus = LobbyStatus.IN_CREATION;
         this.topRatePer1km = NO_MAX_RATE;
         this.travelCurrency = currency;
         cars = new ArrayList<>();
+        participants = new ArrayList<>();
     }
 
     public LobbyOutputDto toDto() {
@@ -81,9 +83,12 @@ public class Lobby extends AbstractEntity {
             .build();
     }
 
-    public void addCar(final CarId car) {
+    public void addCar(final @NonNull Car car) {
         if (cars.isEmpty()) {
             lobbyStatus = LobbyStatus.IN_CONFIGURATION;
+        }
+        if (cars.contains(car)) {
+            throw new IllegalStateException("Car already exists in this lobby");
         }
         cars.add(car);
     }
@@ -105,15 +110,26 @@ public class Lobby extends AbstractEntity {
         travelCurrency = currency;
     }
 
-    public void addPassenger(final @NonNull Participant travelParticipant) {
+    public void addPassengerToCar(final @NonNull Participant travelParticipant, final @NonNull CarId carId) {
         if (lobbyStatus != LobbyStatus.IN_CONFIGURATION) {
             throw new IllegalStateException("Cant add passengers in this stage");
         }
+
+        final Car car = cars.stream()
+            .filter(c -> c.getCarId().equals(carId))
+            .findFirst().orElseThrow(() -> new IllegalStateException("Car doesn't exist in this lobby"));
+
+        if (car.isFull()) {
+            throw new IllegalStateException("Can't add another passenger to this car. Car is full");
+        }
+
+        cars.set(cars.indexOf(car), car.occupySeat());
 
         final TravelParticipant participant = TravelParticipant.builder()
             .displayName(travelParticipant.getDisplayName())
             .travelCurrency(travelCurrency)
             .userId(travelParticipant.getParticipantId())
+            .carId(carId)
             .participantType(travelParticipant.getParticipantType())
             .lobbyId(getAggregateId())
             .build();

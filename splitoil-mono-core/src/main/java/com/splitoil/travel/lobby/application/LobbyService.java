@@ -23,12 +23,14 @@ public class LobbyService {
 
     private EventPublisher eventPublisher;
 
-    private UserTranslator userTranslator;
+    private UserService userService;
+
+    private CarService carService;
 
     //TODO: przez ile lobby moze byc w tym stanie?
     //TODO: pousuwaj te id z drivera na UUID zamien
     public LobbyOutputDto createLobby(final CreateLobbyCommand createLobbyCommand) {
-        final Driver lobbyCreator = userTranslator.getCurrentLoggedDriver();
+        final Driver lobbyCreator = userService.getCurrentLoggedDriver();
         final Lobby lobby = creator.createNewLobby(createLobbyCommand.getLobbyName(), lobbyCreator);
 
         lobbyRepository.save(lobby);
@@ -37,7 +39,7 @@ public class LobbyService {
     }
 
     public Result addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
-        final CarId car = creator.createCarId(addCarToTravelCommand.getCarId());
+        final Car car = carService.getCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
 
         lobby.addCar(car);
@@ -69,9 +71,10 @@ public class LobbyService {
 
     public LobbyOutputDto addPassenger(final AddPassengerToLobbyCommand addPassengerToLobbyCommand) {
         final Lobby lobby = lobbyRepository.getByAggregateId(addPassengerToLobbyCommand.getLobbyId());
-        final Participant passenger = userTranslator.getPassenger(addPassengerToLobbyCommand.getUserId());
+        final Participant passenger = userService.getPassenger(addPassengerToLobbyCommand.getUserId());
+        final CarId car = creator.createCarId(addPassengerToLobbyCommand.getCarId());
 
-        lobby.addPassenger(passenger);
+        lobby.addPassengerToCar(passenger, car);
 
         return lobby.toDto();
     }
@@ -79,8 +82,9 @@ public class LobbyService {
     public LobbyOutputDto addExternalPassenger(final AddExternalPassengerToLobbyCommand addExternalPassengerToLobbyCommand) {
         final Lobby lobby = lobbyRepository.getByAggregateId(addExternalPassengerToLobbyCommand.getLobbyId());
         final Participant passenger = creator.createAdHocPassenger(UUID.randomUUID(), addExternalPassengerToLobbyCommand.getDisplayName());
+        final CarId car = creator.createCarId(addExternalPassengerToLobbyCommand.getCarId());
 
-        lobby.addPassenger(passenger);
+        lobby.addPassengerToCar(passenger, car);
 
         return lobby.toDto();
     }

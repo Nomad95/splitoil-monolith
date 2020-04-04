@@ -29,6 +29,8 @@ public class TravelParticipant extends AbstractEntity {
     @NotBlank
     private String displayName;
 
+    private CarId carId;
+
     @NotNull
     @Enumerated(value = EnumType.STRING)
     private Currency travelCurrency;

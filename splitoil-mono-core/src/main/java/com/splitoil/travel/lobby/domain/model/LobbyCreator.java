@@ -29,7 +29,7 @@ public class LobbyCreator {
     }
 
     public Participant createAdHocPassenger(final UUID id, final String displayName) {
-        return Participant.of(id, displayName, ParticipantType.AD_HOC_PASSENGER);
+        return Participant.of(id, displayName, ParticipantType.TEMPORAL_PASSENGER);
     }
 
     public Participant createCarDriver(final UUID id, final String displayName) {
@@ -37,6 +37,6 @@ public class LobbyCreator {
     }
 
     public Car createCar(final CarFullDto carDto) {
-        return Car.of(createCarId(carDto.getId()), carDto.getDriver().getId(), carDto.getSeatsCount());
+        return Car.of(createCarId(carDto.getId()), carDto.getDriver().getId(), carDto.getSeatsCount(), 0);
     }
 }
