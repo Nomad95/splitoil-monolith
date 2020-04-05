@@ -12,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.transaction.annotation.Transactional
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -21,11 +22,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Category(IntegrationTest)
 @WithMockUser("admin")
 @WithMockSecurityContext
+@Transactional
 class LobbyIntegrationTest extends IntegrationSpec {
 
     private static final String LOBBY_NAME = "Some lobby name"
     private static final UUID LOBBY_UUID = UUID.fromString('148091b1-c0f0-4a3e-9b0d-569e05cfcd0f') //db script
-    private static final UUID CAR_UUID = UUID.fromString('c13d02de-c7a4-4ab0-9f3f-7ee0768b4a5f')
+    private static final UUID CAR_UUID = UUID.fromString('b9574b12-8ca1-4779-aab8-a25192e33739')
     private static final BigDecimal TOP_RATE = new BigDecimal("3.50")
     private static final String USD = 'USD'
 
@@ -45,7 +47,7 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.lobbyStatus').value("IN_CREATION"))
     }
 
-    @Sql(scripts = '/db/travel/lobby/new_lobby.sql')
+    @Sql(scripts = ["/db/travel/lobby/new_lobby.sql", "/db/car/default_car.sql", "/db/user/user_admin.sql"])
     def "Driver chooses travel car to lobby"() {
         given:
             def command = AddCarToTravelCommand.of(LOBBY_UUID, CAR_UUID)

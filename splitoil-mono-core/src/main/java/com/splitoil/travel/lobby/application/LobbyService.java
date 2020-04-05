@@ -23,13 +23,13 @@ public class LobbyService {
 
     private EventPublisher eventPublisher;
 
-    private UserService userService;
+    private UserTranslationService userTranslationService;
 
-    private CarService carService;
+    private CarTranslationService carTranslationService;
 
     //TODO: przez ile lobby moze byc w tym stanie?
     public LobbyOutputDto createLobby(final CreateLobbyCommand createLobbyCommand) {
-        final Driver lobbyCreator = userService.getCurrentLoggedDriver();
+        final Driver lobbyCreator = userTranslationService.getCurrentLoggedDriver();
         final Lobby lobby = creator.createNewLobby(createLobbyCommand.getLobbyName(), lobbyCreator);
 
         lobbyRepository.save(lobby);
@@ -39,9 +39,9 @@ public class LobbyService {
 
     //TODO: e tam chuyba mozna zmienic teraz
     public Result addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
-        final Car car = carService.getCar(addCarToTravelCommand.getCarId());
+        final Car car = carTranslationService.getCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
-        final Participant carDriver = userService.getCurrentUserAsDriver();
+        final Participant carDriver = userTranslationService.getCurrentUserAsDriver();
 
         lobby.addCar(car);
         lobby.addPassengerToCar(carDriver, car.getCarId());
@@ -73,7 +73,7 @@ public class LobbyService {
 
     public LobbyOutputDto addPassenger(final AddPassengerToLobbyCommand addPassengerToLobbyCommand) {
         final Lobby lobby = lobbyRepository.getByAggregateId(addPassengerToLobbyCommand.getLobbyId());
-        final Participant passenger = userService.getPassenger(addPassengerToLobbyCommand.getUserId());
+        final Participant passenger = userTranslationService.getPassenger(addPassengerToLobbyCommand.getUserId());
         final CarId car = creator.createCarId(addPassengerToLobbyCommand.getCarId());
 
         lobby.addPassengerToCar(passenger, car);

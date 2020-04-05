@@ -11,7 +11,7 @@ import spock.lang.See
 
 @Category(UnitTest)
 @Narrative("""
-As a Lobby creator i want to add travel participants
+As a Lobby creator i want to add travel participants to my lobby
 """)
 @See('resources/cucumber/lobby_creation.feature')
 class ParticipantAddingTest extends LobbyTest {

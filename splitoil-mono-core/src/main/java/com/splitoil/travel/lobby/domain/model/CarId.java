@@ -4,6 +4,7 @@ import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
@@ -11,6 +12,10 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CarId extends AbstractValue {
+public class CarId extends AbstractValue implements Serializable {
     @NonNull private UUID carId;
+
+    @Override public String toString() {
+        return carId.toString();
+    }
 }

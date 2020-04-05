@@ -4,9 +4,9 @@ import com.splitoil.shared.UserCurrencyProvider;
 import com.splitoil.shared.event.EventPublisher;
 import com.splitoil.shared.event.publisher.NoopEventPublisher;
 import com.splitoil.shared.model.Currency;
-import com.splitoil.travel.lobby.application.CarService;
+import com.splitoil.travel.lobby.application.CarTranslationService;
 import com.splitoil.travel.lobby.application.LobbyService;
-import com.splitoil.travel.lobby.application.UserService;
+import com.splitoil.travel.lobby.application.UserTranslationService;
 import com.splitoil.travel.lobby.domain.model.LobbyCreator;
 import com.splitoil.travel.lobby.domain.model.LobbyRepository;
 import com.splitoil.travel.lobby.infrastructure.database.InMemoryLobbyRepository;
@@ -16,15 +16,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LobbyConfiguration {
 
-    public LobbyService lobbyService(final UserService userService, final CarService carService) {
-        return new LobbyService(new LobbyCreator(StubCurrencyProvider.getInstance()), new InMemoryLobbyRepository(), new NoopEventPublisher(), userService, carService);
+    public LobbyService lobbyService(final UserTranslationService userTranslationService, final CarTranslationService carTranslationService) {
+        return new LobbyService(new LobbyCreator(StubCurrencyProvider.getInstance()), new InMemoryLobbyRepository(), new NoopEventPublisher(),
+            userTranslationService, carTranslationService);
     }
 
     @Bean
     public LobbyService lobbyService(final LobbyRepository lobbyRepository, final EventPublisher eventPublisher,
-        final UserCurrencyProvider userCurrencyProvider, final UserService userService, final CarService carService) {
+        final UserCurrencyProvider userCurrencyProvider, final UserTranslationService userTranslationService, final CarTranslationService carTranslationService) {
         final LobbyCreator lobbyCreator = new LobbyCreator(userCurrencyProvider);
-        return new LobbyService(lobbyCreator, lobbyRepository, eventPublisher, userService, carService);
+        return new LobbyService(lobbyCreator, lobbyRepository, eventPublisher, userTranslationService, carTranslationService);
     }
 
     @Bean

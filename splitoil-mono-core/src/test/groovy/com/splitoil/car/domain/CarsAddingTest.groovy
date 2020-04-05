@@ -14,7 +14,7 @@ class CarsAddingTest extends Specification {
 
     static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
     static final DriverDto DRIVER_DTO = DriverDto.of(DRIVER_ID)
-    static final AddCarDto CAR_INPUT_DTO = AddCarDto.builder().name("A4").brand("Audi").driver(DRIVER_DTO).build()
+    static final AddCarDto CAR_INPUT_DTO = AddCarDto.builder().name("A4").brand("Audi").seatsCount(5).driver(DRIVER_DTO).build()
 
     private CarFacade carFacade
 
@@ -54,6 +54,25 @@ class CarsAddingTest extends Specification {
 
         then:
             allCars.size() == 0
+    }
+
+    def "Driver should retrieve his car"() {
+        given: 'My car'
+            def newCar = carFacade.addNewCarToCollection(CAR_INPUT_DTO)
+
+        when: 'I want check my car information'
+            def car = carFacade.getOneCar(newCar.id)
+
+        then:
+            car.name == "A4"
+            car.brand == "Audi"
+            car.driver == DRIVER_DTO
+            car.seatsCount == 5
+            car.numberOfTravels == 0
+            car.mileage == 0
+            car.fuelCapacity == BigDecimal.ZERO
+            car.avgFuelConsumption == BigDecimal.ZERO
+            car.avgCostPer1Km == BigDecimal.ZERO
     }
 
     //TODO:     And user is now a driver

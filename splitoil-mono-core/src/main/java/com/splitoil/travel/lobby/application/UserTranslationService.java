@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 @AntiCorruptionLayer
 @AllArgsConstructor
-public class UserService {
+public class UserTranslationService {
 
     private final UserFacade userFacade;
 

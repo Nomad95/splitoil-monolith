@@ -11,6 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,7 @@ public class ApplicationUser extends AbstractEntity {
     private String email;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private Currency defaultCurrency;
 
     @Column(nullable = false, columnDefinition = "json")
@@ -55,10 +58,4 @@ public class ApplicationUser extends AbstractEntity {
             .build();
     }
 
-//    public static ApplicationUser create(final UserInputDTO userInputDTO) {
-//        return new ApplicationUser(
-//            userInputDTO.getUsername(),
-//            userInputDTO.getPassword(),
-//            new UserRole(ImmutableSet.of(Role.USER.name())));
-//    }
 }

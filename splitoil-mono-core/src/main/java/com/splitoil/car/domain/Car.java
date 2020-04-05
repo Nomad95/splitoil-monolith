@@ -41,6 +41,8 @@ class Car extends AbstractEntity {
     @Builder.Default
     private BigDecimal calculatedAvg1kmCost = BigDecimal.ZERO;
 
+    private int seatCount;
+
     private BigDecimal getFuelCapacity() {
         if (Objects.isNull(fuelTank)) {
             return BigDecimal.ZERO;
@@ -106,6 +108,7 @@ class Car extends AbstractEntity {
             .avgCostPer1Km(calculatedAvg1kmCost)
             .fuelCapacity(getFuelCapacity())
             .numberOfTravels(numberOfTravels)
+            .seatsCount(seatCount)
             .build();
     }
 

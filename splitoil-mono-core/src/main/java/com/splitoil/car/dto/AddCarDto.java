@@ -18,4 +18,6 @@ public class AddCarDto {
 
     @NonNull
     private DriverDto driver;
+
+    private int seatsCount;
 }

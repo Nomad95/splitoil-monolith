@@ -1,8 +1,8 @@
 package com.splitoil.travel.lobby.domain
 
-import com.splitoil.travel.lobby.application.CarService
+import com.splitoil.travel.lobby.application.CarTranslationService
 import com.splitoil.travel.lobby.application.LobbyService
-import com.splitoil.travel.lobby.application.UserService
+import com.splitoil.travel.lobby.application.UserTranslationService
 import com.splitoil.travel.lobby.domain.model.*
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
 import spock.lang.Specification
@@ -21,8 +21,8 @@ class LobbyTest extends Specification {
     protected static final String USD = 'USD'
 
     protected LobbyService lobbyService
-    protected UserService userTranslator
-    protected CarService carService
+    protected UserTranslationService userTranslator
+    protected CarTranslationService carService
 
     def setup() {
         userTranslator = Stub()

@@ -4,6 +4,7 @@ import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
@@ -11,7 +12,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false, of = {"carId", "driverId"})
 @AllArgsConstructor(staticName = "of", access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Car extends AbstractValue {
+public class Car extends AbstractValue implements Serializable {
     @NonNull private CarId carId;
     @NonNull private UUID driverId;
     private int numberOfSeats;

@@ -12,6 +12,7 @@ class CarCreator {
         return Car.builder()
             .brand(addCarDto.getBrand())
             .name(addCarDto.getName())
+            .seatCount(addCarDto.getSeatsCount())
             .mileage(0L)
             .owner(createDriver(addCarDto.getDriver()))
             .build();

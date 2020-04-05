@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 @AntiCorruptionLayer
 @AllArgsConstructor
-public class CarService {
+public class CarTranslationService {
 
     private final CarFacade carFacade;
 
