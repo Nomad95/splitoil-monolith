@@ -1,7 +1,6 @@
 package com.splitoil.travel.lobby.web;
 
 import com.splitoil.car.CarController;
-import com.splitoil.shared.dto.Result;
 import com.splitoil.travel.lobby.application.LobbyService;
 import com.splitoil.travel.lobby.web.dto.*;
 import lombok.AllArgsConstructor;
@@ -41,14 +40,14 @@ public class LobbyController {
     }
 
     @PostMapping("car")
-    public EntityModel<Result> addCarToLobby(@RequestBody @Valid @NonNull final AddCarToTravelCommand addCarToTravelCommand) {
-        final Result result = lobbyService.addCarToLobby(addCarToTravelCommand);
+    public EntityModel<LobbyOutputDto> addCarToLobby(@RequestBody @Valid @NonNull final AddCarToTravelCommand addCarToTravelCommand) {
+        final LobbyOutputDto outputDto = lobbyService.addCarToLobby(addCarToTravelCommand);
 
         final Link self = linkTo(LobbyController.class).slash("car").withSelfRel();
         final Link changeTopRate = linkTo(LobbyController.class).slash("topRate").withRel("set-travel-top-rate");
         final Link changeCurrency = linkTo(LobbyController.class).slash("currency").withRel("change-default-currency");
 
-        return new EntityModel<>(result)
+        return new EntityModel<>(outputDto)
             .add(self)
             .add(changeCurrency)
             .add(changeTopRate);

@@ -30,6 +30,7 @@ class LobbyIntegrationTest extends IntegrationSpec {
     private static final UUID CAR_UUID = UUID.fromString('b9574b12-8ca1-4779-aab8-a25192e33739')
     private static final BigDecimal TOP_RATE = new BigDecimal("3.50")
     private static final String USD = 'USD'
+    public static final String DRIVER_ID_STR = '41a6fd60-6f64-4f37-beb8-4edbce18b92c'
 
     def "Driver creates lobby"() {
         given:
@@ -60,7 +61,8 @@ class LobbyIntegrationTest extends IntegrationSpec {
         then:
             result.andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath('$.content').value("Success"))
+                    .andExpect(jsonPath('$.lobbyId').value(LOBBY_UUID.toString()))
+                    .andExpect(jsonPath('$.participants[0].userId').value(DRIVER_ID_STR))
     }
 
     @Sql(scripts = '/db/travel/lobby/new_lobby.sql')

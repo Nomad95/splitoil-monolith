@@ -1,10 +1,9 @@
 package com.splitoil.travel.lobby.application;
 
 import com.splitoil.shared.annotation.ApplicationService;
-import com.splitoil.shared.dto.Result;
 import com.splitoil.shared.event.EventPublisher;
 import com.splitoil.shared.model.Currency;
-import com.splitoil.travel.lobby.domain.event.LobbyCreated;
+import com.splitoil.travel.lobby.domain.event.*;
 import com.splitoil.travel.lobby.domain.model.*;
 import com.splitoil.travel.lobby.web.dto.*;
 import lombok.AllArgsConstructor;
@@ -37,17 +36,19 @@ public class LobbyService {
         return lobby.toDto();
     }
 
-    //TODO: e tam chuyba mozna zmienic teraz
-    public Result addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
+    public LobbyOutputDto addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
         final Car car = carTranslationService.getCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
         final Participant carDriver = userTranslationService.getCurrentUserAsDriver();
 
         lobby.addCar(car);
         lobby.addPassengerToCar(carDriver, car.getCarId());
+
+        eventPublisher.publish(new CarAddedToLobby(lobby.getAggregateId(), car.getCarId().getCarId()));
+        eventPublisher.publish(new ParticipantAddedToLobby(lobby.getAggregateId(), carDriver.getParticipantId(), car.getCarId().getCarId()));
         eventPublisher.publish(new LobbyCreated(lobby.getAggregateId()));
 
-        return Result.Success;
+        return lobby.toDto();
     }
 
     public LobbyOutputDto getLobby(final UUID lobbyId) {
@@ -58,6 +59,7 @@ public class LobbyService {
         final Lobby lobby = lobbyRepository.getByAggregateId(setTravelTopRatePer1kmCommand.getLobbyId());
 
         lobby.setTravelTopRatePer1km(setTravelTopRatePer1kmCommand.getRate());
+        eventPublisher.publish(new TravelTopRateSet(lobby.getAggregateId(), setTravelTopRatePer1kmCommand.getRate()));
 
         return lobby.toDto();
     }
@@ -67,6 +69,7 @@ public class LobbyService {
         final Currency currency = Currency.valueOf(changeTravelDefaultCurrencyCommand.getCurrency());
 
         lobby.changeDefaultCurrency(currency);
+        eventPublisher.publish(new TravelCurrencyChanged(lobby.getAggregateId(), currency.toString()));
 
         return lobby.toDto();
     }
@@ -77,16 +80,18 @@ public class LobbyService {
         final CarId car = creator.createCarId(addPassengerToLobbyCommand.getCarId());
 
         lobby.addPassengerToCar(passenger, car);
+        eventPublisher.publish(new ParticipantAddedToLobby(lobby.getAggregateId(), passenger.getParticipantId(), car.getCarId()));
 
         return lobby.toDto();
     }
 
     public LobbyOutputDto addExternalPassenger(final AddExternalPassengerToLobbyCommand addExternalPassengerToLobbyCommand) {
         final Lobby lobby = lobbyRepository.getByAggregateId(addExternalPassengerToLobbyCommand.getLobbyId());
-        final Participant passenger = creator.createAdHocPassenger(UUID.randomUUID(), addExternalPassengerToLobbyCommand.getDisplayName());
+        final Participant passenger = creator.createTemporalPassenger(UUID.randomUUID(), addExternalPassengerToLobbyCommand.getDisplayName());
         final CarId car = creator.createCarId(addExternalPassengerToLobbyCommand.getCarId());
 
         lobby.addPassengerToCar(passenger, car);
+        eventPublisher.publish(new ParticipantAddedToLobby(lobby.getAggregateId(), passenger.getParticipantId(), car.getCarId()));
 
         return lobby.toDto();
     }

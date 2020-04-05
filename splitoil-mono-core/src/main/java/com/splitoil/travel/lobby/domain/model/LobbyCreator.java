@@ -28,7 +28,7 @@ public class LobbyCreator {
         return Participant.of(id, displayName, ParticipantType.PASSENGER);
     }
 
-    public Participant createAdHocPassenger(final UUID id, final String displayName) {
+    public Participant createTemporalPassenger(final UUID id, final String displayName) {
         return Participant.of(id, displayName, ParticipantType.TEMPORAL_PASSENGER);
     }
 

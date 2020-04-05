@@ -35,7 +35,7 @@ public class Lobby extends AbstractEntity {
     private String name;
 
     @NonNull
-    private Driver lobbyCreator;//TODO change to lobby creator VO
+    private Driver lobbyCreator;
 
     @NonNull
     @Enumerated(value = EnumType.STRING)
@@ -90,7 +90,7 @@ public class Lobby extends AbstractEntity {
             throw new IllegalStateException("Car already exists in this lobby");
         }
 
-        cars.addCar( car);
+        cars.addCar(car);
     }
 
     public void setTravelTopRatePer1km(final @NonNull BigDecimal rate) {
