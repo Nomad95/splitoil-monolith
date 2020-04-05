@@ -5,9 +5,7 @@ import com.splitoil.shared.model.Currency;
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantDto;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -17,17 +15,17 @@ import java.util.UUID;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = {"userId", "lobbyId"}, callSuper = false)
+@EqualsAndHashCode(of = {"userId", "lobby"}, callSuper = false) //TODO: tak bo bedzie zmiana w AbstractEntity
 public class TravelParticipant extends AbstractEntity {
 
     @NonNull
     private UUID userId;
 
-    @NonNull
-    private UUID lobbyId;
-
     @NotBlank
     private String displayName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Lobby lobby;
 
     private CarId carId;
 

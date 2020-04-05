@@ -3,16 +3,12 @@ package com.splitoil.travel.lobby
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec
 import com.splitoil.infrastructure.security.WithMockSecurityContext
-import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
-import com.splitoil.travel.lobby.web.dto.ChangeTravelDefaultCurrencyCommand
-import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
-import com.splitoil.travel.lobby.web.dto.SetTravelTopRatePer1kmCommand
+import com.splitoil.travel.lobby.web.dto.*
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.transaction.annotation.Transactional
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -22,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Category(IntegrationTest)
 @WithMockUser("admin")
 @WithMockSecurityContext
-@Transactional
 class LobbyIntegrationTest extends IntegrationSpec {
 
     private static final String LOBBY_NAME = "Some lobby name"
@@ -30,7 +25,9 @@ class LobbyIntegrationTest extends IntegrationSpec {
     private static final UUID CAR_UUID = UUID.fromString('b9574b12-8ca1-4779-aab8-a25192e33739')
     private static final BigDecimal TOP_RATE = new BigDecimal("3.50")
     private static final String USD = 'USD'
-    public static final String DRIVER_ID_STR = '41a6fd60-6f64-4f37-beb8-4edbce18b92c'
+    private static final String DRIVER_ID_STR = '41a6fd60-6f64-4f37-beb8-4edbce18b92c'
+    private static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
+    private static final UUID PASSENGER_ID = UUID.fromString('31c7b8b8-17fe-46b2-9ec6-df4c1d23f3a4')
 
     def "Driver creates lobby"() {
         given:
@@ -58,11 +55,12 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(jackson.toJson(command)))
 
-        then:
+        then: 'Car is added as well as Driver, as a participant himself'
             result.andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath('$.lobbyId').value(LOBBY_UUID.toString()))
                     .andExpect(jsonPath('$.participants[0].userId').value(DRIVER_ID_STR))
+        //TODO: user przyporzadkowany do car tutaj
     }
 
     @Sql(scripts = '/db/travel/lobby/new_lobby.sql')
@@ -112,6 +110,46 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.lobbyId').value(LOBBY_UUID.toString()))
                     .andExpect(jsonPath('$.lobbyStatus').value("IN_CONFIGURATION"))
                     .andExpect(jsonPath('$.travelCurrency').value("USD"))
+    }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_in_configuration.sql', '/db/user/user_passenger.sql', '/db/travel/lobby/travel_participant_lobby_creator_driver.sql'])
+    def "Driver can add passenger to lobby"() {
+        given:
+            def addPassengerToLobbyCommand = AddPassengerToLobbyCommand.of(LOBBY_UUID, PASSENGER_ID, CAR_UUID)
+
+        when:
+            def result = mockMvc.perform(post("/lobby/participant/passenger")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addPassengerToLobbyCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.lobbyId').value(LOBBY_UUID.toString()))
+                    .andExpect(jsonPath('$.participants[0].userId').value(DRIVER_ID.toString()))
+                    .andExpect(jsonPath('$.participants[0].participantType').value("CAR_DRIVER"))
+                    .andExpect(jsonPath('$.participants[1].userId').value(PASSENGER_ID.toString()))
+                    .andExpect(jsonPath('$.participants[1].participantType').value("PASSENGER"))
+    }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_in_configuration.sql', '/db/user/user_passenger.sql', '/db/travel/lobby/travel_participant_lobby_creator_driver.sql'])
+    def "Driver can add temporal passenger to lobby"() {
+        given:
+            def addPassengerToLobbyCommand = AddTemporalPassengerToLobbyCommand.of(LOBBY_UUID, 'passenger', CAR_UUID)
+
+        when:
+            def result = mockMvc.perform(post("/lobby/participant/temporalpassenger")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(addPassengerToLobbyCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.lobbyId').value(LOBBY_UUID.toString()))
+                    .andExpect(jsonPath('$.participants[0].userId').value(DRIVER_ID.toString()))
+                    .andExpect(jsonPath('$.participants[0].participantType').value("CAR_DRIVER"))
+                    .andExpect(jsonPath('$.participants[1].displayName').value('passenger'))
+                    .andExpect(jsonPath('$.participants[1].participantType').value("TEMPORAL_PASSENGER"))
     }
 
 }

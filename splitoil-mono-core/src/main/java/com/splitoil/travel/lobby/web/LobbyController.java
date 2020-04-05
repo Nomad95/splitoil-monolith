@@ -30,12 +30,10 @@ public class LobbyController {
         final LobbyOutputDto outputDto = lobbyService.createLobby(createLobbyCommand);
 
         final Link self = linkTo(LobbyController.class).withSelfRel();
-        final Link addCarToLobby = linkTo(CarController.class).slash("car").withRel("add-car-to-lobby");
-        final Link getLobbyInfo = linkTo(CarController.class).slash(outputDto.getLobbyId().toString()).withRel("get-lobby-info");
 
         return new EntityModel<>(outputDto)
-            .add(addCarToLobby)
-            .add(getLobbyInfo)
+            .add(addCarToLobbyLink())
+            .add(lobbyDetailsLink(outputDto.getLobbyId()))
             .add(self);
     }
 
@@ -44,13 +42,14 @@ public class LobbyController {
         final LobbyOutputDto outputDto = lobbyService.addCarToLobby(addCarToTravelCommand);
 
         final Link self = linkTo(LobbyController.class).slash("car").withSelfRel();
-        final Link changeTopRate = linkTo(LobbyController.class).slash("topRate").withRel("set-travel-top-rate");
-        final Link changeCurrency = linkTo(LobbyController.class).slash("currency").withRel("change-default-currency");
 
         return new EntityModel<>(outputDto)
             .add(self)
-            .add(changeCurrency)
-            .add(changeTopRate);
+            .add(setLobbyCurrencyLink())
+            .add(addCarToLobbyLink())
+            .add(addTemporalPassengerLink())
+            .add(addPassengerLink())
+            .add(changeLobbyTopRateLink());
     }
 
     @GetMapping("{lobbyId}")
@@ -68,26 +67,83 @@ public class LobbyController {
         final LobbyOutputDto lobby = lobbyService.setTravelTopRatePer1km(setTravelTopRatePer1kmCommand);
 
         final Link self = linkTo(LobbyController.class).slash("topRate").withSelfRel();
-        final Link lobbyDetails = linkTo(LobbyController.class).withRel("lobby-details");
-        final Link changeCurrency = linkTo(LobbyController.class).slash("currency").withRel("change-default-currency");
 
         return new EntityModel<>(lobby)
             .add(self)
-            .add(lobbyDetails)
-            .add(changeCurrency);
+            .add(lobbyDetailsLink(lobby.getLobbyId()))
+            .add(setLobbyCurrencyLink())
+            .add(addCarToLobbyLink())
+            .add(addTemporalPassengerLink())
+            .add(addPassengerLink());
     }
 
     @PostMapping("currency")
-    public EntityModel<LobbyOutputDto> changeTravelDefaultCurrency(@RequestBody @Valid @NonNull final ChangeTravelDefaultCurrencyCommand changeTravelDefaultCurrencyCommand) {
+    public EntityModel<LobbyOutputDto> changeTravelDefaultCurrency(
+        @RequestBody @Valid @NonNull final ChangeTravelDefaultCurrencyCommand changeTravelDefaultCurrencyCommand) {
         final LobbyOutputDto lobby = lobbyService.changeTravelDefaultCurrency(changeTravelDefaultCurrencyCommand);
 
         final Link self = linkTo(LobbyController.class).slash("currency").withSelfRel();
-        final Link lobbyDetails = linkTo(LobbyController.class).withRel("lobby-details");
-        final Link changeTopRate = linkTo(LobbyController.class).slash("topRate").withRel("set-travel-top-rate");
 
         return new EntityModel<>(lobby)
             .add(self)
-            .add(lobbyDetails)
-            .add(changeTopRate);
+            .add(lobbyDetailsLink(lobby.getLobbyId()))
+            .add(changeLobbyTopRateLink())
+            .add(addTemporalPassengerLink())
+            .add(addPassengerLink());
+    }
+
+    @PostMapping("participant/passenger")
+    public EntityModel<LobbyOutputDto> addPassengerToLobby(@RequestBody @Valid @NonNull final AddPassengerToLobbyCommand addPassengerToLobbyCommand) {
+        final LobbyOutputDto lobby = lobbyService.addPassenger(addPassengerToLobbyCommand);
+
+        final Link self = linkTo(LobbyController.class).slash("participant/passenger").withSelfRel();
+
+        return new EntityModel<>(lobby)
+            .add(self)
+            .add(addCarToLobbyLink())
+            .add(setLobbyCurrencyLink())
+            .add(addTemporalPassengerLink())
+            .add(lobbyDetailsLink(lobby.getLobbyId()))
+            .add(changeLobbyTopRateLink());
+    }
+
+    @PostMapping("participant/temporalpassenger")
+    public EntityModel<LobbyOutputDto> addExternalPassengerToLobby(
+        @RequestBody @Valid @NonNull final AddTemporalPassengerToLobbyCommand addTemporalPassengerToLobbyCommand) {
+        final LobbyOutputDto lobby = lobbyService.addExternalPassenger(addTemporalPassengerToLobbyCommand);
+
+        final Link self = linkTo(LobbyController.class).slash("participant/temporalpassenger").withSelfRel();
+
+        return new EntityModel<>(lobby)
+            .add(self)
+            .add(lobbyDetailsLink(lobby.getLobbyId()))
+            .add(addCarToLobbyLink())
+            .add(setLobbyCurrencyLink())
+            .add(addPassengerLink())
+            .add(changeLobbyTopRateLink());
+    }
+
+    private Link addTemporalPassengerLink() {
+        return linkTo(LobbyController.class).slash("participant/passenger").withRel("add-temporal-passenger");
+    }
+
+    private Link changeLobbyTopRateLink() {
+        return linkTo(LobbyController.class).slash("topRate").withRel("set-travel-top-rate");
+    }
+
+    private Link addCarToLobbyLink() {
+        return linkTo(CarController.class).slash("car").withRel("add-car-to-lobby");
+    }
+
+    private Link setLobbyCurrencyLink() {
+        return linkTo(LobbyController.class).slash("currency").withRel("change-default-currency");
+    }
+
+    private Link addPassengerLink() {
+        return linkTo(LobbyController.class).slash("participant/passenger").withRel("add-passenger");
+    }
+
+    private Link lobbyDetailsLink(final UUID lobbyId) {
+        return linkTo(CarController.class).slash(lobbyId.toString()).withRel("get-lobby-info");
     }
 }

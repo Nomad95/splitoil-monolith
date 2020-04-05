@@ -85,10 +85,10 @@ public class LobbyService {
         return lobby.toDto();
     }
 
-    public LobbyOutputDto addExternalPassenger(final AddExternalPassengerToLobbyCommand addExternalPassengerToLobbyCommand) {
-        final Lobby lobby = lobbyRepository.getByAggregateId(addExternalPassengerToLobbyCommand.getLobbyId());
-        final Participant passenger = creator.createTemporalPassenger(UUID.randomUUID(), addExternalPassengerToLobbyCommand.getDisplayName());
-        final CarId car = creator.createCarId(addExternalPassengerToLobbyCommand.getCarId());
+    public LobbyOutputDto addExternalPassenger(final AddTemporalPassengerToLobbyCommand addTemporalPassengerToLobbyCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(addTemporalPassengerToLobbyCommand.getLobbyId());
+        final Participant passenger = creator.createTemporalPassenger(UUID.randomUUID(), addTemporalPassengerToLobbyCommand.getDisplayName());
+        final CarId car = creator.createCarId(addTemporalPassengerToLobbyCommand.getCarId());
 
         lobby.addPassengerToCar(passenger, car);
         eventPublisher.publish(new ParticipantAddedToLobby(lobby.getAggregateId(), passenger.getParticipantId(), car.getCarId()));

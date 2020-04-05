@@ -2,8 +2,8 @@ package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
-import com.splitoil.travel.lobby.web.dto.AddExternalPassengerToLobbyCommand
 import com.splitoil.travel.lobby.web.dto.AddPassengerToLobbyCommand
+import com.splitoil.travel.lobby.web.dto.AddTemporalPassengerToLobbyCommand
 import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
@@ -43,7 +43,7 @@ class ParticipantAddingTest extends LobbyTest {
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds passenger that is not registered in the app'
-            def command = AddExternalPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_NAME, CAR_ID)
+            def command = AddTemporalPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_NAME, CAR_ID)
             def alteredLobby = lobbyService.addExternalPassenger(command)
 
         then: 'Lobby has a temporal passenger'

@@ -51,7 +51,8 @@ public class Lobby extends AbstractEntity {
     @OneToMany(
         cascade = CascadeType.ALL,
         orphanRemoval = true,
-        fetch = FetchType.EAGER
+        fetch = FetchType.EAGER,
+        mappedBy = "lobby"
     )
     private List<TravelParticipant> participants;
 
@@ -121,7 +122,7 @@ public class Lobby extends AbstractEntity {
             .userId(travelParticipant.getParticipantId())
             .carId(carId)
             .participantType(travelParticipant.getParticipantType())
-            .lobbyId(getAggregateId())
+            .lobby(this)
             .build();
 
         if (participants.contains(participant)) {

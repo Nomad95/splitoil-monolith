@@ -8,7 +8,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PUBLIC, staticName = "of")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AddExternalPassengerToLobbyCommand {
+public class AddTemporalPassengerToLobbyCommand {
     @NonNull private UUID lobbyId;
     @NotBlank private String displayName;
     @NonNull private UUID carId;
