@@ -76,6 +76,52 @@ class ParticipantMaintenanceTest extends LobbyTest {
             alteredLobby.participants[2].assignedCar == SECOND_CAR_ID
     }
 
+    def "Lobby creator can't assign participant to another car when is full"() {
+        setup: 'lobby with two cars and one passenger'
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 4)
+            driverExists(DRIVER_ID, DRIVER_LOGIN)
+            driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
+            def lobby = lobbyWithTwoCarsAndOnePassenger()
+
+        when: 'Assign passenger to another car'
+            def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
+            lobbyService.assignToCar(command)
+
+        then:
+            thrown(IllegalStateException)
+    }
+
+    def "Lobby creator can't assign participant to non-existing car"() {
+        setup: 'lobby with one car and one passenger'
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            driverExists(DRIVER_ID, DRIVER_LOGIN)
+            def lobby = lobbyWithCarAndPassenger()
+
+        when: 'Assign passenger to another car'
+            def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
+            lobbyService.assignToCar(command)
+
+        then:
+            thrown(IllegalStateException)
+    }
+
+    def "Lobby creator can't reseat driver"() {
+        setup: 'lobby with two cars and one passenger'
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 1)
+            driverExists(DRIVER_ID, DRIVER_LOGIN)
+            driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
+            def lobby = lobbyWithTwoCarsAndOnePassenger()
+
+        when: 'Assign passenger to another car'
+            def command = AssignToCarCommand.of(lobby.lobbyId, DRIVER_ID, SECOND_CAR_ID)
+            lobbyService.assignToCar(command)
+
+        then:
+            thrown(IllegalStateException)
+    }
+
     private def aNewLobbyWithOneCar() {
         def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
         lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))

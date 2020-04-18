@@ -74,6 +74,7 @@ public class LobbyController {
             .add(setLobbyCurrencyLink())
             .add(addCarToLobbyLink())
             .add(addTemporalPassengerLink())
+            .add(assignToCarLink())
             .add(addPassengerLink());
     }
 
@@ -89,6 +90,7 @@ public class LobbyController {
             .add(lobbyDetailsLink(lobby.getLobbyId()))
             .add(changeLobbyTopRateLink())
             .add(addTemporalPassengerLink())
+            .add(assignToCarLink())
             .add(addPassengerLink());
     }
 
@@ -103,6 +105,7 @@ public class LobbyController {
             .add(addCarToLobbyLink())
             .add(setLobbyCurrencyLink())
             .add(addTemporalPassengerLink())
+            .add(assignToCarLink())
             .add(lobbyDetailsLink(lobby.getLobbyId()))
             .add(changeLobbyTopRateLink());
     }
@@ -120,11 +123,32 @@ public class LobbyController {
             .add(addCarToLobbyLink())
             .add(setLobbyCurrencyLink())
             .add(addPassengerLink())
+            .add(assignToCarLink())
+            .add(changeLobbyTopRateLink());
+    }
+
+    @PostMapping("participant/assignToCar")
+    public EntityModel<LobbyOutputDto> assignToCar(@RequestBody @Valid @NonNull final AssignToCarCommand assignToCarCommand) {
+        final LobbyOutputDto lobby = lobbyService.assignToCar(assignToCarCommand);
+
+        final Link self = linkTo(LobbyController.class).slash("participant/assignToCar").withSelfRel();
+
+        return new EntityModel<>(lobby)
+            .add(self)
+            .add(lobbyDetailsLink(lobby.getLobbyId()))
+            .add(addCarToLobbyLink())
+            .add(setLobbyCurrencyLink())
+            .add(addPassengerLink())
+            .add(addTemporalPassengerLink())
             .add(changeLobbyTopRateLink());
     }
 
     private Link addTemporalPassengerLink() {
         return linkTo(LobbyController.class).slash("participant/passenger").withRel("add-temporal-passenger");
+    }
+
+    private Link assignToCarLink() {
+        return linkTo(LobbyController.class).slash("participant/assignToCar").withRel("assign-to-car");
     }
 
     private Link changeLobbyTopRateLink() {

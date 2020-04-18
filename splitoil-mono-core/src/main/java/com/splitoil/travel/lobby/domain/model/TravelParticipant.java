@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = { "userId", "lobby" }, callSuper = false)
-public class TravelParticipant extends AbstractEntity {
+public class TravelParticipant extends AbstractEntity {//TODO: zmiana na bez aggregate
 
     @NonNull
     private UUID userId;
@@ -66,6 +66,10 @@ public class TravelParticipant extends AbstractEntity {
 
     public void reseatTo(final CarId car) {
         assignedCar = car;
+    }
+
+    public boolean isDriver() {
+        return participantType == ParticipantType.CAR_DRIVER;
     }
 }
 

@@ -156,7 +156,7 @@ public class Lobby extends AbstractEntity {
 
     public void assignParticipantToCar(final CarId car, final UUID participantId) {
         if (cars.isAbsent(car)) {
-            throw new IllegalStateException("Car doesn't exist in this lobby");
+            throw new IllegalStateException(String.format("Car %s doesn't exist in lobby %s", car.getCarId(), getAggregateId()));
         }
 
         final Car newCar = cars.getCar(car);
@@ -165,6 +165,10 @@ public class Lobby extends AbstractEntity {
         }
 
         final TravelParticipant participant = findParticipant(participantId);
+
+        if (participant.isDriver()) {
+            throw new IllegalStateException("Cannot move driver out from his car");
+        }
 
         final Car currentCar = cars.getCar(participant.getAssignedCar()); //TODO: to jakies dziewne
         cars.addCar(currentCar.disoccupySeat());
