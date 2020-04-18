@@ -102,6 +102,7 @@ public class LobbyService {
         final UUID participantId = toggleParticipantsCostChargingCommand.getParticipantId();
 
         lobby.toggleCostCharging(participantId);
+        eventPublisher.publish(new ParticipantCostChargingChanged(lobby.getAggregateId(), participantId, lobby.hasCostChargingEnabled(participantId)));
 
         return lobby.toDto();
     }
@@ -112,6 +113,7 @@ public class LobbyService {
         final UUID participantId = changeParticipantsTravelCurrencyCommand.getParticipantId();
 
         lobby.changeParticipantTravelCurrency(participantId, currency);
+        eventPublisher.publish(new ParticipantTravelCurrencyChanged(lobby.getAggregateId(), participantId, changeParticipantsTravelCurrencyCommand.getCurrency()));
 
         return lobby.toDto();
     }
@@ -122,6 +124,7 @@ public class LobbyService {
         final CarId car = creator.createCarId(assignToCarCommand.getCarId());
         final UUID participantId = assignToCarCommand.getParticipantId();
         lobby.assignParticipantToCar(car, participantId);
+        eventPublisher.publish(new ParticipantReseated(lobby.getAggregateId(), participantId, assignToCarCommand.getCarId()));
 
         return lobby.toDto();
     }
@@ -129,7 +132,9 @@ public class LobbyService {
     public LobbyOutputDto removeFromLobby(final RemoveParticipantFromLobbyCommand removeParticipantFromLobbyCommand) {
         final Lobby lobby = lobbyRepository.getByAggregateId(removeParticipantFromLobbyCommand.getLobbyId());
 
-        lobby.removeParticipant(removeParticipantFromLobbyCommand.getParticipantId());
+        final UUID participantId = removeParticipantFromLobbyCommand.getParticipantId();
+        lobby.removeParticipant(participantId);
+        eventPublisher.publish(new ParticipantRemovedFromLobby(lobby.getAggregateId(), participantId));
 
         return lobby.toDto();
     }

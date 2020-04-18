@@ -203,6 +203,14 @@ public class Lobby extends AbstractEntity {
     private Predicate<TravelParticipant> hasAssignedCar(final @NonNull CarId carId) {
         return travelParticipant -> travelParticipant.hasCar(carId);
     }
+
+    public boolean hasCostChargingEnabled(final @NonNull UUID participantId) {
+        return participants.stream()
+            .filter(p -> p.hasUserId(participantId))
+            .findFirst()
+            .map(TravelParticipant::isCostCharging)
+            .orElseThrow(() -> new IllegalArgumentException("Participant " + participantId + " not found in lobby " + getAggregateId()));
+    }
 }
 
 
