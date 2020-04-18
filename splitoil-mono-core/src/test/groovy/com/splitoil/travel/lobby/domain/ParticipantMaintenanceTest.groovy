@@ -64,6 +64,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
         setup: 'lobby with two cars and one passenger'
             carExists(CAR_ID, DRIVER_ID, 5, 1)
             carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 1)
+            driverExists(DRIVER_ID, DRIVER_LOGIN)
             driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
             def lobby = lobbyWithTwoCarsAndOnePassenger()
 
@@ -72,7 +73,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
             def alteredLobby = lobbyService.assignToCar(command)
 
         then: 'passenger is in another car'
-            alteredLobby.participants[0].assignedCar == SECOND_CAR_ID
+            alteredLobby.participants[2].assignedCar == SECOND_CAR_ID
     }
 
     private def aNewLobbyWithOneCar() {

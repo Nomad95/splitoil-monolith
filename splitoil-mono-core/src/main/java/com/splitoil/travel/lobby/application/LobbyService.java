@@ -39,7 +39,7 @@ public class LobbyService {
     public LobbyOutputDto addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
         final Car car = carTranslationService.getCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
-        final Participant carDriver = userTranslationService.getCurrentUserAsDriver();//TODO: dodanie
+        final Participant carDriver = userTranslationService.getAsDriver(addCarToTravelCommand.getDriverId());
 
         lobby.addCar(car);
         lobby.addPassengerToCar(carDriver, car.getCarId());

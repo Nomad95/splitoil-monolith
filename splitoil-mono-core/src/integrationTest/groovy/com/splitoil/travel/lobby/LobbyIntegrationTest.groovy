@@ -25,7 +25,7 @@ class LobbyIntegrationTest extends IntegrationSpec {
     private static final UUID CAR_UUID = UUID.fromString('b9574b12-8ca1-4779-aab8-a25192e33739')
     private static final BigDecimal TOP_RATE = new BigDecimal("3.50")
     private static final String USD = 'USD'
-    private static final String DRIVER_ID_STR = '41a6fd60-6f64-4f37-beb8-4edbce18b92c'
+    private static final String DRIVER_ID_STR = '0ea7db01-5f68-409b-8130-e96e8d96060a'
     private static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
     private static final UUID PASSENGER_ID = UUID.fromString('31c7b8b8-17fe-46b2-9ec6-df4c1d23f3a4')
 
@@ -45,10 +45,10 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.lobbyStatus').value("IN_CREATION"))
     }
 
-    @Sql(scripts = ["/db/travel/lobby/new_lobby.sql", "/db/car/default_car.sql", "/db/user/user_admin.sql"])
+    @Sql(scripts = ["/db/travel/lobby/new_lobby.sql", "/db/car/default_car.sql", "/db/user/user_admin.sql", "/db/user/user_driver_1.sql"])
     def "Driver chooses travel car to lobby"() {
         given:
-            def command = AddCarToTravelCommand.of(LOBBY_UUID, CAR_UUID)
+            def command = AddCarToTravelCommand.of(LOBBY_UUID, CAR_UUID, DRIVER_ID)
 
         when:
             def result = mockMvc.perform(post("/lobby/car")
@@ -60,7 +60,7 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath('$.lobbyId').value(LOBBY_UUID.toString()))
                     .andExpect(jsonPath('$.participants[0].userId').value(DRIVER_ID_STR))
-        //TODO: user przyporzadkowany do car tutaj
+                    .andExpect(jsonPath('$.participants[0].assignedCar').value(CAR_UUID.toString()))
     }
 
     @Sql(scripts = '/db/travel/lobby/new_lobby.sql')

@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = {"userId", "lobby"}, callSuper = false)
+@EqualsAndHashCode(of = { "userId", "lobby" }, callSuper = false)
 public class TravelParticipant extends AbstractEntity {
 
     @NonNull
