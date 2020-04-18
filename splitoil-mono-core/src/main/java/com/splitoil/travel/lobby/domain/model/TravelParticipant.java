@@ -71,6 +71,14 @@ public class TravelParticipant extends AbstractEntity {//TODO: zmiana na bez agg
     public boolean isDriver() {
         return participantType == ParticipantType.CAR_DRIVER;
     }
+
+    public boolean hasCar(final @NonNull CarId car) {
+        return car.equals(assignedCar);
+    }
+
+    public boolean is(final Driver driver) {
+        return userId.equals(driver.getDriverId());
+    }
 }
 
 

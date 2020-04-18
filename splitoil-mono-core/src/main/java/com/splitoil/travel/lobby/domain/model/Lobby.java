@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Entity
@@ -29,12 +30,12 @@ public class Lobby extends AbstractEntity {
         IN_CREATION,
         IN_CONFIGURATION,
         IN_TRAVEL,
-        ENDED;
-
-
+        ENDED
     }
+
     @NotBlank
     private String name;
+
     @NonNull
     private Driver lobbyCreator;
 
@@ -154,7 +155,7 @@ public class Lobby extends AbstractEntity {
         findParticipant(participantId).changeTravelCurrency(currency);
     }
 
-    public void assignParticipantToCar(final CarId car, final UUID participantId) {
+    public void assignParticipantToCar(final @NonNull CarId car, final @NonNull UUID participantId) {
         if (cars.isAbsent(car)) {
             throw new IllegalStateException(String.format("Car %s doesn't exist in lobby %s", car.getCarId(), getAggregateId()));
         }
@@ -170,10 +171,9 @@ public class Lobby extends AbstractEntity {
             throw new IllegalStateException("Cannot move driver out from his car");
         }
 
-        final Car currentCar = cars.getCar(participant.getAssignedCar()); //TODO: to jakies dziewne
-        cars.addCar(currentCar.disoccupySeat()); //nazwa teŻ
+        cars.disoccupySeatOfCar(participant.getAssignedCar());
         participant.reseatTo(car);
-        cars.addCar(newCar.occupySeat());
+        cars.occupySeatOfCar(newCar.getCarId());
     }
 
     private TravelParticipant findParticipant(final @NonNull UUID participantId) {
@@ -181,6 +181,27 @@ public class Lobby extends AbstractEntity {
             .filter(travelParticipant -> travelParticipant.hasUserId(participantId))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException(String.format("Participant %s is not present in lobby %s", participantId, getAggregateId())));
+    }
+
+    public void removeParticipant(final @NonNull UUID participantId) {
+        final TravelParticipant participant = findParticipant(participantId);
+
+        if (participant.is(lobbyCreator)) {
+            throw new IllegalArgumentException("Cant remove lobby creator");
+        }
+
+        if (participant.isDriver()) {
+            cars.removeCar(participant.getAssignedCar());
+            participants.removeIf(hasAssignedCar(participant.getAssignedCar()));
+            return;
+        }
+
+        cars.disoccupySeatOfCar(participant.getAssignedCar());
+        participants.remove(participant);
+    }
+
+    private Predicate<TravelParticipant> hasAssignedCar(final @NonNull CarId carId) {
+        return travelParticipant -> travelParticipant.hasCar(carId);
     }
 }
 

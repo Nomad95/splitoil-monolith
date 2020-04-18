@@ -125,4 +125,12 @@ public class LobbyService {
 
         return lobby.toDto();
     }
+
+    public LobbyOutputDto removeFromLobby(final RemoveParticipantFromLobbyCommand removeParticipantFromLobbyCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(removeParticipantFromLobbyCommand.getLobbyId());
+
+        lobby.removeParticipant(removeParticipantFromLobbyCommand.getParticipantId());
+
+        return lobby.toDto();
+    }
 }

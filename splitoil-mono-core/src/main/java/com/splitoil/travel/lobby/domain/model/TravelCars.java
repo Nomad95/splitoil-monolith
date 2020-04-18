@@ -49,6 +49,15 @@ public class TravelCars implements JsonEntity, Serializable {
         cars.put(carId.getCarId(), car.occupySeat());
     }
 
+    void disoccupySeatOfCar(final @NonNull CarId carId) {
+        if (!isPresent(carId)) {
+            throw new IllegalArgumentException(String.format("No such car - %s", carId.getCarId()));
+        }
+
+        final Car car = cars.get(carId.getCarId());
+        cars.put(carId.getCarId(), car.disoccupySeat());
+    }
+
     Car getCar(final @NonNull CarId carId) {
         if (!isPresent(carId)) {
             throw new IllegalArgumentException(String.format("No such car - %s", carId.getCarId()));
@@ -64,5 +73,11 @@ public class TravelCars implements JsonEntity, Serializable {
             .collect(Collectors.toUnmodifiableList());
     }
 
+    public void removeCar(final CarId carId) {
+        if (!isPresent(carId)) {
+            throw new IllegalArgumentException(String.format("Cannot remove. No such car - %s", carId.getCarId()));
+        }
 
+        cars.remove(carId.getCarId());
+    }
 }
