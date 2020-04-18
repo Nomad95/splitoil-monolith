@@ -20,7 +20,7 @@ class LobbyCreationTest extends LobbyTest {
 
     def "Driver should create lobby for new travel"() {
         given:
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
 
         and: "Driver does not have another lobby created simultaneously"
             // TODO: ???

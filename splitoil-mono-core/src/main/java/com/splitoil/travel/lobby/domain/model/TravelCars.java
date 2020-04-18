@@ -59,7 +59,9 @@ public class TravelCars implements JsonEntity, Serializable {
 
     //TODO: czy moze byc ref do DTOsow??
     List<CarDto> toDtoList() {
-        return cars.keySet().stream().map(id -> CarDto.builder().id(id).build()).collect(Collectors.toUnmodifiableList());
+        return cars.values().stream()
+            .map(car -> CarDto.builder().id(car.getCarId().getCarId()).seatsOccupied(car.getSeatsOccupied()).build())
+            .collect(Collectors.toUnmodifiableList());
     }
 
 

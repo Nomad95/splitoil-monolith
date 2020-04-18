@@ -20,7 +20,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
     def "Lobby creator disables particular participant from cost charging"() {
         setup: 'A new lobby with one car'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = lobbyWithCarAndPassenger()
 
         when: 'Lobby creator disables passenger from cost charging'
@@ -35,7 +35,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
     def "Lobby creator enables particular participant from cost charging"() {
         setup: 'A new lobby with one car'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = passengerHasDisabledCostCharging()
 
         when: 'Lobby creator enables passenger from cost charging'
@@ -49,7 +49,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
     def "Disabling particular participant from cost charging does not affect others"() {
         setup: 'A new lobby with one car'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = lobbyWithCarAndPassenger()
 
         when: 'Lobby creator disables passenger from cost charging'
@@ -62,8 +62,8 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
     def "Lobby creator can assign participant to another car"() {
         setup: 'lobby with two cars and one passenger'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
-            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
+            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 0)
             driverExists(DRIVER_ID, DRIVER_LOGIN)
             driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
             def lobby = lobbyWithTwoCarsAndOnePassenger()
@@ -76,9 +76,26 @@ class ParticipantMaintenanceTest extends LobbyTest {
             alteredLobby.participants[2].assignedCar == SECOND_CAR_ID
     }
 
+    def "Seats are consistent after reseating"() {
+        setup: 'lobby with two cars and one passenger'
+            carExists(CAR_ID, DRIVER_ID, 5, 0) //0 at creation, 1 with driver, 2 at adding first passenger
+            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 0)
+            driverExists(DRIVER_ID, DRIVER_LOGIN)
+            driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
+            def lobby = lobbyWithTwoCarsAndOnePassenger()
+
+        when: 'Assign passenger to another car'
+            def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
+            def alteredLobby = lobbyService.assignToCar(command)
+
+        then: 'first car has one place more second one place less'
+            alteredLobby.cars[0].seatsOccupied == 1
+            alteredLobby.cars[1].seatsOccupied == 2
+    }
+
     def "Lobby creator can't assign participant to another car when is full"() {
         setup: 'lobby with two cars and one passenger'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 4)
             driverExists(DRIVER_ID, DRIVER_LOGIN)
             driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
@@ -94,7 +111,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
     def "Lobby creator can't assign participant to non-existing car"() {
         setup: 'lobby with one car and one passenger'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             driverExists(DRIVER_ID, DRIVER_LOGIN)
             def lobby = lobbyWithCarAndPassenger()
 
@@ -108,8 +125,8 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
     def "Lobby creator can't reseat driver"() {
         setup: 'lobby with two cars and one passenger'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
-            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
+            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 0)
             driverExists(DRIVER_ID, DRIVER_LOGIN)
             driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
             def lobby = lobbyWithTwoCarsAndOnePassenger()
@@ -121,6 +138,20 @@ class ParticipantMaintenanceTest extends LobbyTest {
         then:
             thrown(IllegalStateException)
     }
+//
+//    def "Lobby creator can remove participant from lobby"() {
+//        setup: 'lobby with car and one passenger'
+//            carExists(CAR_ID, DRIVER_ID, 5, 2)
+//            driverExists(DRIVER_ID, DRIVER_LOGIN)
+//            def lobby = lobbyWithTwoCarsAndOnePassenger()
+//
+//        when: 'Assign passenger to another car'
+//            def command = AssignToCarCommand.of(lobby.lobbyId, DRIVER_ID, SECOND_CAR_ID)
+//            lobbyService.assignToCar(command)
+//
+//        then:
+//
+//    }
 
     private def aNewLobbyWithOneCar() {
         def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))

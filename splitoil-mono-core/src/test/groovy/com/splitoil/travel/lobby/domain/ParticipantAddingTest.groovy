@@ -23,7 +23,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Lobby creator adds a passenger to travel lobby"() {
         setup: 'A new lobby'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'
@@ -39,7 +39,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Lobby creator adds an ad hoc passenger to travel lobby"() {
         setup: 'A new lobby'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds passenger that is not registered in the app'
@@ -68,7 +68,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Should throw when creator adds a passenger to car that is not present in lobby"() {
         setup: 'A new lobby'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'
@@ -81,7 +81,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Should throw when creator adds a same passenger twice"() {
         setup: 'A new lobby'
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'

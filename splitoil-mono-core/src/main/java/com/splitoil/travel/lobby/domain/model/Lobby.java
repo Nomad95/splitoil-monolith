@@ -171,9 +171,9 @@ public class Lobby extends AbstractEntity {
         }
 
         final Car currentCar = cars.getCar(participant.getAssignedCar()); //TODO: to jakies dziewne
-        cars.addCar(currentCar.disoccupySeat());
-
+        cars.addCar(currentCar.disoccupySeat()); //nazwa teŻ
         participant.reseatTo(car);
+        cars.addCar(newCar.occupySeat());
     }
 
     private TravelParticipant findParticipant(final @NonNull UUID participantId) {

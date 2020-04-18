@@ -21,7 +21,7 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
     def "Lobby creator changes currency of particular participant"() {
         setup: 'A new lobby with one car'
             loggedDriver(DRIVER_ID, DRIVER_LOGIN)
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             passengerExists(PASSENGER_1_ID, PASSENGER_NAME, PLN)
             def lobby = lobbyWithCarAndPassenger()
 
@@ -37,7 +37,7 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
     def "Passenger has his default currency set when added to lobby"(Currency passengersDefault, String checkCurrency) {
         setup: 'A new lobby with one car and passenger with default currency of'
             loggedDriver(DRIVER_ID, DRIVER_LOGIN)
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             passengerExists(PASSENGER_1_ID, PASSENGER_NAME, passengersDefault.name())
 
         when: 'Create lobby and add passenger'
@@ -57,7 +57,7 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
     def "Driver has his default currency set when added to lobby"(Currency driverDefault, String checkCurrency) {
         setup: 'A new lobby with one car and driver with default currency of'
             loggedDriver(DRIVER_ID, DRIVER_LOGIN, driverDefault.name())
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             passengerExists(PASSENGER_1_ID, PASSENGER_NAME, driverDefault.name())
 
         when: 'Create lobby and add passenger'
@@ -77,7 +77,7 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
     def "Temporal user has his default currency set when added to lobby"(Currency lobbyCurrency, String checkCurrency) {
         setup: 'A new lobby with one car'
             loggedDriver(DRIVER_ID, DRIVER_LOGIN)
-            carExists(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
             //passengerExists(PASSENGER_1_ID, PASSENGER_NAME, driverDefault.name())
             lobbyHasDefaultCurrency(lobbyCurrency)
 

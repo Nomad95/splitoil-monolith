@@ -20,7 +20,7 @@ class LobbyConfigurationTest extends LobbyTest {
 
     def setup() {
         loggedDriver(DRIVER_ID, DRIVER_LOGIN)
-        carExists(CAR_ID, DRIVER_ID, 5, 1)
+        carExists(CAR_ID, DRIVER_ID, 5, 0)
     }
 
     def "Driver configures top rate per 1 km lobby for new travel"() {
