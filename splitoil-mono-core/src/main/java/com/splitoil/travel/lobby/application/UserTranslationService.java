@@ -30,11 +30,16 @@ public class UserTranslationService {
     public Participant getCurrentUserAsDriver() {
         final String currentUserLogin = SecurityUtils.getCurrentUserLogin();
         final ApplicationUserDto userByLogin = userFacade.getUserByLogin(currentUserLogin);
-        return lobbyCreator.createCarDriver(userByLogin.getId(), userByLogin.getLogin());
+        return lobbyCreator.createCarDriver(userByLogin.getId(), userByLogin.getLogin(), userByLogin.getDefaultCurrency());
+    }
+
+    public Participant getAsDriver(final UUID driverId) {
+        final ApplicationUserDto userByLogin = userFacade.getUserById(driverId);
+        return lobbyCreator.createCarDriver(userByLogin.getId(), userByLogin.getLogin(), userByLogin.getDefaultCurrency());
     }
 
     public Participant getPassenger(final UUID userId) {
         final ApplicationUserDto user = userFacade.getUserById(userId);
-        return lobbyCreator.createPassenger(user.getId(), user.getLogin());
+        return lobbyCreator.createPassenger(user.getId(), user.getLogin(), user.getDefaultCurrency());
     }
 }

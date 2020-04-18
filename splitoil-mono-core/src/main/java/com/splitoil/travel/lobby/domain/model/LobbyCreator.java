@@ -2,6 +2,7 @@ package com.splitoil.travel.lobby.domain.model;
 
 import com.splitoil.car.dto.CarFullDto;
 import com.splitoil.shared.UserCurrencyProvider;
+import com.splitoil.shared.model.Currency;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -24,16 +25,16 @@ public class LobbyCreator {
         return CarId.of(carId);
     }
 
-    public Participant createPassenger(final UUID id, final String displayName) {
-        return Participant.of(id, displayName, ParticipantType.PASSENGER);
+    public Participant createPassenger(final UUID id, final String displayName, final String travelCurrency) {
+        return Participant.of(id, displayName, ParticipantType.PASSENGER, Currency.valueOf(travelCurrency));
     }
 
-    public Participant createTemporalPassenger(final UUID id, final String displayName) {
-        return Participant.of(id, displayName, ParticipantType.TEMPORAL_PASSENGER);
+    public Participant createTemporalPassenger(final UUID id, final String displayName, final String travelCurrency) {
+        return Participant.of(id, displayName, ParticipantType.TEMPORAL_PASSENGER, Currency.valueOf(travelCurrency));
     }
 
-    public Participant createCarDriver(final UUID id, final String displayName) {
-        return Participant.of(id, displayName, ParticipantType.CAR_DRIVER);
+    public Participant createCarDriver(final UUID id, final String displayName, final String travelCurrency) {
+        return Participant.of(id, displayName, ParticipantType.CAR_DRIVER, Currency.valueOf(travelCurrency));
     }
 
     public Car createCar(final CarFullDto carDto) {

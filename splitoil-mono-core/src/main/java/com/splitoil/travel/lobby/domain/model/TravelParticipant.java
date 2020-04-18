@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = {"userId", "lobby"}, callSuper = false) //TODO: tak bo bedzie zmiana w AbstractEntity
+@EqualsAndHashCode(of = {"userId", "lobby"}, callSuper = false)
 public class TravelParticipant extends AbstractEntity {
 
     @NonNull
@@ -27,7 +27,7 @@ public class TravelParticipant extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Lobby lobby;
 
-    private CarId carId;
+    private CarId assignedCar;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
@@ -37,12 +37,35 @@ public class TravelParticipant extends AbstractEntity {
     @Enumerated(value = EnumType.STRING)
     private ParticipantType participantType;
 
+    @Builder.Default
+    @Column(columnDefinition = "boolean default true")
+    private boolean costCharging = true;
+
     LobbyParticipantDto toDto() {
         return LobbyParticipantDto.builder()
             .displayName(displayName)
             .userId(userId)
             .participantType(participantType.name())
+            .costChargingEnabled(costCharging)
+            .travelCurrency(travelCurrency.name())
+            .assignedCar(assignedCar.getCarId())
             .build();
+    }
+
+    boolean hasUserId(final @NonNull UUID userId) {
+        return this.userId.equals(userId);
+    }
+
+    public void toggleCostCharging() {
+        this.costCharging = !this.costCharging;
+    }
+
+    public void changeTravelCurrency(final @NonNull Currency currency) {
+        travelCurrency = currency;
+    }
+
+    public void reseatTo(final CarId car) {
+        assignedCar = car;
     }
 }
 

@@ -1,6 +1,7 @@
 package com.splitoil.travel.lobby.domain.model;
 
 import com.splitoil.shared.AbstractValue;
+import com.splitoil.shared.model.Currency;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -15,4 +16,5 @@ public class Participant extends AbstractValue {
     private UUID participantId;
     private String displayName;
     private ParticipantType participantType;
+    private Currency travelCurrency;
 }

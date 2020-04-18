@@ -30,11 +30,23 @@ public class Car extends AbstractValue implements Serializable {
         return seatsOccupied == numberOfSeats;
     }
 
+    boolean isEmpty() {
+        return seatsOccupied == 0;
+    }
+
     Car occupySeat() {
         if (isFull()) {
             throw new IllegalStateException("Cannot occupy another seat. Car is full");
         }
 
         return Car.of(carId, driverId, numberOfSeats, seatsOccupied + 1);
+    }
+
+    Car disoccupySeat() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Cannot occupy another seat. Car is full");
+        }
+
+        return Car.of(carId, driverId, numberOfSeats, seatsOccupied - 1);
     }
 }

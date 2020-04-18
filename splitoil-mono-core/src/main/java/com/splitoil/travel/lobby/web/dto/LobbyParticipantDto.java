@@ -12,5 +12,8 @@ import java.util.UUID;
 public class LobbyParticipantDto {
     @NonNull private String displayName;
     @NonNull private UUID userId;
+    @NonNull private UUID assignedCar;
     @NonNull private String participantType;
+    private boolean costChargingEnabled;
+    @NonNull private String travelCurrency;
 }

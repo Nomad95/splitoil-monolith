@@ -1,12 +1,15 @@
 package com.splitoil.travel.lobby.domain.model;
 
 import com.splitoil.infrastructure.json.JsonEntity;
+import com.splitoil.travel.lobby.web.dto.CarDto;
 import lombok.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -29,6 +32,10 @@ public class TravelCars implements JsonEntity, Serializable {
         return cars.containsKey(carId.getCarId());
     }
 
+    boolean isAbsent(final @NonNull CarId carId) {
+        return !isPresent(carId);
+    }
+
     void addCar(final @NonNull Car car) {
         cars.put(car.getCarId().getCarId(), car);
     }
@@ -49,5 +56,11 @@ public class TravelCars implements JsonEntity, Serializable {
 
         return cars.get(carId.getCarId());
     }
+
+    //TODO: czy moze byc ref do DTOsow??
+    List<CarDto> toDtoList() {
+        return cars.keySet().stream().map(id -> CarDto.builder().id(id).build()).collect(Collectors.toUnmodifiableList());
+    }
+
 
 }

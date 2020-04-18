@@ -31,3 +31,5 @@ Feature: Driver with car can create travel by defining a lobby
     Then user is assigned to a car
     When driver deletes passenger from lobby
     Then passenger is no longer in lobby
+
+    # TODO: zobacz co jest encją a co tylko UUIdem zrob cos

@@ -110,7 +110,7 @@ public class LobbyController {
     @PostMapping("participant/temporalpassenger")
     public EntityModel<LobbyOutputDto> addExternalPassengerToLobby(
         @RequestBody @Valid @NonNull final AddTemporalPassengerToLobbyCommand addTemporalPassengerToLobbyCommand) {
-        final LobbyOutputDto lobby = lobbyService.addExternalPassenger(addTemporalPassengerToLobbyCommand);
+        final LobbyOutputDto lobby = lobbyService.addTemporalPassenger(addTemporalPassengerToLobbyCommand);
 
         final Link self = linkTo(LobbyController.class).slash("participant/temporalpassenger").withSelfRel();
 

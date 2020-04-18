@@ -16,4 +16,5 @@ public class LobbyOutputDto {
     @NonNull private BigDecimal topRatePer1km;
     @NonNull private String travelCurrency;
     private List<LobbyParticipantDto> participants;
+    private List<CarDto> cars;
 }

@@ -20,7 +20,7 @@ class LobbyConfigurationTest extends LobbyTest {
 
     def setup() {
         loggedDriver(DRIVER_ID, DRIVER_LOGIN)
-        addCar(CAR_ID, DRIVER_ID, 5, 1)
+        carExists(CAR_ID, DRIVER_ID, 5, 1)
     }
 
     def "Driver configures top rate per 1 km lobby for new travel"() {
@@ -111,7 +111,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = carlessLobby()
 
         when: 'Adding a car to lobby'
-            lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID))
+            lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
             def alteredLobby = lobbyService.getLobby(lobby.lobbyId)
 
         then: 'Driver is added as a participant'
@@ -126,7 +126,7 @@ class LobbyConfigurationTest extends LobbyTest {
 
     private def aNewLobby() {
         def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID))
+        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         return lobby;
     }

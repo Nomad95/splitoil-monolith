@@ -39,7 +39,7 @@ public class LobbyService {
     public LobbyOutputDto addCarToLobby(final AddCarToTravelCommand addCarToTravelCommand) {
         final Car car = carTranslationService.getCar(addCarToTravelCommand.getCarId());
         final Lobby lobby = lobbyRepository.getByAggregateId(addCarToTravelCommand.getLobbyId());
-        final Participant carDriver = userTranslationService.getCurrentUserAsDriver();
+        final Participant carDriver = userTranslationService.getCurrentUserAsDriver();//TODO: dodanie
 
         lobby.addCar(car);
         lobby.addPassengerToCar(carDriver, car.getCarId());
@@ -85,13 +85,43 @@ public class LobbyService {
         return lobby.toDto();
     }
 
-    public LobbyOutputDto addExternalPassenger(final AddTemporalPassengerToLobbyCommand addTemporalPassengerToLobbyCommand) {
+    public LobbyOutputDto addTemporalPassenger(final AddTemporalPassengerToLobbyCommand addTemporalPassengerToLobbyCommand) {
         final Lobby lobby = lobbyRepository.getByAggregateId(addTemporalPassengerToLobbyCommand.getLobbyId());
-        final Participant passenger = creator.createTemporalPassenger(UUID.randomUUID(), addTemporalPassengerToLobbyCommand.getDisplayName());
+        final Participant passenger = creator
+            .createTemporalPassenger(UUID.randomUUID(), addTemporalPassengerToLobbyCommand.getDisplayName(), lobby.getTravelCurrency().name());
         final CarId car = creator.createCarId(addTemporalPassengerToLobbyCommand.getCarId());
 
         lobby.addPassengerToCar(passenger, car);
         eventPublisher.publish(new ParticipantAddedToLobby(lobby.getAggregateId(), passenger.getParticipantId(), car.getCarId()));
+
+        return lobby.toDto();
+    }
+
+    public LobbyOutputDto toggleCostCharging(final ToggleParticipantsCostChargingCommand toggleParticipantsCostChargingCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(toggleParticipantsCostChargingCommand.getLobbyId());
+        final UUID participantId = toggleParticipantsCostChargingCommand.getParticipantId();
+
+        lobby.toggleCostCharging(participantId);
+
+        return lobby.toDto();
+    }
+
+    public LobbyOutputDto changeParticipantsCurrency(final ChangeParticipantsTravelCurrencyCommand changeParticipantsTravelCurrencyCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(changeParticipantsTravelCurrencyCommand.getLobbyId());
+        final Currency currency = Currency.valueOf(changeParticipantsTravelCurrencyCommand.getCurrency());
+        final UUID participantId = changeParticipantsTravelCurrencyCommand.getParticipantId();
+
+        lobby.changeParticipantTravelCurrency(participantId, currency);
+
+        return lobby.toDto();
+    }
+
+    public LobbyOutputDto assignToCar(final AssignToCarCommand assignToCarCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(assignToCarCommand.getLobbyId());
+
+        final CarId car = creator.createCarId(assignToCarCommand.getCarId());
+        final UUID participantId = assignToCarCommand.getParticipantId();
+        lobby.assignParticipantToCar(car, participantId);
 
         return lobby.toDto();
     }

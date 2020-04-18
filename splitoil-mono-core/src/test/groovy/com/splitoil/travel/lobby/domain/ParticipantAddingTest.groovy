@@ -18,12 +18,12 @@ class ParticipantAddingTest extends LobbyTest {
 
     def setup() {
         loggedDriver(DRIVER_ID, DRIVER_LOGIN)
-        passenger(PASSENGER_1_ID, PASSENGER_NAME)
+        passengerExists(PASSENGER_1_ID, PASSENGER_NAME, PLN)
     }
 
     def "Lobby creator adds a passenger to travel lobby"() {
         setup: 'A new lobby'
-            addCar(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'
@@ -39,12 +39,12 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Lobby creator adds an ad hoc passenger to travel lobby"() {
         setup: 'A new lobby'
-            addCar(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds passenger that is not registered in the app'
             def command = AddTemporalPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_NAME, CAR_ID)
-            def alteredLobby = lobbyService.addExternalPassenger(command)
+            def alteredLobby = lobbyService.addTemporalPassenger(command)
 
         then: 'Lobby has a temporal passenger'
             alteredLobby.lobbyId == lobby.lobbyId
@@ -55,7 +55,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Should throw when creator adds a passenger to car that is full"() {
         setup: 'A new lobby'
-            addCar(CAR_ID, DRIVER_ID, 5, 4)//TODO ogarnac liczby
+            carExists(CAR_ID, DRIVER_ID, 5, 4)//TODO ogarnac liczby
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'
@@ -68,7 +68,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Should throw when creator adds a passenger to car that is not present in lobby"() {
         setup: 'A new lobby'
-            addCar(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'
@@ -81,7 +81,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Should throw when creator adds a same passenger twice"() {
         setup: 'A new lobby'
-            addCar(CAR_ID, DRIVER_ID, 5, 1)
+            carExists(CAR_ID, DRIVER_ID, 5, 1)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'
@@ -95,7 +95,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     private def aNewLobbyWithOneCar() {
         def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID))
+        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         return lobby;
     }

@@ -13,10 +13,11 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
-@Getter
+@Getter//TODO: tylko package
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -28,12 +29,12 @@ public class Lobby extends AbstractEntity {
         IN_CREATION,
         IN_CONFIGURATION,
         IN_TRAVEL,
-        ENDED
-    }
+        ENDED;
 
+
+    }
     @NotBlank
     private String name;
-
     @NonNull
     private Driver lobbyCreator;
 
@@ -80,6 +81,7 @@ public class Lobby extends AbstractEntity {
             .topRatePer1km(topRatePer1km)
             .travelCurrency(travelCurrency.name())
             .participants(participants.stream().map(TravelParticipant::toDto).collect(Collectors.toUnmodifiableList()))
+            .cars(cars.toDtoList())
             .build();
     }
 
@@ -118,29 +120,63 @@ public class Lobby extends AbstractEntity {
 
         final TravelParticipant participant = TravelParticipant.builder()
             .displayName(travelParticipant.getDisplayName())
-            .travelCurrency(travelCurrency)
+            .travelCurrency(travelParticipant.getTravelCurrency())
             .userId(travelParticipant.getParticipantId())
-            .carId(carId)
+            .assignedCar(carId)
             .participantType(travelParticipant.getParticipantType())
             .lobby(this)
             .build();
 
         if (participants.contains(participant)) {
-            throw new IllegalStateException("This passenger is already in this lobby");
+            throw new IllegalStateException(String.format("Passenger %s is already in this lobby", travelParticipant.getDisplayName()));
         }
 
         if (!cars.isPresent(carId)) {
-            throw new IllegalStateException("Car doesn't exist in this lobby");
+            throw new IllegalStateException(String.format("Car %s doesn't exist in this lobby", carId.getCarId()));
         }
 
         final Car car = cars.getCar(carId);
 
         if (car.isFull()) {
-            throw new IllegalStateException("Can't add another passenger to this car. Car is full");
+            throw new IllegalStateException(String.format("Can't add another passenger to car %s. Car is full", carId.getCarId()));
         }
 
         cars.occupySeatOfCar(carId);
         participants.add(participant);
+    }
+
+    public void toggleCostCharging(final @NonNull UUID participantId) {
+        final TravelParticipant participant = findParticipant(participantId);
+        participant.toggleCostCharging();
+    }
+
+    public void changeParticipantTravelCurrency(final @NonNull UUID participantId, final @NonNull Currency currency) {
+        findParticipant(participantId).changeTravelCurrency(currency);
+    }
+
+    public void assignParticipantToCar(final CarId car, final UUID participantId) {
+        if (cars.isAbsent(car)) {
+            throw new IllegalStateException("Car doesn't exist in this lobby");
+        }
+
+        final Car newCar = cars.getCar(car);
+        if (newCar.isFull()) {
+            throw new IllegalStateException("Cannot assign more passengers to car " + car.getCarId());
+        }
+
+        final TravelParticipant participant = findParticipant(participantId);
+
+        final Car currentCar = cars.getCar(participant.getAssignedCar()); //TODO: to jakies dziewne
+        cars.addCar(currentCar.disoccupySeat());
+
+        participant.reseatTo(car);
+    }
+
+    private TravelParticipant findParticipant(final @NonNull UUID participantId) {
+        return participants.stream()
+            .filter(travelParticipant -> travelParticipant.hasUserId(participantId))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Participant %s is not present in lobby %s", participantId, getAggregateId())));
     }
 }
 
