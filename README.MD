@@ -42,3 +42,9 @@ for participants chat, and for brief travel configuration. Additionally lobby is
 send invitations for users and to add participants manually (When they are not registered 
 in application but are needed for fee distribution). In lobby, lobby creator defines travel plan that is 
 visible to other users in lobby. When lobby creator accepts plan a Travel is created.  
+
+
+#### Mutation tests 
+
+I am skipping some mutation test outputs as its too time-consuming and this project is not meant to be fully working. This projects focuses more on DDD 
+not on tests. Mutation tests are here only to experiment with various frameworks and libraries.
