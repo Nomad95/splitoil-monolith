@@ -111,6 +111,6 @@ task cucumber() {
 
 // Mutation tests
 pitest {
-    targetClasses = ['com.splitoil.gasstation.domain.*', 'com.splitoil.car.domain.*']
+    targetClasses = ['com.splitoil.gasstation.domain.*', 'com.splitoil.car.domain.*', 'com.splitoil.travel.lobby.domain.model.*']
     mutators = ['DEFAULTS', 'EMPTY_RETURNS', 'NULL_RETURNS']
 }
