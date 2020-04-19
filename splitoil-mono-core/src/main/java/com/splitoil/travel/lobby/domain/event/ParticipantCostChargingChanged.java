@@ -13,5 +13,5 @@ public class ParticipantCostChargingChanged implements DomainEvent {
     @NonNull UUID aggregateId;
     @NonNull Instant createdAt = Instant.now();
     @NonNull UUID participantId;
-    @NonNull boolean costChargingEnabled;
+    boolean costChargingEnabled;
 }

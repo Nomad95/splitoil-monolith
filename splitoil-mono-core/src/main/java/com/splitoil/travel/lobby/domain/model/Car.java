@@ -3,12 +3,15 @@ package com.splitoil.travel.lobby.domain.model;
 import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @Embeddable
+@Access(AccessType.FIELD)
 @EqualsAndHashCode(callSuper = false, of = {"carId", "driverId"})
 @AllArgsConstructor(staticName = "of", access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -44,7 +47,7 @@ public class Car extends AbstractValue implements Serializable {
 
     Car disoccupySeat() {
         if (isEmpty()) {
-            throw new IllegalStateException("Cannot occupy another seat. Car is full");
+            throw new IllegalStateException("Cannot disoccupy seat. Empty");
         }
 
         return Car.of(carId, driverId, numberOfSeats, seatsOccupied - 1);

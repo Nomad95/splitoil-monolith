@@ -11,5 +11,5 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarDto {
     @NonNull private UUID id;
-    @NonNull private int seatsOccupied;
+    private int seatsOccupied;
 }
