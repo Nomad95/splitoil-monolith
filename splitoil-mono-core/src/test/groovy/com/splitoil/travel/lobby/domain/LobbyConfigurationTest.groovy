@@ -3,10 +3,7 @@ package com.splitoil.travel.lobby.domain
 import com.splitoil.UnitTest
 import com.splitoil.shared.model.Currency
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
-import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
-import com.splitoil.travel.lobby.web.dto.ChangeTravelDefaultCurrencyCommand
-import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
-import com.splitoil.travel.lobby.web.dto.SetTravelTopRatePer1kmCommand
+import com.splitoil.travel.lobby.web.dto.*
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See
@@ -84,6 +81,17 @@ class LobbyConfigurationTest extends LobbyTest {
 
         when:
             lobbyService.changeTravelDefaultCurrency(ChangeTravelDefaultCurrencyCommand.of(lobby.lobbyId, USD))
+
+        then:
+            thrown(IllegalStateException)
+    }
+
+    def "Cannot add participants before adding car"() {
+        given:
+            def lobby = carlessLobby()
+
+        when:
+            lobbyService.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
 
         then:
             thrown(IllegalStateException)

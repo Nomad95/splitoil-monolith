@@ -15,7 +15,8 @@ import java.util.UUID;
 public class CarId extends AbstractValue implements Serializable {
     @NonNull private UUID carId;
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return carId.toString();
     }
 }

@@ -43,4 +43,20 @@ class LobbyCreationTest extends LobbyTest {
             finalLobbyOutput.lobbyStatus == "IN_CONFIGURATION"
     }
 
+    def "Can't add same car twice"() {
+        given:
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
+            def lobby = carlessLobby()
+
+        when:
+            lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+            def result = lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+
+        then:
+            thrown(IllegalStateException)
+    }
+
+    def carlessLobby() {
+        return lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+    }
 }
