@@ -46,7 +46,7 @@ public class TravelCars implements JsonEntity, Serializable {
         }
 
         final Car car = cars.get(carId.getCarId());
-        cars.put(carId.getCarId(), car.occupySeat());
+        car.occupySeat();
     }
 
     void disoccupySeatOfCar(final @NonNull CarId carId) {
@@ -55,7 +55,7 @@ public class TravelCars implements JsonEntity, Serializable {
         }
 
         final Car car = cars.get(carId.getCarId());
-        cars.put(carId.getCarId(), car.disoccupySeat());
+        car.disoccupySeat();
     }
 
     Car getCar(final @NonNull CarId carId) {

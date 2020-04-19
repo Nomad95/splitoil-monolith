@@ -1,6 +1,5 @@
 package com.splitoil.travel.lobby.domain.model;
 
-import com.splitoil.shared.AbstractValue;
 import lombok.*;
 
 import javax.persistence.Access;
@@ -15,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false, of = {"carId", "driverId"})
 @AllArgsConstructor(staticName = "of", access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Car extends AbstractValue implements Serializable {
+public class Car implements Serializable {
     @NonNull private CarId carId;
     @NonNull private UUID driverId;
     private int numberOfSeats;
@@ -37,19 +36,19 @@ public class Car extends AbstractValue implements Serializable {
         return seatsOccupied == 0;
     }
 
-    Car occupySeat() {
+    void occupySeat() {
         if (isFull()) {
             throw new IllegalStateException("Cannot occupy another seat. Car is full");
         }
 
-        return Car.of(carId, driverId, numberOfSeats, seatsOccupied + 1);
+        seatsOccupied++;
     }
 
-    Car disoccupySeat() {
+    void disoccupySeat() {
         if (isEmpty()) {
             throw new IllegalStateException("Cannot disoccupy seat. Empty");
         }
 
-        return Car.of(carId, driverId, numberOfSeats, seatsOccupied - 1);
+        seatsOccupied--;
     }
 }

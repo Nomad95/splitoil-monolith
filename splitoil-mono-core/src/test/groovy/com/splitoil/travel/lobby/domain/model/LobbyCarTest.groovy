@@ -12,7 +12,7 @@ class LobbyCarTest extends LobbyModelTest {
             def car = Car.withDriver(CarId.of(CAR_ID), DRIVER_ID, 1)
 
         when:
-            car = car.disoccupySeat()
+            car.disoccupySeat()
             car.disoccupySeat()
 
         then:
