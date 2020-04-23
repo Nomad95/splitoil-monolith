@@ -56,27 +56,27 @@ public class TravelParticipant extends AbstractEntity {//TODO: zmiana na bez agg
         return this.userId.equals(userId);
     }
 
-    public void toggleCostCharging() {
+    void toggleCostCharging() {
         this.costCharging = !this.costCharging;
     }
 
-    public void changeTravelCurrency(final @NonNull Currency currency) {
+    void changeTravelCurrency(final @NonNull Currency currency) {
         travelCurrency = currency;
     }
 
-    public void reseatTo(final CarId car) {
+    void reseatTo(final CarId car) {
         assignedCar = car;
     }
 
-    public boolean isDriver() {
+    boolean isDriver() {
         return participantType == ParticipantType.CAR_DRIVER;
     }
 
-    public boolean hasCar(final @NonNull CarId car) {
+    boolean hasCar(final @NonNull CarId car) {
         return car.equals(assignedCar);
     }
 
-    public boolean is(final Driver driver) {
+    boolean is(final Driver driver) {
         return userId.equals(driver.getDriverId());
     }
 }

@@ -28,7 +28,7 @@ class ParticipantAddingTest extends LobbyTest {
 
         when: 'Lobby creator adds a passenger'
             def command = AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID)
-            def alteredLobby = lobbyService.addPassenger(command)
+            def alteredLobby = lobbyFacade.addPassenger(command)
 
         then: 'Lobby has a passenger'
             alteredLobby.lobbyId == lobby.lobbyId
@@ -44,7 +44,7 @@ class ParticipantAddingTest extends LobbyTest {
 
         when: 'Lobby creator adds passenger that is not registered in the app'
             def command = AddTemporalPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_NAME, CAR_ID)
-            def alteredLobby = lobbyService.addTemporalPassenger(command)
+            def alteredLobby = lobbyFacade.addTemporalPassenger(command)
 
         then: 'Lobby has a temporal passenger'
             alteredLobby.lobbyId == lobby.lobbyId
@@ -60,7 +60,7 @@ class ParticipantAddingTest extends LobbyTest {
 
         when: 'Lobby creator adds a passenger'
             def command = AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID)
-            lobbyService.addPassenger(command)
+            lobbyFacade.addPassenger(command)
 
         then:
             thrown(IllegalStateException.class)
@@ -73,7 +73,7 @@ class ParticipantAddingTest extends LobbyTest {
 
         when: 'Lobby creator adds a passenger'
             def command = AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, UUID.randomUUID())
-            lobbyService.addPassenger(command)
+            lobbyFacade.addPassenger(command)
 
         then:
             thrown(IllegalStateException.class)
@@ -86,16 +86,16 @@ class ParticipantAddingTest extends LobbyTest {
 
         when: 'Lobby creator adds a passenger'
             def command = AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID)
-            lobbyService.addPassenger(command)
-            lobbyService.addPassenger(command)
+            lobbyFacade.addPassenger(command)
+            lobbyFacade.addPassenger(command)
 
         then:
             thrown(IllegalStateException.class)
     }
 
     private def aNewLobbyWithOneCar() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         return lobby;
     }

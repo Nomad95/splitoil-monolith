@@ -28,7 +28,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
         when: 'Lobby creator disables passenger from cost charging'
             def command = ToggleParticipantsCostChargingCommand.of(lobby.lobbyId, PASSENGER_1_ID)
-            def alteredLobby = lobbyService.toggleCostCharging(command)
+            def alteredLobby = lobbyFacade.toggleCostCharging(command)
 
         then: "Passenger's disabled from cost charging"
             alteredLobby.participants[1].displayName == PASSENGER_NAME
@@ -43,7 +43,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
         when: 'Lobby creator enables passenger from cost charging'
             def command = ToggleParticipantsCostChargingCommand.of(lobby.lobbyId, PASSENGER_1_ID)
-            def alteredLobby = lobbyService.toggleCostCharging(command)
+            def alteredLobby = lobbyFacade.toggleCostCharging(command)
 
         then: "Passenger's enabled from cost charging"
             alteredLobby.participants[1].displayName == PASSENGER_NAME
@@ -57,29 +57,29 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
         when: 'Lobby creator disables passenger from cost charging'
             def command = ToggleParticipantsCostChargingCommand.of(lobby.lobbyId, PASSENGER_1_ID)
-            def alteredLobby = lobbyService.toggleCostCharging(command)
+            def alteredLobby = lobbyFacade.toggleCostCharging(command)
 
         then: 'Other not changed'
             alteredLobby.participants[0].costChargingEnabled
     }
 
     private def aNewLobbyWithOneCar() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         return lobby;
     }
 
     private def lobbyWithCarAndPassenger() {
         def lobby = aNewLobbyWithOneCar()
-        def alteredLobby = lobbyService.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
+        def alteredLobby = lobbyFacade.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
         return alteredLobby
     }
 
     private def passengerHasDisabledCostCharging() {
         def lobby = lobbyWithCarAndPassenger()
         def command = ToggleParticipantsCostChargingCommand.of(lobby.lobbyId, PASSENGER_1_ID)
-        def alteredLobby = lobbyService.toggleCostCharging(command)
+        def alteredLobby = lobbyFacade.toggleCostCharging(command)
 
         return alteredLobby
     }

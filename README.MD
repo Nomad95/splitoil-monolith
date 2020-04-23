@@ -48,3 +48,10 @@ visible to other users in lobby. When lobby creator accepts plan a Travel is cre
 
 I am skipping some mutation test outputs as its too time-consuming and this project is not meant to be fully working. This projects focuses more on DDD 
 not on tests. Mutation tests are here only to experiment with various frameworks and libraries.
+
+
+
+## Notes
+
+"When a significant process or transformation in the domain is not a natural responsibility of an ENTITY or VALUE OBJECT, add an operation to the 
+model as standalone interface declared as a SERVICE."

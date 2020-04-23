@@ -16,4 +16,11 @@ public class LobbyParticipantDto {
     @NonNull private String participantType;
     private boolean costChargingEnabled;
     @NonNull private String travelCurrency;
+
+    public LobbyParticipantForTravelPlanDto toForTravelDto() {
+        return LobbyParticipantForTravelPlanDto.builder()
+            .assignedCar(assignedCar)
+            .userId(userId)
+            .build();
+    }
 }

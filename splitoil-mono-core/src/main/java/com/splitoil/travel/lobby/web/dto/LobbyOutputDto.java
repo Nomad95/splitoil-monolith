@@ -1,6 +1,7 @@
 package com.splitoil.travel.lobby.web.dto;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +16,7 @@ public class LobbyOutputDto {
     @NonNull private String lobbyStatus;
     @NonNull private BigDecimal topRatePer1km;
     @NonNull private String travelCurrency;
+    @Nullable private UUID travelId;
     private List<LobbyParticipantDto> participants;
     private List<CarDto> cars;
 }

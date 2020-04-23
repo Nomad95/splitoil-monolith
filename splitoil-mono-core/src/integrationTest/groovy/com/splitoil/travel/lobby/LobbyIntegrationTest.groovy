@@ -183,4 +183,21 @@ class LobbyIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.participants[1].assignedCar').value(SECOND_CAR_UUID.toString()))
     }
 
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql', '/db/user/user_passenger.sql',
+            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql', '/db/travel/lobby/travel_participant_passenger.sql'])
+    def "Driver can start defining travelling plan"() {
+        given:
+            def startDefiningTravelPlanCommand = StartDefiningTravelPlanCommand.of(LOBBY_UUID)
+
+        when:
+            def result = mockMvc.perform(post("/lobby/starttravelplan")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(startDefiningTravelPlanCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isAccepted())
+    }
+
 }

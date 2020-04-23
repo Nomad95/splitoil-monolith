@@ -14,17 +14,19 @@ import java.util.UUID;
 @Transactional
 @ApplicationService
 @AllArgsConstructor
-public class LobbyService {
+public class LobbyFacade {
 
-    private LobbyCreator creator;
+    private final LobbyCreator creator;
 
-    private LobbyRepository lobbyRepository;
+    private final LobbyRepository lobbyRepository;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
-    private UserTranslationService userTranslationService;
+    private final UserTranslationService userTranslationService;
 
-    private CarTranslationService carTranslationService;
+    private final CarTranslationService carTranslationService;
+
+    private final LobbyService lobbyService;
 
     //TODO: przez ile lobby moze byc w tym stanie?
     public LobbyOutputDto createLobby(final CreateLobbyCommand createLobbyCommand) {
@@ -137,5 +139,13 @@ public class LobbyService {
         eventPublisher.publish(new ParticipantRemovedFromLobby(lobby.getAggregateId(), participantId));
 
         return lobby.toDto();
+    }
+
+    public void startDefiningTravelPlan(final StartDefiningTravelPlanCommand startDefiningTravelPlanCommand) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(startDefiningTravelPlanCommand.getLobbyId());
+
+        final TravelCreationRequested createTravelCommand = lobbyService.startDefiningTravelPlan(lobby);
+
+        eventPublisher.publish(createTravelCommand);
     }
 }

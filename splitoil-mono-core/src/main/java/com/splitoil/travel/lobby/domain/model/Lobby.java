@@ -4,6 +4,7 @@ import com.splitoil.infrastructure.json.JsonUserType;
 import com.splitoil.shared.AbstractEntity;
 import com.splitoil.shared.model.Currency;
 import com.splitoil.travel.lobby.web.dto.LobbyOutputDto;
+import com.splitoil.travel.lobby.web.dto.LobbyParticipantDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
@@ -18,7 +19,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Entity
-@Getter//TODO: tylko package
+@Getter
 @Builder(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -211,6 +212,19 @@ public class Lobby extends AbstractEntity {
             .map(TravelParticipant::isCostCharging)
             .orElseThrow(() -> new IllegalArgumentException("Participant " + participantId + " not found in lobby " + getAggregateId()));
     }
+
+    boolean canStartDefiningTravel() {
+        return lobbyStatus == LobbyStatus.IN_CONFIGURATION &&
+            !cars.hasNoCars() &&
+            participants.size() >= cars.countCars();
+    }
+
+    List<LobbyParticipantDto> getParticipants() {
+        return participants.stream()
+            .map(TravelParticipant::toDto)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
 }
 
 

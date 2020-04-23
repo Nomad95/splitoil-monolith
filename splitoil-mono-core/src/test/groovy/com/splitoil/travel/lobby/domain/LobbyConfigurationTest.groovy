@@ -25,7 +25,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = aNewLobby()
 
         when: 'Driver sets top rate per 1km to'
-            lobby = lobbyService.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("3.50")))
+            lobby = lobbyFacade.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("3.50")))
 
         then: 'Rate is visible'
             lobby.topRatePer1km == new BigDecimal("3.50")
@@ -36,7 +36,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = carlessLobby()
 
         when:
-            lobbyService.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("3.50")))
+            lobbyFacade.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("3.50")))
 
         then:
             thrown(IllegalStateException)
@@ -47,7 +47,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = aNewLobby()
 
         when:
-            lobbyService.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("-3.50")))
+            lobbyFacade.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("-3.50")))
 
         then:
             thrown(IllegalArgumentException)
@@ -58,7 +58,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = aNewLobby()
 
         when:
-            lobbyService.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("0")))
+            lobbyFacade.setTravelTopRatePer1km(SetTravelTopRatePer1kmCommand.of(lobby.lobbyId, new BigDecimal("0")))
 
         then:
             thrown(IllegalArgumentException)
@@ -69,7 +69,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = aNewLobby()
 
         when: 'Driver sets travel currency'
-            lobby = lobbyService.changeTravelDefaultCurrency(ChangeTravelDefaultCurrencyCommand.of(lobby.lobbyId, USD))
+            lobby = lobbyFacade.changeTravelDefaultCurrency(ChangeTravelDefaultCurrencyCommand.of(lobby.lobbyId, USD))
 
         then: 'Travel currency is visible'
             lobby.travelCurrency == USD
@@ -80,7 +80,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = carlessLobby()
 
         when:
-            lobbyService.changeTravelDefaultCurrency(ChangeTravelDefaultCurrencyCommand.of(lobby.lobbyId, USD))
+            lobbyFacade.changeTravelDefaultCurrency(ChangeTravelDefaultCurrencyCommand.of(lobby.lobbyId, USD))
 
         then:
             thrown(IllegalStateException)
@@ -91,7 +91,7 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = carlessLobby()
 
         when:
-            lobbyService.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
+            lobbyFacade.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
 
         then:
             thrown(IllegalStateException)
@@ -119,8 +119,8 @@ class LobbyConfigurationTest extends LobbyTest {
             def lobby = carlessLobby()
 
         when: 'Adding a car to lobby'
-            lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
-            def alteredLobby = lobbyService.getLobby(lobby.lobbyId)
+            lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+            def alteredLobby = lobbyFacade.getLobby(lobby.lobbyId)
 
         then: 'Driver is added as a participant'
             alteredLobby.lobbyId == lobby.lobbyId
@@ -133,14 +133,14 @@ class LobbyConfigurationTest extends LobbyTest {
     //should get default driver currency for travel
 
     private def aNewLobby() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         return lobby;
     }
 
     private def carlessLobby() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
 
         return lobby;
     }

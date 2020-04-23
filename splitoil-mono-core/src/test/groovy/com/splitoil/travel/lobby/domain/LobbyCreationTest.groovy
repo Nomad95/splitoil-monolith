@@ -26,15 +26,15 @@ class LobbyCreationTest extends LobbyTest {
             // TODO: ???
 
         when: "Driver creates new lobby"
-            def lobbyOutput = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+            def lobbyOutput = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
 
         then:
             lobbyOutput.lobbyId != null
             lobbyOutput.lobbyStatus == "IN_CREATION"
 
         when: "Driver has chosen a car"
-            def result = lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobbyOutput.lobbyId, CAR_ID, DRIVER_ID))
-            def finalLobbyOutput = lobbyService.getLobby(lobbyOutput.lobbyId)
+            def result = lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobbyOutput.lobbyId, CAR_ID, DRIVER_ID))
+            def finalLobbyOutput = lobbyFacade.getLobby(lobbyOutput.lobbyId)
 
         then: "Car is added to lobby"
             result.cars[0].id == CAR_ID
@@ -49,14 +49,14 @@ class LobbyCreationTest extends LobbyTest {
             def lobby = carlessLobby()
 
         when:
-            lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
-            def result = lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+            lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+            def result = lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         then:
             thrown(IllegalStateException)
     }
 
     def carlessLobby() {
-        return lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        return lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
     }
 }

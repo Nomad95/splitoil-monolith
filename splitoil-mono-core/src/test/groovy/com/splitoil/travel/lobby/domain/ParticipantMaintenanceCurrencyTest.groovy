@@ -27,7 +27,7 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
 
         when: "Lobby creator changes passenger's travel currency"
             def command = ChangeParticipantsTravelCurrencyCommand.of(lobby.lobbyId, PASSENGER_1_ID, EUR)
-            def alteredLobby = lobbyService.changeParticipantsCurrency(command)
+            def alteredLobby = lobbyFacade.changeParticipantsCurrency(command)
 
         then: "Passenger's changed travel currency"
             alteredLobby.participants[1].displayName == PASSENGER_NAME
@@ -96,16 +96,16 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
     }
 
     private def lobbyWithCarAndPassenger() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
-        def alteredLobby = lobbyService.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        def alteredLobby = lobbyFacade.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
         return alteredLobby
     }
 
     private def lobbyWithCarAndTemporalPassenger() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
-        def alteredLobby = lobbyService.addTemporalPassenger(AddTemporalPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_NAME, CAR_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        def alteredLobby = lobbyFacade.addTemporalPassenger(AddTemporalPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_NAME, CAR_ID))
         return alteredLobby
     }
 

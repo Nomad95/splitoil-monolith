@@ -2,13 +2,13 @@ package com.splitoil.travel.lobby.infrastructure;
 
 import com.splitoil.shared.UserCurrencyProvider;
 import com.splitoil.shared.event.EventPublisher;
-import com.splitoil.shared.event.publisher.NoopEventPublisher;
 import com.splitoil.shared.model.Currency;
 import com.splitoil.travel.lobby.application.CarTranslationService;
-import com.splitoil.travel.lobby.application.LobbyService;
+import com.splitoil.travel.lobby.application.LobbyFacade;
 import com.splitoil.travel.lobby.application.UserTranslationService;
 import com.splitoil.travel.lobby.domain.model.LobbyCreator;
 import com.splitoil.travel.lobby.domain.model.LobbyRepository;
+import com.splitoil.travel.lobby.domain.model.LobbyService;
 import com.splitoil.travel.lobby.infrastructure.database.InMemoryLobbyRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,16 +16,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LobbyConfiguration {
 
-    public LobbyService lobbyService(final UserTranslationService userTranslationService, final CarTranslationService carTranslationService) {
-        return new LobbyService(new LobbyCreator(StubCurrencyProvider.getInstance()), new InMemoryLobbyRepository(), new NoopEventPublisher(),
-            userTranslationService, carTranslationService);
+    public LobbyFacade lobbyFacade(final UserTranslationService userTranslationService, final CarTranslationService carTranslationService, final EventPublisher eventPublisher) {
+        final LobbyCreator lobbyCreator = new LobbyCreator(StubCurrencyProvider.getInstance());
+        return new LobbyFacade(lobbyCreator, new InMemoryLobbyRepository(), eventPublisher,
+            userTranslationService, carTranslationService, new LobbyService(lobbyCreator));
     }
 
     @Bean
-    public LobbyService lobbyService(final LobbyRepository lobbyRepository, final EventPublisher eventPublisher,
-        final UserCurrencyProvider userCurrencyProvider, final UserTranslationService userTranslationService, final CarTranslationService carTranslationService) {
+    public LobbyFacade lobbyFacade(final LobbyRepository lobbyRepository, final EventPublisher eventPublisher,
+        final UserCurrencyProvider userCurrencyProvider, final UserTranslationService userTranslationService, final CarTranslationService carTranslationService,
+        final LobbyService lobbyService) {
         final LobbyCreator lobbyCreator = new LobbyCreator(userCurrencyProvider);
-        return new LobbyService(lobbyCreator, lobbyRepository, eventPublisher, userTranslationService, carTranslationService);
+        return new LobbyFacade(lobbyCreator, lobbyRepository, eventPublisher, userTranslationService, carTranslationService, lobbyService);
+    }
+
+    @Bean
+    public LobbyService lobbyService(final LobbyCreator lobbyCreator) {
+        return new LobbyService(lobbyCreator);
     }
 
     @Bean

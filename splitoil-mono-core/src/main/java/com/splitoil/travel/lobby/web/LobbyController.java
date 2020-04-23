@@ -1,7 +1,7 @@
 package com.splitoil.travel.lobby.web;
 
 import com.splitoil.car.CarController;
-import com.splitoil.travel.lobby.application.LobbyService;
+import com.splitoil.travel.lobby.application.LobbyFacade;
 import com.splitoil.travel.lobby.web.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -22,12 +22,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping("/lobby")
 public class LobbyController {
 
-    private LobbyService lobbyService;
+    private LobbyFacade lobbyFacade;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<LobbyOutputDto> createNewLobby(@RequestBody @Valid @NonNull final CreateLobbyCommand createLobbyCommand) {
-        final LobbyOutputDto outputDto = lobbyService.createLobby(createLobbyCommand);
+        final LobbyOutputDto outputDto = lobbyFacade.createLobby(createLobbyCommand);
 
         final Link self = linkTo(LobbyController.class).withSelfRel();
 
@@ -39,7 +39,7 @@ public class LobbyController {
 
     @PostMapping("car")
     public EntityModel<LobbyOutputDto> addCarToLobby(@RequestBody @Valid @NonNull final AddCarToTravelCommand addCarToTravelCommand) {
-        final LobbyOutputDto outputDto = lobbyService.addCarToLobby(addCarToTravelCommand);
+        final LobbyOutputDto outputDto = lobbyFacade.addCarToLobby(addCarToTravelCommand);
 
         final Link self = linkTo(LobbyController.class).slash("car").withSelfRel();
 
@@ -54,7 +54,7 @@ public class LobbyController {
 
     @GetMapping("{lobbyId}")
     public EntityModel<LobbyOutputDto> getLobbyDetails(@NonNull @PathVariable("lobbyId") final UUID lobbyId) {
-        final LobbyOutputDto lobby = lobbyService.getLobby(lobbyId);
+        final LobbyOutputDto lobby = lobbyFacade.getLobby(lobbyId);
 
         final Link self = linkTo(LobbyController.class).slash(lobbyId).withSelfRel();
 
@@ -64,7 +64,7 @@ public class LobbyController {
 
     @PostMapping("topRate")
     public EntityModel<LobbyOutputDto> setTravelTopRatePer1km(@RequestBody @Valid @NonNull final SetTravelTopRatePer1kmCommand setTravelTopRatePer1kmCommand) {
-        final LobbyOutputDto lobby = lobbyService.setTravelTopRatePer1km(setTravelTopRatePer1kmCommand);
+        final LobbyOutputDto lobby = lobbyFacade.setTravelTopRatePer1km(setTravelTopRatePer1kmCommand);
 
         final Link self = linkTo(LobbyController.class).slash("topRate").withSelfRel();
 
@@ -81,7 +81,7 @@ public class LobbyController {
     @PostMapping("currency")
     public EntityModel<LobbyOutputDto> changeTravelDefaultCurrency(
         @RequestBody @Valid @NonNull final ChangeTravelDefaultCurrencyCommand changeTravelDefaultCurrencyCommand) {
-        final LobbyOutputDto lobby = lobbyService.changeTravelDefaultCurrency(changeTravelDefaultCurrencyCommand);
+        final LobbyOutputDto lobby = lobbyFacade.changeTravelDefaultCurrency(changeTravelDefaultCurrencyCommand);
 
         final Link self = linkTo(LobbyController.class).slash("currency").withSelfRel();
 
@@ -96,7 +96,7 @@ public class LobbyController {
 
     @PostMapping("participant/passenger")
     public EntityModel<LobbyOutputDto> addPassengerToLobby(@RequestBody @Valid @NonNull final AddPassengerToLobbyCommand addPassengerToLobbyCommand) {
-        final LobbyOutputDto lobby = lobbyService.addPassenger(addPassengerToLobbyCommand);
+        final LobbyOutputDto lobby = lobbyFacade.addPassenger(addPassengerToLobbyCommand);
 
         final Link self = linkTo(LobbyController.class).slash("participant/passenger").withSelfRel();
 
@@ -113,7 +113,7 @@ public class LobbyController {
     @PostMapping("participant/temporalpassenger")
     public EntityModel<LobbyOutputDto> addExternalPassengerToLobby(
         @RequestBody @Valid @NonNull final AddTemporalPassengerToLobbyCommand addTemporalPassengerToLobbyCommand) {
-        final LobbyOutputDto lobby = lobbyService.addTemporalPassenger(addTemporalPassengerToLobbyCommand);
+        final LobbyOutputDto lobby = lobbyFacade.addTemporalPassenger(addTemporalPassengerToLobbyCommand);
 
         final Link self = linkTo(LobbyController.class).slash("participant/temporalpassenger").withSelfRel();
 
@@ -129,7 +129,7 @@ public class LobbyController {
 
     @PostMapping("participant/assignToCar")
     public EntityModel<LobbyOutputDto> assignToCar(@RequestBody @Valid @NonNull final AssignToCarCommand assignToCarCommand) {
-        final LobbyOutputDto lobby = lobbyService.assignToCar(assignToCarCommand);
+        final LobbyOutputDto lobby = lobbyFacade.assignToCar(assignToCarCommand);
 
         final Link self = linkTo(LobbyController.class).slash("participant/assignToCar").withSelfRel();
 
@@ -141,6 +141,12 @@ public class LobbyController {
             .add(addPassengerLink())
             .add(addTemporalPassengerLink())
             .add(changeLobbyTopRateLink());
+    }
+
+    @PostMapping("starttravelplan")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void startDefiningTravelPlan(@RequestBody @Valid @NonNull final StartDefiningTravelPlanCommand startDefiningTravelPlanCommand) {
+        lobbyFacade.startDefiningTravelPlan(startDefiningTravelPlanCommand);
     }
 
     private Link addTemporalPassengerLink() {

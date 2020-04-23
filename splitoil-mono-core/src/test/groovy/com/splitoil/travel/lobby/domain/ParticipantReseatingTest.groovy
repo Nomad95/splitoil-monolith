@@ -31,7 +31,7 @@ class ParticipantReseatingTest extends LobbyTest {
 
         when: 'Assign passenger to another car'
             def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
-            def alteredLobby = lobbyService.assignToCar(command)
+            def alteredLobby = lobbyFacade.assignToCar(command)
 
         then: 'passenger is in another car'
             alteredLobby.participants[2].assignedCar == SECOND_CAR_ID
@@ -47,7 +47,7 @@ class ParticipantReseatingTest extends LobbyTest {
 
         when: 'Assign passenger to another car'
             def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
-            def alteredLobby = lobbyService.assignToCar(command)
+            def alteredLobby = lobbyFacade.assignToCar(command)
 
         then: 'first car has one place more second one place less'
             alteredLobby.cars[0].seatsOccupied == 1
@@ -64,7 +64,7 @@ class ParticipantReseatingTest extends LobbyTest {
 
         when: 'Assign passenger to another car'
             def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
-            lobbyService.assignToCar(command)
+            lobbyFacade.assignToCar(command)
 
         then:
             thrown(IllegalStateException)
@@ -78,7 +78,7 @@ class ParticipantReseatingTest extends LobbyTest {
 
         when: 'Assign passenger to another car'
             def command = AssignToCarCommand.of(lobby.lobbyId, PASSENGER_1_ID, SECOND_CAR_ID)
-            lobbyService.assignToCar(command)
+            lobbyFacade.assignToCar(command)
 
         then:
             thrown(IllegalStateException)
@@ -94,30 +94,30 @@ class ParticipantReseatingTest extends LobbyTest {
 
         when: 'Assign passenger to another car'
             def command = AssignToCarCommand.of(lobby.lobbyId, DRIVER_ID, SECOND_CAR_ID)
-            lobbyService.assignToCar(command)
+            lobbyFacade.assignToCar(command)
 
         then:
             thrown(IllegalStateException)
     }
 
     private def aNewLobbyWithOneCar() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
 
         return lobby;
     }
 
     private def lobbyWithCarAndPassenger() {
         def lobby = aNewLobbyWithOneCar()
-        def alteredLobby = lobbyService.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
+        def alteredLobby = lobbyFacade.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
         return alteredLobby
     }
 
     private def lobbyWithTwoCarsAndOnePassenger() {
-        def lobby = lobbyService.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
-        lobbyService.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, SECOND_CAR_ID, SECOND_DRIVER_ID))
-        def alteredLobby = lobbyService.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
+        def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, CAR_ID, DRIVER_ID))
+        lobbyFacade.addCarToLobby(AddCarToTravelCommand.of(lobby.lobbyId, SECOND_CAR_ID, SECOND_DRIVER_ID))
+        def alteredLobby = lobbyFacade.addPassenger(AddPassengerToLobbyCommand.of(lobby.lobbyId, PASSENGER_1_ID, CAR_ID))
         return alteredLobby
     }
 
