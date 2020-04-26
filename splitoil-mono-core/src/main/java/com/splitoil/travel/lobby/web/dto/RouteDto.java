@@ -9,8 +9,8 @@ import java.util.List;
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ForTravelCreationLobbyDto {
+public class RouteDto {
     @Singular
     @NonNull
-    private List<LobbyParticipantForTravelPlanDto> participants;
+    private List<WaypointDto> waypoints;
 }

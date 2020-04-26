@@ -1,4 +1,4 @@
-package com.splitoil.travel.travelplan.domain.model;
+package com.splitoil.travel.travelflow.domain.model;
 
 import com.splitoil.shared.AbstractValue;
 import lombok.*;

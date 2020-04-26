@@ -1,16 +1,15 @@
 package com.splitoil.travel.lobby.web.dto;
 
+import com.splitoil.travel.travelflow.web.dto.GeoPointDto;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Builder
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ForTravelCreationLobbyDto {
-    @Singular
-    @NonNull
-    private List<LobbyParticipantForTravelPlanDto> participants;
+public class WaypointDto {
+    private GeoPointDto location;
+    private String waypointType;
+    private boolean historical;
 }

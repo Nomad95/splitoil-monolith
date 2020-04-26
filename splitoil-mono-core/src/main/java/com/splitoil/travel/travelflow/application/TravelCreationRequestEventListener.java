@@ -1,4 +1,4 @@
-package com.splitoil.travel.travelplan.application;
+package com.splitoil.travel.travelflow.application;
 
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested;
 import lombok.NonNull;
