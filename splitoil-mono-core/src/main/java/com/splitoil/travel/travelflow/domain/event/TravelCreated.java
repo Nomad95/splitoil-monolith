@@ -12,4 +12,5 @@ public class TravelCreated implements DomainEvent {
     @NonNull UUID eventId = UUID.randomUUID();
     @NonNull UUID aggregateId;
     @NonNull Instant createdAt = Instant.now();
+    @NonNull UUID lobbyId;
 }

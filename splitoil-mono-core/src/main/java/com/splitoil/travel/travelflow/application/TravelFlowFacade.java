@@ -36,7 +36,7 @@ public class TravelFlowFacade {
         final Travel newTravel = travelCreator.createNewTravel(travelCreationRequest);
 
         travelRepository.save(newTravel);
-        eventPublisher.publish(new TravelCreated(newTravel.getAggregateId()));
+        eventPublisher.publish(new TravelCreated(newTravel.getAggregateId(), newTravel.getLobbyId().getId()));
 
         return newTravel.toDto();
     }

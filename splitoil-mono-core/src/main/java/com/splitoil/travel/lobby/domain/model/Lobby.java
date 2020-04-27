@@ -7,6 +7,7 @@ import com.splitoil.travel.lobby.web.dto.LobbyOutputDto;
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -51,6 +53,9 @@ public class Lobby extends AbstractEntity {
     @Enumerated(value = EnumType.STRING)
     private Currency travelCurrency;
 
+    @Nullable
+    private TravelId travelId;
+
     @OneToMany(
         cascade = CascadeType.ALL,
         orphanRemoval = true,
@@ -84,6 +89,7 @@ public class Lobby extends AbstractEntity {
             .travelCurrency(travelCurrency.name())
             .participants(participants.stream().map(TravelParticipant::toDto).collect(Collectors.toUnmodifiableList()))
             .cars(cars.toDtoList())
+            .travelId(Optional.ofNullable(travelId).map(TravelId::getTravelId).orElse(null))
             .build();
     }
 
@@ -223,6 +229,10 @@ public class Lobby extends AbstractEntity {
         return participants.stream()
             .map(TravelParticipant::toDto)
             .collect(Collectors.toUnmodifiableList());
+    }
+
+    public void assignTravel(final TravelId travelId) {
+        this.travelId = travelId;
     }
 
 }

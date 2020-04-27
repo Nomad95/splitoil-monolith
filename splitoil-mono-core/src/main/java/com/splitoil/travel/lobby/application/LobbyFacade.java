@@ -148,4 +148,11 @@ public class LobbyFacade {
 
         eventPublisher.publish(createTravelCommand);
     }
+
+    public void assignTravelToLobby(final UUID travelId, final UUID lobbyId) {
+        final Lobby lobby = lobbyRepository.getByAggregateId(lobbyId);
+        final TravelId id = creator.createTravelId(travelId);
+
+        lobby.assignTravel(id);
+    }
 }

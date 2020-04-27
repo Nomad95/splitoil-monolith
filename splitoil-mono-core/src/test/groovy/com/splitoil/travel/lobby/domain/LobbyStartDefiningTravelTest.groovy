@@ -53,6 +53,21 @@ class LobbyStartDefiningTravelTest extends LobbyTest {
             thrown(LobbyNotReadyForTravelException)
     }
 
+    def "Lobby should receive travelId after it is created"() {
+        setup: 'Some lobby'
+            carExists(CAR_ID, DRIVER_ID, 5, 0)
+            carExists(SECOND_CAR_ID, SECOND_DRIVER_ID, 5, 0)
+            driverExists(DRIVER_ID, DRIVER_LOGIN)
+            driverExists(SECOND_DRIVER_ID, SECOND_DRIVER_LOGIN)
+            def lobby = lobbyWithTwoCarsAndThreePassengers()
+
+        when: 'Receive travelId'
+            lobbyFacade.assignTravelToLobby(TRAVEL_ID, lobby.lobbyId)
+            lobby = lobbyFacade.getLobby(lobby.lobbyId)
+
+        then:
+            lobby.travelId == TRAVEL_ID
+    }
 
     private def lobbyWithTwoCarsAndThreePassengers() {
         def lobby = lobbyFacade.createLobby(CreateLobbyCommand.of(LOBBY_NAME))

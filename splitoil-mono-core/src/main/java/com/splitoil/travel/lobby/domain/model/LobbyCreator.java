@@ -57,4 +57,8 @@ public class LobbyCreator {
 
         return new TravelCreationRequested(lobby.getAggregateId(), data);
     }
+
+    public TravelId createTravelId(final UUID travelId) {
+        return TravelId.of(travelId);
+    }
 }
