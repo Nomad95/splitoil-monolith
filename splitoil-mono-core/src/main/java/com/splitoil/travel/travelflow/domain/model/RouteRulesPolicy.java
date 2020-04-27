@@ -4,13 +4,11 @@ import groovy.util.logging.Slf4j;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.splitoil.travel.travelflow.domain.model.Waypoint.WaypointType.BEGINNING_PLACE;
-import static com.splitoil.travel.travelflow.domain.model.Waypoint.WaypointType.DESTINATION_PLACE;
+import static com.splitoil.travel.travelflow.domain.model.Waypoints.getIndexOfFirstActiveWaypoint;
 
 @Slf4j
 @FunctionalInterface
@@ -18,10 +16,8 @@ interface RouteRulesPolicy {
 
     RouteRuleCheckResult followsTheRule(List<Waypoint> waypoints);
 
-    EnumSet<Waypoint.WaypointType> ONLY_ONCE_RULES = EnumSet.of(BEGINNING_PLACE, DESTINATION_PLACE);
-
     RouteRulesPolicy onlyOncePolicy = waypoints -> {
-        for (final Waypoint.WaypointType waypointType : ONLY_ONCE_RULES) {
+        for (final Waypoint.WaypointType waypointType : Waypoints.ONLY_ONCE_WAYPOINTS) {
             if (waypoints.stream().filter(waypoint -> waypoint.is(waypointType)).count() > 1) {
                 return RouteRuleCheckResult.isNotFollowingTheRule(String.format("Waypoint of type %s occurs more than once", waypointType.name()));
             }
@@ -73,31 +69,22 @@ interface RouteRulesPolicy {
         return List.of(onlyOncePolicy, atStartOnlyPolicy, atEndOnlyPolicy, historicalBeforeActiveRule);
     }
 
-    static int getIndexOfFirstActiveWaypoint(final List<Waypoint> waypoints) {
-        for (final Waypoint waypoint : waypoints) {
-            if (waypoint.isActive()) {
-                return waypoints.indexOf(waypoint);
-            }
-        }
-
-        //TODO: wszystkie historical
-        throw new IllegalStateException("Zrob cos");
-    }
-
-    static<T> List<T>[] split(final List<T> list, final int index) {
-        int[] endpoints = {0, index, list.size()};
+    static <T> List<T>[] split(final List<T> list, final int index) {
+        int[] endpoints = { 0, index, list.size() };
 
         List<List<T>> lists =
             IntStream.rangeClosed(0, 1)
                 .mapToObj(i -> list.subList(endpoints[i], endpoints[i + 1]))
                 .collect(Collectors.toList());
 
-        return new List[] {lists.get(0), lists.get(1)};
+        return new List[] { lists.get(0), lists.get(1) };
     }
 
     @Value
     class RouteRuleCheckResult {
+
         boolean follows;
+
         String message;
 
         static RouteRuleCheckResult isFollowingTheRule() {

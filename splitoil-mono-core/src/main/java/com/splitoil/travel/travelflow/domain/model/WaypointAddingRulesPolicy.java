@@ -4,11 +4,7 @@ import groovy.util.logging.Slf4j;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.util.EnumSet;
 import java.util.List;
-
-import static com.splitoil.travel.travelflow.domain.model.Waypoint.WaypointType.BEGINNING_PLACE;
-import static com.splitoil.travel.travelflow.domain.model.Waypoint.WaypointType.DESTINATION_PLACE;
 
 @Slf4j
 @FunctionalInterface
@@ -16,10 +12,8 @@ interface WaypointAddingRulesPolicy {
 
     WaypointAddingCheckResult canAddWaypoint(List<Waypoint> waypoints, Waypoint waypoint);
 
-    EnumSet<Waypoint.WaypointType> ONLY_ONCE_RULES = EnumSet.of(BEGINNING_PLACE, DESTINATION_PLACE);
-
     WaypointAddingRulesPolicy addOnlyOnceWaypointPolicy = (waypoints, waypoint) -> {
-        if (!ONLY_ONCE_RULES.contains(waypoint.getWaypointType())) {
+        if (!Waypoints.ONLY_ONCE_WAYPOINTS.contains(waypoint.getWaypointType())) {
             return WaypointAddingCheckResult.isFollowingTheRule();
         }
 
@@ -30,13 +24,29 @@ interface WaypointAddingRulesPolicy {
         return WaypointAddingCheckResult.isFollowingTheRule();
     };
 
+    WaypointAddingRulesPolicy addAfterBeginningAndDestinationIsSetPolicy = (waypoints, waypoint) -> {
+        if (Waypoints.ONLY_ONCE_WAYPOINTS.contains(waypoint.getWaypointType())) {
+            return WaypointAddingCheckResult.isFollowingTheRule();
+        }
+
+        final boolean beginningSet = waypoints.stream().anyMatch(Waypoint::isBeginning);
+        final boolean destinationSet = waypoints.stream().anyMatch(Waypoint::isDestination);
+
+        return beginningSet && destinationSet ?
+            WaypointAddingCheckResult.isFollowingTheRule() :
+            WaypointAddingCheckResult.isNotFollowingTheRule(
+                String.format("Can't add %s waypoint before adding beginning and destination waypoint first", waypoint.getWaypointType().name()));
+    };
+
     static List<WaypointAddingRulesPolicy> allCurrentPolicies() {
-        return List.of(addOnlyOnceWaypointPolicy);
+        return List.of(addOnlyOnceWaypointPolicy, addAfterBeginningAndDestinationIsSetPolicy);
     }
 
     @Value
     class WaypointAddingCheckResult {
+
         boolean follows;
+
         String message;
 
         static WaypointAddingCheckResult isFollowingTheRule() {
@@ -52,3 +62,4 @@ interface WaypointAddingRulesPolicy {
         }
     }
 }
+

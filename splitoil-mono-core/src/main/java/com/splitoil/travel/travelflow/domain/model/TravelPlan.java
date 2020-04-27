@@ -26,7 +26,7 @@ class TravelPlan implements JsonEntity, Serializable {
         this.route = new LinkedList<>();
     }
 
-    public boolean canAddWaypoint(final Waypoint waypoint) {
+    public boolean canAddWaypoint(final @NonNull Waypoint waypoint) {
         final List<WaypointAddingRulesPolicy> waypointAddingRulesPolicies = WaypointAddingRulesPolicy.allCurrentPolicies();
         for (final WaypointAddingRulesPolicy policy : waypointAddingRulesPolicies) {
             final WaypointAddingRulesPolicy.WaypointAddingCheckResult result = policy.canAddWaypoint(route, waypoint);
@@ -39,7 +39,7 @@ class TravelPlan implements JsonEntity, Serializable {
         return true;
     }
 
-    public void addWaypoint(final Waypoint waypoint) {
+    public void addWaypoint(final @NonNull Waypoint waypoint) {
         if (!canAddWaypoint(waypoint)) {
             throw new IllegalArgumentException(String.format("Can't add %s waypoint", waypoint.getWaypointType().name()));
         }
