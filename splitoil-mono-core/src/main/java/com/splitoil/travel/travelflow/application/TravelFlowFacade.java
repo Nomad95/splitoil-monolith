@@ -123,7 +123,7 @@ public class TravelFlowFacade {
 
         travel.addWaypoint(refuelPlace);
         eventPublisher.publish(
-            new TravelParticipantBoardingPlaceAdded(
+            new TravelParticipantExitPlaceAdded(
                 travel.getAggregateId(),
                 addParticipantExitPlaceCommand.getLocation(),
                 addParticipantExitPlaceCommand.getPassengerId(),
