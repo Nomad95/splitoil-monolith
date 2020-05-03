@@ -2,6 +2,7 @@ package com.splitoil.travel.travelflow.domain.model;
 
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested;
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantForTravelPlanDto;
+import com.splitoil.travel.travelflow.web.dto.GeoPointDto;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -17,7 +18,7 @@ public class TravelCreator {
             participantBuilder.participant(new TravelParticipant(lobbyParticipant.getUserId(), lobbyParticipant.getAssignedCar()));
         }
 
-        return new Travel(lobbyId, participantBuilder.build());
+        return new Travel(lobbyId, participantBuilder.build(), new Route());
     }
 
     public Waypoint createBeginningPlace(final double lon, final double lat) {
@@ -32,8 +33,8 @@ public class TravelCreator {
         return Waypoint.checkpoint(GeoPoint.of(lon, lat));
     }
 
-    public Waypoint createPassengerBoardingPlace(final double lon, final double lat) {
-        return Waypoint.passengerBoardingPlace(GeoPoint.of(lon, lat));
+    public Waypoint createParticipantBoardingPlace(final double lon, final double lat) {
+        return Waypoint.participantBoardingPlace(GeoPoint.of(lon, lat));
     }
 
     public Waypoint createPassengerExitPlace(final double lon, final double lat) {
@@ -50,5 +51,29 @@ public class TravelCreator {
 
     public Waypoint createStopPlace(final double lon, final double lat) {
         return Waypoint.stopPlace(GeoPoint.of(lon, lat));
+    }
+
+    public Waypoint createWaypointByType(final GeoPointDto location, final String waypointType) {
+        final Waypoint.WaypointType type = Waypoint.WaypointType.valueOf(waypointType);
+        switch (type) {
+            case CHECKPOINT:
+                return createCheckpoint(location.getLon(), location.getLat());
+            case RESEAT_PLACE:
+                return createReseatPlace(location.getLon(), location.getLat());
+            case BEGINNING_PLACE:
+                return createBeginningPlace(location.getLon(), location.getLat());
+            case DESTINATION_PLACE:
+                return createDestinationPlace(location.getLon(), location.getLat());
+            case PARTICIPANT_BOARDING_PLACE:
+                return createParticipantBoardingPlace(location.getLon(), location.getLat());
+            case STOP_PLACE:
+                return createStopPlace(location.getLon(), location.getLat());
+            case REFUEL_PLACE:
+                return createRefuelPlace(location.getLon(), location.getLat());
+            case PARTICIPANT_EXIT_PLACE:
+                return createPassengerExitPlace(location.getLon(), location.getLat());
+        }
+
+        throw new IllegalArgumentException("No waypoint for type: " + waypointType);
     }
 }

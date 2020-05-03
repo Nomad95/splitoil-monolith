@@ -6,19 +6,34 @@ import com.splitoil.travel.travelflow.web.dto.GeoPointDto;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class Waypoint implements JsonEntity, Serializable {
+
+    private UUID id = UUID.randomUUID();
 
     private GeoPoint location;
 
     private WaypointType waypointType;
 
     private boolean historical = false;
+
+    Waypoint(final GeoPoint location, final WaypointType waypointType, final boolean historical) {
+        this.location = location;
+        this.waypointType = waypointType;
+        this.historical = historical;
+    }
+
+    Waypoint(final UUID id, final GeoPoint location, final WaypointType waypointType, final boolean historical) {
+        this.id = id;
+        this.location = location;
+        this.waypointType = waypointType;
+        this.historical = historical;
+    }
 
     boolean is(final @NonNull WaypointType waypointType) {
         return waypointType == this.waypointType;
@@ -44,12 +59,12 @@ public class Waypoint implements JsonEntity, Serializable {
         return new Waypoint(geoPoint, WaypointType.STOP_PLACE, false);
     }
 
-    static Waypoint passengerBoardingPlace(final @NonNull GeoPoint geoPoint) {
-        return new Waypoint(geoPoint, WaypointType.PASSENGER_BOARDING_PLACE, false);
+    static Waypoint participantBoardingPlace(final @NonNull GeoPoint geoPoint) {
+        return new Waypoint(geoPoint, WaypointType.PARTICIPANT_BOARDING_PLACE, false);
     }
 
     static Waypoint passengerExitPlace(final @NonNull GeoPoint geoPoint) {
-        return new Waypoint(geoPoint, WaypointType.PASSENGER_EXIT_PLACE, false);
+        return new Waypoint(geoPoint, WaypointType.PARTICIPANT_EXIT_PLACE, false);
     }
 
     static Waypoint checkpoint(final @NonNull GeoPoint geoPoint) {
@@ -57,7 +72,7 @@ public class Waypoint implements JsonEntity, Serializable {
     }
 
     enum WaypointType {
-        BEGINNING_PLACE, DESTINATION_PLACE, RESEAT_PLACE, REFUEL_PLACE, STOP_PLACE, PASSENGER_BOARDING_PLACE, PASSENGER_EXIT_PLACE, CHECKPOINT
+        BEGINNING_PLACE, DESTINATION_PLACE, RESEAT_PLACE, REFUEL_PLACE, STOP_PLACE, PARTICIPANT_BOARDING_PLACE, PARTICIPANT_EXIT_PLACE, CHECKPOINT
     }
 
     boolean isBeginning() {
@@ -74,6 +89,7 @@ public class Waypoint implements JsonEntity, Serializable {
 
     WaypointDto toDto() {
         return WaypointDto.builder()
+            .id(id)
             .historical(historical)
             .location(GeoPointDto.of(location.getLon(), location.getLat()))
             .waypointType(waypointType.name())

@@ -20,11 +20,10 @@ import javax.persistence.Entity;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Travel extends AbstractEntity {
 
-    Travel(final LobbyId lobbyId, final TravelParticipants travelParticipants) {
+    Travel(final LobbyId lobbyId, final TravelParticipants travelParticipants, final Route route) {
         this.lobbyId = lobbyId;
         this.travelParticipants = travelParticipants;
-        this.travelFlow = new TravelFlow();
-        this.travelPlan = new TravelPlan();
+        this.route = route;
     }
 
     @AttributeOverride(name = "id", column = @Column(name = "lobby_id"))
@@ -33,16 +32,9 @@ public class Travel extends AbstractEntity {
     @Column(nullable = false, columnDefinition = "json")
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
           parameters = {
-              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.TravelFlow"),
+              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.Route"),
           })
-    private TravelFlow travelFlow;
-
-    @Column(nullable = false, columnDefinition = "json")
-    @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
-          parameters = {
-              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.TravelPlan"),
-          })
-    private TravelPlan travelPlan;
+    private Route route;
 
     @Column(nullable = false, columnDefinition = "json")
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
@@ -51,15 +43,15 @@ public class Travel extends AbstractEntity {
           })
     private TravelParticipants travelParticipants;
 
-    public TravelOutputDto toDto() {
-        return TravelOutputDto.builder().travelId(getAggregateId()).build();
-    }
-
     public void addWaypoint(final Waypoint waypoint) {
-        travelPlan.addWaypoint(waypoint);
+        route.addWaypoint(waypoint);
     }
 
     public RouteDto getRoute() {
-        return travelPlan.toDto();
+        return route.toRouteDto();
+    }
+
+    public TravelOutputDto toDto() {
+        return TravelOutputDto.builder().travelId(getAggregateId()).build();
     }
 }

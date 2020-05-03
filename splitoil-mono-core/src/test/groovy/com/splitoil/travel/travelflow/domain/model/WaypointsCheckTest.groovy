@@ -15,7 +15,7 @@ class WaypointsCheckTest extends TravelTest {
 
     def "Can't add two beginning waypoints"() {
         given: 'Route with beginning waypoint'
-            def travelPlan = new TravelPlan()
+            def travelPlan = new Route()
             travelPlan.addWaypoint(Waypoint.beginningPlace(LOCATION))
 
         when: 'Add second beginning waypoint'
@@ -27,7 +27,7 @@ class WaypointsCheckTest extends TravelTest {
 
     def "Can't add two destination waypoints"() {
         given: 'Route with destination waypoint'
-            def travelPlan = new TravelPlan()
+            def travelPlan = new Route()
             travelPlan.addWaypoint(Waypoint.destinationPlace(LOCATION))
 
         when: 'Add second destination waypoint'
@@ -40,7 +40,7 @@ class WaypointsCheckTest extends TravelTest {
     @Unroll
     def "Can add any amount of given waypoints"(final Waypoint[] waypoints) {
         given:
-            def travelPlan = new TravelPlan()
+            def travelPlan = new Route()
             travelPlan.addWaypoint(Waypoint.beginningPlace(LOCATION))
             travelPlan.addWaypoint(Waypoint.destinationPlace(LOCATION))
 
@@ -49,22 +49,22 @@ class WaypointsCheckTest extends TravelTest {
                 travelPlan.addWaypoint(waypoint)
 
         then: 'three'
-            travelPlan.getRoute().size() == NUMBER_OF_NEW_WAYPOINTS + NUMBER_OF_INITIAL_WAYPOINTS
+            travelPlan.waypoints().size() == NUMBER_OF_NEW_WAYPOINTS + NUMBER_OF_INITIAL_WAYPOINTS
 
         where:
-            waypoints                                                                                                                         | _
-            [Waypoint.checkpoint(LOCATION), Waypoint.checkpoint(LOCATION), Waypoint.checkpoint(LOCATION)]                                     | _
-            [Waypoint.passengerBoardingPlace(LOCATION), Waypoint.passengerBoardingPlace(LOCATION), Waypoint.passengerBoardingPlace(LOCATION)] | _
-            [Waypoint.passengerExitPlace(LOCATION), Waypoint.passengerExitPlace(LOCATION), Waypoint.passengerExitPlace(LOCATION)]             | _
-            [Waypoint.refuelPlace(LOCATION), Waypoint.refuelPlace(LOCATION), Waypoint.refuelPlace(LOCATION)]                                  | _
-            [Waypoint.reseatPlace(LOCATION), Waypoint.reseatPlace(LOCATION), Waypoint.reseatPlace(LOCATION)]                                  | _
-            [Waypoint.stopPlace(LOCATION), Waypoint.stopPlace(LOCATION), Waypoint.stopPlace(LOCATION)]                                        | _
+            waypoints                                                                                                                               | _
+            [Waypoint.checkpoint(LOCATION), Waypoint.checkpoint(LOCATION), Waypoint.checkpoint(LOCATION)]                                           | _
+            [Waypoint.participantBoardingPlace(LOCATION), Waypoint.participantBoardingPlace(LOCATION), Waypoint.participantBoardingPlace(LOCATION)] | _
+            [Waypoint.passengerExitPlace(LOCATION), Waypoint.passengerExitPlace(LOCATION), Waypoint.passengerExitPlace(LOCATION)]                   | _
+            [Waypoint.refuelPlace(LOCATION), Waypoint.refuelPlace(LOCATION), Waypoint.refuelPlace(LOCATION)]                                        | _
+            [Waypoint.reseatPlace(LOCATION), Waypoint.reseatPlace(LOCATION), Waypoint.reseatPlace(LOCATION)]                                        | _
+            [Waypoint.stopPlace(LOCATION), Waypoint.stopPlace(LOCATION), Waypoint.stopPlace(LOCATION)]                                              | _
     }
 
     @Unroll
     def "Can't add any else type waypoint before adding beginning and destination place"(final Waypoint waypoint) {
         given: 'Blank route'
-            def travelPlan = new TravelPlan()
+            def travelPlan = new Route()
 
         when: 'Add waypoint'
             travelPlan.addWaypoint(waypoint)
@@ -73,18 +73,18 @@ class WaypointsCheckTest extends TravelTest {
             thrown(IllegalArgumentException)
 
         where:
-            waypoint                                  | _
-            Waypoint.checkpoint(LOCATION)             | _
-            Waypoint.passengerBoardingPlace(LOCATION) | _
-            Waypoint.passengerExitPlace(LOCATION)     | _
-            Waypoint.refuelPlace(LOCATION)            | _
-            Waypoint.reseatPlace(LOCATION)            | _
-            Waypoint.stopPlace(LOCATION)              | _
+            waypoint                                    | _
+            Waypoint.checkpoint(LOCATION)               | _
+            Waypoint.participantBoardingPlace(LOCATION) | _
+            Waypoint.passengerExitPlace(LOCATION)       | _
+            Waypoint.refuelPlace(LOCATION)              | _
+            Waypoint.reseatPlace(LOCATION)              | _
+            Waypoint.stopPlace(LOCATION)                | _
     }
 
     def "Beginning is always first waypoint and destination last"() {
         given: 'Blank route'
-            def travelPlan = new TravelPlan()
+            def travelPlan = new Route()
 
             def beginning = Waypoint.beginningPlace(LOCATION)
             def destination = Waypoint.destinationPlace(LOCATION)
@@ -94,15 +94,15 @@ class WaypointsCheckTest extends TravelTest {
 
         when: 'Add waypoints'
             travelPlan.addWaypoint(Waypoint.checkpoint(LOCATION))
-            travelPlan.addWaypoint(Waypoint.passengerBoardingPlace(LOCATION))
+            travelPlan.addWaypoint(Waypoint.participantBoardingPlace(LOCATION))
             travelPlan.addWaypoint(Waypoint.passengerExitPlace(LOCATION))
             travelPlan.addWaypoint(Waypoint.refuelPlace(LOCATION))
             travelPlan.addWaypoint(Waypoint.reseatPlace(LOCATION))
             travelPlan.addWaypoint(Waypoint.stopPlace(LOCATION))
 
         then:
-            travelPlan.getRoute().get(0) == beginning
-            travelPlan.getRoute().get(travelPlan.getRoute().size() - 1) == destination
+            travelPlan.waypoints().get(0) == beginning
+            travelPlan.waypoints().get(travelPlan.waypoints().size() - 1) == destination
 
     }
 

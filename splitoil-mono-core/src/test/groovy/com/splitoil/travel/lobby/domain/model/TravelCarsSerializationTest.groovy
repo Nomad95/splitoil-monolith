@@ -1,4 +1,4 @@
-package com.splitoil.travel.lobby.serialization
+package com.splitoil.travel.lobby.domain.model
 
 import com.splitoil.UnitTest
 import com.splitoil.infrastructure.json.JacksonAdapter

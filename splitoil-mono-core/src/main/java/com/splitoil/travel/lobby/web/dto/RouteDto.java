@@ -12,5 +12,5 @@ import java.util.List;
 public class RouteDto {
     @Singular
     @NonNull
-    private List<WaypointDto> waypoints;
+    private List<WaypointDto> waypoints; //TODO: wiecej info o waypopintach ;/
 }
