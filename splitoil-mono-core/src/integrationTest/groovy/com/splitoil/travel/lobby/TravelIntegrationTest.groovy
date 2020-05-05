@@ -34,6 +34,9 @@ class TravelIntegrationTest extends IntegrationSpec {
 
     private static final UUID PASSENGER_ID = UUID.fromString('31c7b8b8-17fe-46b2-9ec6-df4c1d23f3a4')
     private static final UUID TRAVEL_ID = UUID.fromString('799c470e-b0d6-4df9-8bbe-195533515826')
+    private static final UUID DESTINATION_WAYPOINT_ID = UUID.fromString('1b6a488f-237a-4bad-9f84-c2200aa6f9cf')
+    private static final UUID STOP_WAYPOINT_ID = UUID.fromString('e4a6bf07-b429-464d-8e1c-554aac5e543e')
+    private static final UUID CHECKPOINT_WAYPOINT_ID = UUID.fromString('4db9b61e-6ae8-472f-93ee-6a90e5cb6dae')
     private static final GeoPointDto GEO_POINT = GeoPointDto.of(10, 15)
 
 
@@ -242,5 +245,57 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.waypoints[0].waypointType').value('BEGINNING_PLACE'))
                     .andExpect(jsonPath('$.waypoints[1].waypointType').value('CHECKPOINT'))
                     .andExpect(jsonPath('$.waypoints[2].waypointType').value('DESTINATION_PLACE'))
+    }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
+            '/db/user/user_passenger.sql',
+            '/db/user/user_passenger_2.sql',
+            '/db/user/user_passenger_3.sql',
+            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
+            '/db/travel/lobby/travel_participant_passenger.sql',
+            '/db/travel/lobby/travel_participant_passenger_2.sql',
+            '/db/travel/lobby/travel_participant_passenger_3.sql',
+            '/db/travel/travel/new_travel_two_drivers_three_pass_with_begin_and_end.sql'])
+    def "Lobby creator can change location of a waypoint"() {
+        given:
+            def moveWaypointCommand = MoveWaypointCommand.of(TRAVEL_ID, DESTINATION_WAYPOINT_ID, GEO_POINT)
+
+        when:
+            def result = mockMvc.perform(post("/travel/route/changelocation")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(moveWaypointCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.waypoints[1].waypointType').value('DESTINATION_PLACE'))
+                    .andExpect(jsonPath('$.waypoints[1].location.lon').value(10))
+                    .andExpect(jsonPath('$.waypoints[1].location.lat').value(15))
+    }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
+            '/db/user/user_passenger.sql',
+            '/db/user/user_passenger_2.sql',
+            '/db/user/user_passenger_3.sql',
+            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
+            '/db/travel/lobby/travel_participant_passenger.sql',
+            '/db/travel/lobby/travel_participant_passenger_2.sql',
+            '/db/travel/lobby/travel_participant_passenger_3.sql',
+            '/db/travel/travel/new_travel_two_drivers_three_pass_with_some_waypoints.sql'])
+    def "Lobby creator can change order of waypoints"() {
+        given:
+            def changeOrderWaypointCommand = ChangeOrderWaypointCommand.of(TRAVEL_ID, STOP_WAYPOINT_ID, CHECKPOINT_WAYPOINT_ID)
+
+        when:
+            def result = mockMvc.perform(post("/travel/route/changeorder")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(changeOrderWaypointCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.waypoints[1].waypointType').value('CHECKPOINT'))
+                    .andExpect(jsonPath('$.waypoints[2].waypointType').value('STOP_PLACE'))
+
     }
 }

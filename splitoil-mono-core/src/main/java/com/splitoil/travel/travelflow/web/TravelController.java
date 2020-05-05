@@ -21,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping("/travel")
 public class TravelController {
 
-    private TravelFlowFacade travelFlowFacade;
+    private final TravelFlowFacade travelFlowFacade;
 
     @PostMapping("route/beginning")
     public EntityModel<RouteDto> selectTravelBeginning(@RequestBody @Valid @NonNull final SelectTravelBeginningCommand selectTravelBeginningCommand) {
@@ -39,6 +39,8 @@ public class TravelController {
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
+            .add(addChangeWaypointOrderLink())
             .add(self);
     }
 
@@ -58,6 +60,8 @@ public class TravelController {
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
+            .add(addChangeWaypointOrderLink())
             .add(self);
     }
 
@@ -77,10 +81,11 @@ public class TravelController {
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
+            .add(addChangeWaypointOrderLink())
             .add(self);
     }
 
-    //TODO: testy unit
     @PostMapping("route/refuel")
     public EntityModel<RouteDto> selectParticipantRefuelPlace(@RequestBody @Valid @NonNull final AddRefuelPlaceCommand addRefuelPlaceCommand) {
         travelFlowFacade.addRefuelPlace(addRefuelPlaceCommand);
@@ -97,6 +102,8 @@ public class TravelController {
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
+            .add(addChangeWaypointOrderLink())
             .add(self);
     }
 
@@ -116,6 +123,8 @@ public class TravelController {
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addChangeWaypointOrderLink())
+            .add(addMoveWaypointLocationLink())
             .add(self);
     }
 
@@ -135,6 +144,8 @@ public class TravelController {
             .add(addStopPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addChangeWaypointOrderLink())
+            .add(addMoveWaypointLocationLink())
             .add(self);
     }
 
@@ -154,6 +165,8 @@ public class TravelController {
             .add(addStopPlaceLink())
             .add(addBoardingPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
+            .add(addChangeWaypointOrderLink())
             .add(self);
     }
 
@@ -173,6 +186,50 @@ public class TravelController {
             .add(addStopPlaceLink())
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
+            .add(addMoveWaypointLocationLink())
+            .add(addChangeWaypointOrderLink())
+            .add(self);
+    }
+
+    @PostMapping("route/changelocation")
+    public EntityModel<RouteDto> changeWaypointLocation(@RequestBody @Valid @NonNull final MoveWaypointCommand moveWaypointCommand) {
+        travelFlowFacade.moveWaypoint(moveWaypointCommand);
+        final RouteDto newRoute = travelFlowFacade.getRoute(moveWaypointCommand.getTravelId());
+
+        final Link self = linkTo(TravelController.class).slash("route").slash("changelocation").withSelfRel();
+
+        return new EntityModel<>(newRoute)
+            .add(getRouteLink(moveWaypointCommand.getTravelId()))
+            .add(addTravelDestinationLink())
+            .add(addTravelBeginningLink())
+            .add(addTravelReseatLink())
+            .add(addRefuelPlaceLink())
+            .add(addStopPlaceLink())
+            .add(addBoardingPlaceLink())
+            .add(addExitPlaceLink())
+            .add(addCheckpointPlaceLink())
+            .add(addChangeWaypointOrderLink())
+            .add(self);
+    }
+
+    @PostMapping("route/changeorder")
+    public EntityModel<RouteDto> changeWaypointLocation(@RequestBody @Valid @NonNull final ChangeOrderWaypointCommand changeOrderWaypointCommand) {
+        travelFlowFacade.changeWaypointOrder(changeOrderWaypointCommand);
+        final RouteDto newRoute = travelFlowFacade.getRoute(changeOrderWaypointCommand.getTravelId());
+
+        final Link self = linkTo(TravelController.class).slash("route").slash("changeorder").withSelfRel();
+
+        return new EntityModel<>(newRoute)
+            .add(getRouteLink(changeOrderWaypointCommand.getTravelId()))
+            .add(addTravelDestinationLink())
+            .add(addTravelBeginningLink())
+            .add(addTravelReseatLink())
+            .add(addRefuelPlaceLink())
+            .add(addStopPlaceLink())
+            .add(addBoardingPlaceLink())
+            .add(addExitPlaceLink())
+            .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
             .add(self);
     }
 
@@ -191,11 +248,16 @@ public class TravelController {
             .add(addBoardingPlaceLink())
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
+            .add(addMoveWaypointLocationLink())
             .add(self);
     }
 
     private Link addTravelBeginningLink() {
         return linkTo(TravelController.class).slash("route").slash("beginning").withRel("add-travel-beginning");
+    }
+
+    private Link addChangeWaypointOrderLink() {
+        return linkTo(TravelController.class).slash("route").slash("beginning").withRel("change-waypoint-order");
     }
 
     private Link addTravelDestinationLink() {
@@ -224,6 +286,10 @@ public class TravelController {
 
     private Link addCheckpointPlaceLink() {
         return linkTo(TravelController.class).slash("route").slash("checkpoint").withRel("add-checkpoint-place");
+    }
+
+    private Link addMoveWaypointLocationLink() {
+        return linkTo(TravelController.class).slash("route").slash("changelocation").withRel("change-waypoint-location");
     }
 
     private Link getRouteLink(final UUID travelId) {

@@ -76,4 +76,8 @@ public class TravelCreator {
 
         throw new IllegalArgumentException("No waypoint for type: " + waypointType);
     }
+
+    public GeoPoint createGeoPoint(final GeoPointDto location) {
+        return GeoPoint.of(location.getLon(), location.getLat());
+    }
 }

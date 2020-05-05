@@ -11,7 +11,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(staticName = "of")
-class GeoPoint extends AbstractValue implements Serializable {
+public class GeoPoint extends AbstractValue implements Serializable {
 
     private double lon;
 

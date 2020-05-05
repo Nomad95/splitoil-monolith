@@ -71,6 +71,10 @@ public class Waypoint implements JsonEntity, Serializable {
         return new Waypoint(geoPoint, WaypointType.CHECKPOINT, false);
     }
 
+    public Waypoint changeLocation(final @NonNull GeoPoint newLocation) {
+        return new Waypoint(id, newLocation, waypointType, historical);
+    }
+
     enum WaypointType {
         BEGINNING_PLACE, DESTINATION_PLACE, RESEAT_PLACE, REFUEL_PLACE, STOP_PLACE, PARTICIPANT_BOARDING_PLACE, PARTICIPANT_EXIT_PLACE, CHECKPOINT
     }

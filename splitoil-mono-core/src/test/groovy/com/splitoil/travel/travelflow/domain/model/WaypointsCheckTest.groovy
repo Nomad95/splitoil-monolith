@@ -12,6 +12,7 @@ class WaypointsCheckTest extends TravelTest {
     public static final int NUMBER_OF_INITIAL_WAYPOINTS = 2
 
     private static final GeoPoint LOCATION = GeoPoint.of(0, 0);
+    private static final GeoPoint ANOTHER_LOCATION = GeoPoint.of(50, 150);
 
     def "Can't add two beginning waypoints"() {
         given: 'Route with beginning waypoint'
@@ -103,7 +104,24 @@ class WaypointsCheckTest extends TravelTest {
         then:
             travelPlan.waypoints().get(0) == beginning
             travelPlan.waypoints().get(travelPlan.waypoints().size() - 1) == destination
+    }
 
+    def "Can't change location of historical waypoint"() {
+        given: 'Route with historical beginning place'
+            def travelPlan = new Route()
+
+            def beginning = Waypoint.beginningPlace(LOCATION)
+            beginning.historical = true
+            def destination = Waypoint.destinationPlace(LOCATION)
+
+            travelPlan.addWaypoint(beginning)
+            travelPlan.addWaypoint(destination)
+
+        when: 'Moving waypoint to another place'
+            travelPlan.changeLocation(beginning.id, ANOTHER_LOCATION)
+
+        then:
+            thrown(IllegalArgumentException)
     }
 
 }

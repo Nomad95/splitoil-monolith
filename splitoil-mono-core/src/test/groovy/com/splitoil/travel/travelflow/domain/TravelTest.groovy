@@ -62,45 +62,4 @@ class TravelTest extends Specification {
         travelFlowFacade.selectTravelDestination(new SelectTravelDestinationCommand(travel.getTravelId(), DESTINATION_LOCATION))
         return travel;
     }
-
-//    protected loggedDriver(final UUID driverId, final String driverLogin) {
-//        def driver = new Participant(
-//                participantId: driverId,
-//                displayName: driverLogin,
-//                participantType: ParticipantType.CAR_DRIVER,
-//                travelCurrency: PLN)
-//
-//        userTranslator.getCurrentLoggedDriver() >> new Driver(driverId)
-//        userTranslator.getAsDriver(driverId) >> driver
-//        userTranslator.getCurrentUserAsDriver() >> driver
-//    }
-//
-//    protected loggedDriver(final UUID driverId, final String driverLogin, final String defaultCurrency) {
-//        def driver = new Participant(
-//                participantId: driverId,
-//                displayName: driverLogin,
-//                participantType: ParticipantType.CAR_DRIVER,
-//                travelCurrency: defaultCurrency)
-//
-//        userTranslator.getCurrentLoggedDriver() >> new Driver(driverId)
-//        userTranslator.getAsDriver(driverId) >> driver
-//        userTranslator.getCurrentUserAsDriver() >> driver
-//    }
-//
-//    protected driverExists(final UUID driverId, final String driverLogin) {
-//        userTranslator.getAsDriver(driverId) >> new Participant(
-//                participantId: driverId,
-//                displayName: driverLogin,
-//                participantType: ParticipantType.CAR_DRIVER,
-//                travelCurrency: PLN)
-//    }
-//
-//    protected passengerExists(final UUID participantId, final String displayName, final String travelCurrency) {
-//        userTranslator.getPassenger(participantId) >> new Participant(participantId, displayName, ParticipantType.PASSENGER, Currency.valueOf(travelCurrency))
-//    }
-//
-//    protected def carExists(final UUID carId, final UUID carOwner, final int seats, final int occupiedSeats) {
-//        carService.getCar(carId) >> new Car(CarId.of(carId), carOwner, seats, occupiedSeats)
-//    }
-
 }

@@ -5,10 +5,7 @@ import com.splitoil.shared.event.EventPublisher;
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested;
 import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.travelflow.domain.event.*;
-import com.splitoil.travel.travelflow.domain.model.Travel;
-import com.splitoil.travel.travelflow.domain.model.TravelCreator;
-import com.splitoil.travel.travelflow.domain.model.TravelRepository;
-import com.splitoil.travel.travelflow.domain.model.Waypoint;
+import com.splitoil.travel.travelflow.domain.model.*;
 import com.splitoil.travel.travelflow.web.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -116,7 +113,7 @@ public class TravelFlowFacade {
                 addParticipantBoardingPlaceCommand.getCarId()));
     }
 
-    public void addExitPlace(final AddParticipantExitPlaceCommand addParticipantExitPlaceCommand) {
+    public void addExitPlace(final @NonNull AddParticipantExitPlaceCommand addParticipantExitPlaceCommand) {
         final Travel travel = travelRepository.getByAggregateId(addParticipantExitPlaceCommand.getTravelId());
         final GeoPointDto waypointLocation = addParticipantExitPlaceCommand.getLocation();
         final Waypoint refuelPlace = travelCreator.createPassengerExitPlace(waypointLocation.getLon(), waypointLocation.getLat());
@@ -130,7 +127,7 @@ public class TravelFlowFacade {
                 addParticipantExitPlaceCommand.getCarId()));
     }
 
-    public void addCheckpoint(final AddCheckpointCommand addCheckpointCommand) {
+    public void addCheckpoint(final @NonNull AddCheckpointCommand addCheckpointCommand) {
         final Travel travel = travelRepository.getByAggregateId(addCheckpointCommand.getTravelId());
         final GeoPointDto waypointLocation = addCheckpointCommand.getLocation();
         final Waypoint refuelPlace = travelCreator.createCheckpoint(waypointLocation.getLon(), waypointLocation.getLat());
@@ -140,5 +137,31 @@ public class TravelFlowFacade {
             new TravelCheckpointAdded(
                 travel.getAggregateId(),
                 addCheckpointCommand.getLocation()));
+    }
+
+    public void moveWaypoint(final @NonNull MoveWaypointCommand moveWaypointCommand) {
+        final Travel travel = travelRepository.getByAggregateId(moveWaypointCommand.getTravelId());
+        final GeoPoint newLocation = travelCreator.createGeoPoint(moveWaypointCommand.getLocation());
+        final UUID waypointId = moveWaypointCommand.getWaypointId();
+
+        travel.moveWaypoint(waypointId, newLocation);
+        eventPublisher.publish(new WaypointLocationMoved(
+            travel.getAggregateId(),
+            moveWaypointCommand.getWaypointId(),
+            moveWaypointCommand.getLocation()
+        ));
+    }
+
+    public void changeWaypointOrder(final ChangeOrderWaypointCommand changeOrderWaypointCommand) {
+        final Travel travel = travelRepository.getByAggregateId(changeOrderWaypointCommand.getTravelId());
+        final UUID rearrangingWaypointId = changeOrderWaypointCommand.getRearrangingWaypoint();
+        final UUID rearrangeAfterWaypointId = changeOrderWaypointCommand.getRearrangeAfterWaypoint();
+
+        travel.moveWaypointAfter(rearrangingWaypointId, rearrangeAfterWaypointId);
+        eventPublisher.publish(new WaypointOrderChanged(
+            travel.getAggregateId(),
+            rearrangingWaypointId,
+            rearrangeAfterWaypointId
+        ));
     }
 }

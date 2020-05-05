@@ -4,15 +4,13 @@ import com.splitoil.infrastructure.json.JsonUserType;
 import com.splitoil.shared.AbstractEntity;
 import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.travelflow.web.dto.TravelOutputDto;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -43,7 +41,7 @@ public class Travel extends AbstractEntity {
           })
     private TravelParticipants travelParticipants;
 
-    public void addWaypoint(final Waypoint waypoint) {
+    public void addWaypoint(final @NonNull Waypoint waypoint) {
         route.addWaypoint(waypoint);
     }
 
@@ -53,5 +51,28 @@ public class Travel extends AbstractEntity {
 
     public TravelOutputDto toDto() {
         return TravelOutputDto.builder().travelId(getAggregateId()).build();
+    }
+
+    public void moveWaypoint(final @NonNull UUID waypointId, final @NonNull GeoPoint newLocation) {
+        if (!route.waypointExists(waypointId)) {
+            throw new IllegalArgumentException(String.format("Waypoint %s doesn't exist in travel %s", waypointId, getAggregateId()));
+        }
+
+        route.changeLocation(waypointId, newLocation);
+    }
+
+    public void moveWaypointAfter(final @NonNull UUID rearrangingWaypointId, final @NonNull UUID rearrangeAfterWaypointId) {
+        if (!route.waypointExists(rearrangingWaypointId)) {
+            throw new IllegalArgumentException(
+                String.format("Cannot rearrange order of waypoint %s. Rearranging waypoint doesn't exist in travel %s", rearrangingWaypointId, getAggregateId()));
+        }
+
+        if (!route.waypointExists(rearrangeAfterWaypointId)) {
+            throw new IllegalArgumentException(
+                String.format("Cannot rearrange order of waypoint %s. Rearrange after waypoint of id %s doesn't exist in travel %s",
+                    rearrangingWaypointId, rearrangeAfterWaypointId, getAggregateId()));
+        }
+
+        route.moveWaypointAfter(rearrangingWaypointId, rearrangeAfterWaypointId);
     }
 }
