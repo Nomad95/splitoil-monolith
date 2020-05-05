@@ -75,4 +75,13 @@ public class Travel extends AbstractEntity {
 
         route.moveWaypointAfter(rearrangingWaypointId, rearrangeAfterWaypointId);
     }
+
+    public void deleteWaypoint(final @NonNull UUID waypointToDeleteId) {
+        if (!route.waypointExists(waypointToDeleteId)) {
+            throw new IllegalArgumentException(
+                String.format("Cannot delete %s - it doesn't exist in travel %s", waypointToDeleteId, getAggregateId()));
+        }
+
+        route.deleteWaypoint(waypointToDeleteId);
+    }
 }

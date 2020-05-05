@@ -124,4 +124,24 @@ class WaypointsCheckTest extends TravelTest {
             thrown(IllegalArgumentException)
     }
 
+    def "Can't remove place waypoint that has been travelled to (historical)"() {
+        given: 'Some route'
+            def travelPlan = new Route()
+
+            def beginning = Waypoint.beginningPlace(LOCATION)
+            beginning.historical = true;
+            def destination = Waypoint.destinationPlace(LOCATION)
+
+            travelPlan.addWaypoint(beginning)
+            travelPlan.addWaypoint(destination)
+            travelPlan.addWaypoint(Waypoint.checkpoint(LOCATION))
+            travelPlan.addWaypoint(Waypoint.stopPlace(LOCATION))
+
+        when: 'Delete historical'
+            travelPlan.deleteWaypoint(beginning.id)
+
+        then:
+            thrown(IllegalArgumentException)
+    }
+
 }

@@ -152,7 +152,7 @@ public class TravelFlowFacade {
         ));
     }
 
-    public void changeWaypointOrder(final ChangeOrderWaypointCommand changeOrderWaypointCommand) {
+    public void changeWaypointOrder(final @NonNull ChangeOrderWaypointCommand changeOrderWaypointCommand) {
         final Travel travel = travelRepository.getByAggregateId(changeOrderWaypointCommand.getTravelId());
         final UUID rearrangingWaypointId = changeOrderWaypointCommand.getRearrangingWaypoint();
         final UUID rearrangeAfterWaypointId = changeOrderWaypointCommand.getRearrangeAfterWaypoint();
@@ -163,5 +163,12 @@ public class TravelFlowFacade {
             rearrangingWaypointId,
             rearrangeAfterWaypointId
         ));
+    }
+
+    public void deleteWaypoint(final @NonNull DeleteWaypointCommand deleteWaypointCommand) {
+        final Travel travel = travelRepository.getByAggregateId(deleteWaypointCommand.getTravelId());
+        @NonNull final UUID waypointToDeleteId = deleteWaypointCommand.getWaypointId();
+
+        travel.deleteWaypoint(waypointToDeleteId);
     }
 }

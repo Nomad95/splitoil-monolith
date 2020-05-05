@@ -22,6 +22,8 @@ class Route implements JsonEntity, Serializable {
 
     private final LinkedList<Waypoint> waypoints = new LinkedList<>();
 
+    //TODO: travelid
+
     List<Waypoint> waypoints() {
         return Collections.unmodifiableList(waypoints);
     }
@@ -129,6 +131,23 @@ class Route implements JsonEntity, Serializable {
         } else {
             waypoints.add(rearrangeAfterIndex + 1, rearranging);
         }
+    }
 
+    public void deleteWaypoint(final @NonNull UUID waypointToDeleteId) {
+        final Waypoint waypointToDelete = findWaypoint(waypointToDeleteId);
+
+        if (waypointToDelete.isHistorical()) {
+            throw new IllegalArgumentException(String.format("Can't remove historical waypoint %s", waypointToDeleteId));
+        }
+
+        if (waypointToDelete.isBeginning()) {
+            throw new IllegalArgumentException(String.format("Can't remove beginning place waypoint %s. This waypoint can only be moved", waypointToDeleteId));
+        }
+
+        if (waypointToDelete.isDestination()) {
+            throw new IllegalArgumentException(String.format("Can't remove destination waypoint %s. This waypoint can only be moved", waypointToDeleteId));
+        }
+
+        waypoints.remove(waypointToDelete);
     }
 }
