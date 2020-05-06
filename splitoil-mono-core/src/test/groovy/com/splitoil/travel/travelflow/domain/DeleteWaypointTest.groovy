@@ -18,7 +18,7 @@ class DeleteWaypointTest extends TravelTest {
     def "Lobby creator can remove waypoint"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Driver deletes refuel waypoint'
@@ -39,7 +39,7 @@ class DeleteWaypointTest extends TravelTest {
     def "Lobby creator can't remove waypoint that is not in the travel"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Deleting not existing travel'
@@ -53,7 +53,7 @@ class DeleteWaypointTest extends TravelTest {
     def "Lobby creator can't remove beginning place waypoint"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Deleting beginning waypoint'
@@ -70,7 +70,7 @@ class DeleteWaypointTest extends TravelTest {
     def "Lobby creator can't remove destination place waypoint"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Deleting beginning waypoint'
@@ -87,7 +87,7 @@ class DeleteWaypointTest extends TravelTest {
     def "Lobby creator can't remove waypoint that has been traveled to (historical)"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Deleting beginning waypoint'

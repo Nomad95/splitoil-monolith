@@ -78,13 +78,12 @@ public class TravelFlowFacade {
         final GeoPointDto waypointLocation = addRefuelPlaceCommand.getLocation();
         final Waypoint refuelPlace = travelCreator.createRefuelPlace(waypointLocation.getLon(), waypointLocation.getLat());
 
-        travel.addWaypoint(refuelPlace);//TODO: nie znamy ceny i wartosci przed zatankowaniem xDDD
+        travel.addWaypoint(refuelPlace);
         eventPublisher.publish(
             new TravelRefuelPlaceAdded(
                 travel.getAggregateId(),
                 addRefuelPlaceCommand.getLocation(),
-                addRefuelPlaceCommand.getCost(),
-                addRefuelPlaceCommand.getFuelAmountInLitres()));
+                addRefuelPlaceCommand.getCarBeingRefueld()));
     }
 
     public void addStopPlace(final @NonNull AddStopPlaceCommand addStopPlaceCommand) {

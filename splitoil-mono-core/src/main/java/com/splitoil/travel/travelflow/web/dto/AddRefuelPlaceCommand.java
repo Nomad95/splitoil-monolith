@@ -2,7 +2,6 @@ package com.splitoil.travel.travelflow.web.dto;
 
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -11,7 +10,5 @@ import java.util.UUID;
 public class AddRefuelPlaceCommand {
     @NonNull private UUID travelId;
     @NonNull private GeoPointDto location;
-    @NonNull private BigDecimal cost;
-    @NonNull private BigDecimal fuelAmountInLitres;
-
+    @NonNull private UUID carBeingRefueld;
 }

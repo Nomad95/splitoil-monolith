@@ -5,7 +5,6 @@ import com.splitoil.travel.travelflow.web.dto.GeoPointDto;
 import lombok.NonNull;
 import lombok.Value;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -15,7 +14,6 @@ public class TravelRefuelPlaceAdded implements DomainEvent {
     @NonNull UUID aggregateId;
     @NonNull Instant createdAt = Instant.now();
     @NonNull GeoPointDto location;
-    @NonNull BigDecimal cost;
-    @NonNull BigDecimal fuelAmountInLitres;
+    @NonNull UUID carToRefuel;
 
 }

@@ -83,7 +83,7 @@ class DefiningRoutesTest extends TravelTest {
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
 
         when: 'Lobby creator selects refuel place'
-            def command = AddRefuelPlaceCommand.of(travel.travelId, DESTINATION_LOCATION, new BigDecimal("100"), new BigDecimal("5"))
+            def command = AddRefuelPlaceCommand.of(travel.travelId, DESTINATION_LOCATION, CAR_ID)
             travelFlowFacade.addRefuelPlace(command)
             def route = travelFlowFacade.getRoute(travel.travelId)
 

@@ -127,7 +127,7 @@ class TravelIntegrationTest extends IntegrationSpec {
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_begin_and_end.sql'])
     def "Lobby creator can add refuel place"() {
         given:
-            def reseatPlaceCommand = AddRefuelPlaceCommand.of(TRAVEL_ID, GEO_POINT, new BigDecimal("123"), new BigDecimal("123"))//TODO: refuel a specifuic car :)
+            def reseatPlaceCommand = AddRefuelPlaceCommand.of(TRAVEL_ID, GEO_POINT, CAR_UUID)
 
         when:
             def result = mockMvc.perform(post("/travel/route/refuel")
@@ -180,8 +180,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     def "Lobby creator can add passenger boarding place"() {
         given:
             def stopPlaceCommand = AddParticipantBoardingPlaceCommand.of(TRAVEL_ID, GEO_POINT, PASSENGER_ID, CAR_UUID)
-            //TODO: sprawdzenie czy moze dolaczyc do samochodu w lobby, w travel powinno sie uzyc tylko istniejacych passengerow w lobby
-            //TODO: sprawdz czy passenger moze tak i w reszcie przypadków ;)
 
         when:
             def result = mockMvc.perform(post("/travel/route/boarding")
@@ -297,7 +295,6 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath('$.waypoints[1].waypointType').value('CHECKPOINT'))
                     .andExpect(jsonPath('$.waypoints[2].waypointType').value('STOP_PLACE'))
-
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
@@ -324,6 +321,5 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.waypoints[0].waypointType').value('BEGINNING_PLACE'))
                     .andExpect(jsonPath('$.waypoints[1].waypointType').value('CHECKPOINT'))
                     .andExpect(jsonPath('$.waypoints[2].waypointType').value('DESTINATION_PLACE'))
-
     }
 }

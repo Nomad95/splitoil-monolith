@@ -19,7 +19,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Lobby creator can move travel beginning location"() {
         setup: 'New travel - checkpoint is after refuel place'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Driver arranges refuel after checkpoint'
@@ -42,7 +42,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Reorder after beginning"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addStopPlace(new AddStopPlaceCommand(travel.travelId, SOME_LOCATION))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
@@ -67,7 +67,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Reorder forward"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addStopPlace(new AddStopPlaceCommand(travel.travelId, SOME_LOCATION))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
@@ -92,7 +92,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Reorder backward"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addStopPlace(new AddStopPlaceCommand(travel.travelId, SOME_LOCATION))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
@@ -117,7 +117,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Reordering in the same place does't change route"() {
         setup: 'New travel'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addStopPlace(new AddStopPlaceCommand(travel.travelId, SOME_LOCATION))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
@@ -141,7 +141,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Can't rearrange when rearranging waypoint doesnt exist in route"() {
         setup: 'New travel - checkpoint is after refuel place'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Driver arranges refuel after checkpoint'
@@ -158,7 +158,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Can't rearrange when rearranging after waypoint doesnt exist in route"() {
         setup: 'New travel - checkpoint is after refuel place'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Driver arranges refuel after checkpoint'
@@ -175,7 +175,7 @@ class ChangeWaypointOrderTest extends TravelTest {
     def "Can't order after destination point"() {
         setup: 'Some travel with route'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
-            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, BigDecimal.ONE, BigDecimal.ONE))
+            travelFlowFacade.addRefuelPlace(new AddRefuelPlaceCommand(travel.travelId, SOME_LOCATION, CAR_ID))
             travelFlowFacade.addCheckpoint(new AddCheckpointCommand(travel.travelId, SOME_LOCATION))
 
         when: 'Driver arranges refuel after destination point'
