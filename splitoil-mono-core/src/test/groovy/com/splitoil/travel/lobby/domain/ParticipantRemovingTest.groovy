@@ -1,6 +1,7 @@
 package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.lobby.domain.event.ParticipantRemovedFromLobby
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.AddPassengerToLobbyCommand
 import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
@@ -33,6 +34,8 @@ class ParticipantRemovingTest extends LobbyTest {
 
         then: 'Passenger is no longer in lobby'
             alteredLobby.participants.size() == 1 //driver only
+
+            1 * eventPublisher.publish(_ as ParticipantRemovedFromLobby)
     }
 
     def "Lobby consistent when removing participant"() {
@@ -47,6 +50,8 @@ class ParticipantRemovingTest extends LobbyTest {
 
         then: 'Cars seats state is correct'
             alteredLobby.cars[0].seatsOccupied == 1 //only driver
+
+            1 * eventPublisher.publish(_ as ParticipantRemovedFromLobby)
     }
 
     def "Removing driver removes all passengers and car from lobby"() {
@@ -64,6 +69,8 @@ class ParticipantRemovingTest extends LobbyTest {
         then: 'Second car is removes as well as passenger'
             alteredLobby.cars.size() == 1 //only lobby creators car
             alteredLobby.participants.size() == 1 //only driver from 1st car
+
+            1 * eventPublisher.publish(_ as ParticipantRemovedFromLobby)
     }
 
     def "Cannot remove lobby creator"() {

@@ -1,6 +1,7 @@
 package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.lobby.domain.event.ParticipantReseated
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.AddPassengerToLobbyCommand
 import com.splitoil.travel.lobby.web.dto.AssignToCarCommand
@@ -35,6 +36,8 @@ class ParticipantReseatingTest extends LobbyTest {
 
         then: 'passenger is in another car'
             alteredLobby.participants[2].assignedCar == SECOND_CAR_ID
+
+            1 * eventPublisher.publish(_ as ParticipantReseated)
     }
 
     def "Seats are consistent after reseating"() {
@@ -52,6 +55,8 @@ class ParticipantReseatingTest extends LobbyTest {
         then: 'first car has one place more second one place less'
             alteredLobby.cars[0].seatsOccupied == 1
             alteredLobby.cars[1].seatsOccupied == 2
+
+            1 * eventPublisher.publish(_ as ParticipantReseated)
     }
 
     def "Lobby creator can't assign participant to another car when is full"() {

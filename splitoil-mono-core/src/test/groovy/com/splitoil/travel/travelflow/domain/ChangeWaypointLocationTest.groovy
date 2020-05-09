@@ -1,6 +1,7 @@
 package com.splitoil.travel.travelflow.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.travelflow.domain.event.WaypointLocationMoved
 import com.splitoil.travel.travelflow.web.dto.MoveWaypointCommand
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
@@ -27,6 +28,8 @@ class ChangeWaypointLocationTest extends TravelTest {
 
         then: 'Waypoint is moved'
             route.getWaypoints().get(0).getLocation() == SOME_LOCATION
+
+            1 * eventPublisher.publish(_ as WaypointLocationMoved)
     }
 
     def "Can't change location of not existing waypoint in travel"() {

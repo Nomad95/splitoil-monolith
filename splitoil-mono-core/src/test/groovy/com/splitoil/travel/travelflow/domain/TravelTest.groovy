@@ -1,6 +1,7 @@
 package com.splitoil.travel.travelflow.domain
 
 import com.splitoil.shared.event.EventPublisher
+import com.splitoil.travel.lobby.application.LobbyQuery
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested
 import com.splitoil.travel.lobby.web.dto.ForTravelCreationLobbyDto
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantForTravelPlanDto
@@ -22,16 +23,20 @@ class TravelTest extends Specification {
     protected static final UUID LOBBY_ID = UUID.fromString('148091b1-c0f0-4a3e-9b0d-569e05cfcd0f')
     protected static final UUID TRAVEL_ID = UUID.fromString('1511e033-5db3-4e4d-a498-7e7f32cfc063')
 
+    protected static final String LOBBY_NAME = "Some lobby name"
+
     protected static final GeoPointDto BEGINNING_LOCATION = GeoPointDto.of(0,0)
     protected static final GeoPointDto SOME_LOCATION = GeoPointDto.of(50,50)
     protected static final GeoPointDto DESTINATION_LOCATION = GeoPointDto.of(1000,1000)
 
     protected TravelFlowFacade travelFlowFacade
     protected EventPublisher eventPublisher
+    protected LobbyQuery lobbyQuery
 
     def setup() {
         eventPublisher = Mock()
-        travelFlowFacade = new TravelConfiguration().travelFlowFacade(eventPublisher)
+        lobbyQuery = Mock()
+        travelFlowFacade = new TravelConfiguration().travelFlowFacade(eventPublisher, lobbyQuery)
     }
 
     protected travelWithTwoCarsAndThreeParticipants() {
@@ -48,6 +53,7 @@ class TravelTest extends Specification {
     }
 
     protected travelWithTwoCarsAndThreeParticipantsAndDestinationSelected() {
+
         def lobbyDto = ForTravelCreationLobbyDto.builder()
                 .participant(LobbyParticipantForTravelPlanDto.builder().userId(DRIVER_ID).assignedCar(CAR_ID).build())
                 .participant(LobbyParticipantForTravelPlanDto.builder().userId(SECOND_DRIVER_ID).assignedCar(SECOND_CAR_ID).build())
@@ -61,5 +67,23 @@ class TravelTest extends Specification {
         travelFlowFacade.selectTravelBeginning(new SelectTravelBeginningCommand(travel.getTravelId(), BEGINNING_LOCATION))
         travelFlowFacade.selectTravelDestination(new SelectTravelDestinationCommand(travel.getTravelId(), DESTINATION_LOCATION))
         return travel;
+    }
+
+    protected allPassengersAndCarsExistsInLobby() {
+        lobbyQuery.participantExistsInLobby(_ as UUID, _ as UUID) >> true
+        lobbyQuery.carsExistInLobby(_ as List<UUID>, _ as UUID) >> true
+        lobbyQuery.carExistInLobby(_ as UUID, _ as UUID) >> true
+    }
+
+    protected passengersAreInTheLobbyButNotCar() {
+        lobbyQuery.participantExistsInLobby(_ as UUID, _ as UUID) >> true
+        lobbyQuery.carsExistInLobby(_ as List<UUID>, _ as UUID) >> false
+        lobbyQuery.carExistInLobby(_ as UUID, _ as UUID) >> false
+    }
+
+    protected allCarsArePresentInLobbyButNotPassengers() {
+        lobbyQuery.participantExistsInLobby(_ as UUID, _ as UUID) >> false
+        lobbyQuery.carsExistInLobby(_ as List<UUID>, _ as UUID) >> true
+        lobbyQuery.carExistInLobby(_ as UUID, _ as UUID) >> true
     }
 }

@@ -1,4 +1,4 @@
-package com.splitoil.travel.lobby
+package com.splitoil.travel.travelplan
 
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec

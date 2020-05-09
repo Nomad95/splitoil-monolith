@@ -1,6 +1,7 @@
 package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.lobby.domain.event.ParticipantCostChargingChanged
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.AddPassengerToLobbyCommand
 import com.splitoil.travel.lobby.web.dto.CreateLobbyCommand
@@ -34,6 +35,7 @@ class ParticipantMaintenanceTest extends LobbyTest {
             alteredLobby.participants[1].displayName == PASSENGER_NAME
             !alteredLobby.participants[1].costChargingEnabled
 
+            1 * eventPublisher.publish(_ as ParticipantCostChargingChanged)
     }
 
     def "Lobby creator enables particular participant from cost charging"() {
@@ -48,6 +50,8 @@ class ParticipantMaintenanceTest extends LobbyTest {
         then: "Passenger's enabled from cost charging"
             alteredLobby.participants[1].displayName == PASSENGER_NAME
             alteredLobby.participants[1].costChargingEnabled
+
+            1 * eventPublisher.publish(_ as ParticipantCostChargingChanged)
     }
 
     def "Disabling particular participant from cost charging does not affect others"() {
@@ -61,6 +65,8 @@ class ParticipantMaintenanceTest extends LobbyTest {
 
         then: 'Other not changed'
             alteredLobby.participants[0].costChargingEnabled
+
+            1 * eventPublisher.publish(_ as ParticipantCostChargingChanged)
     }
 
     private def aNewLobbyWithOneCar() {

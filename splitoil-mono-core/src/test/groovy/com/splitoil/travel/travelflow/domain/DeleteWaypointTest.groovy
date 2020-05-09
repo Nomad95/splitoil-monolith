@@ -1,6 +1,7 @@
 package com.splitoil.travel.travelflow.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.travelflow.domain.event.WaypointDeleted
 import com.splitoil.travel.travelflow.web.dto.AddCheckpointCommand
 import com.splitoil.travel.travelflow.web.dto.AddRefuelPlaceCommand
 import com.splitoil.travel.travelflow.web.dto.DeleteWaypointCommand
@@ -14,6 +15,10 @@ As a lobby creator i want to be able to remove waypoints in my travel plan
 """)
 @See('resources/cucumber/defining_travel.feature')
 class DeleteWaypointTest extends TravelTest {
+
+    def setup() {
+        allPassengersAndCarsExistsInLobby()
+    }
 
     def "Lobby creator can remove waypoint"() {
         setup: 'New travel'
@@ -34,6 +39,8 @@ class DeleteWaypointTest extends TravelTest {
             route.getWaypoints().get(0).waypointType == "BEGINNING_PLACE"
             route.getWaypoints().get(1).waypointType == "CHECKPOINT"
             route.getWaypoints().get(2).waypointType == "DESTINATION_PLACE"
+
+            1 * eventPublisher.publish(_ as WaypointDeleted)
     }
 
     def "Lobby creator can't remove waypoint that is not in the travel"() {

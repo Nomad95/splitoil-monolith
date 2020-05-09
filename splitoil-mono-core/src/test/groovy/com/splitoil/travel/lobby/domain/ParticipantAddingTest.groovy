@@ -1,6 +1,7 @@
 package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.lobby.domain.event.ParticipantAddedToLobby
 import com.splitoil.travel.lobby.web.dto.AddCarToTravelCommand
 import com.splitoil.travel.lobby.web.dto.AddPassengerToLobbyCommand
 import com.splitoil.travel.lobby.web.dto.AddTemporalPassengerToLobbyCommand
@@ -35,6 +36,8 @@ class ParticipantAddingTest extends LobbyTest {
             alteredLobby.participants.size() == 2
             alteredLobby.participants[1].displayName == PASSENGER_NAME
             alteredLobby.participants[1].participantType == 'PASSENGER'
+
+            1 * eventPublisher.publish(_ as ParticipantAddedToLobby)
     }
 
     def "Lobby creator adds an ad hoc passenger to travel lobby"() {
@@ -51,6 +54,8 @@ class ParticipantAddingTest extends LobbyTest {
             alteredLobby.participants.size() == 2
             alteredLobby.participants[1].displayName == PASSENGER_NAME
             alteredLobby.participants[1].participantType == 'TEMPORAL_PASSENGER'
+
+            1 * eventPublisher.publish(_ as ParticipantAddedToLobby)
     }
 
     def "Should throw when creator adds a passenger to car that is full"() {

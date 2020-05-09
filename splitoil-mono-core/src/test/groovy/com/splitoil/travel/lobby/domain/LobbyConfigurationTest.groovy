@@ -2,6 +2,7 @@ package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
 import com.splitoil.shared.model.Currency
+import com.splitoil.travel.lobby.domain.event.*
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
 import com.splitoil.travel.lobby.web.dto.*
 import org.junit.experimental.categories.Category
@@ -29,6 +30,8 @@ class LobbyConfigurationTest extends LobbyTest {
 
         then: 'Rate is visible'
             lobby.topRatePer1km == new BigDecimal("3.50")
+
+            1 * eventPublisher.publish(_ as TravelTopRateSet)
     }
 
     def "Lobby cannot be configured for top rate per 1km before adding the first car"() {
@@ -73,6 +76,8 @@ class LobbyConfigurationTest extends LobbyTest {
 
         then: 'Travel currency is visible'
             lobby.travelCurrency == USD
+
+            1 * eventPublisher.publish(_ as TravelCurrencyChanged)
     }
 
     def "Lobby cannot be configured for currency before adding the first car"() {
@@ -127,6 +132,11 @@ class LobbyConfigurationTest extends LobbyTest {
             alteredLobby.participants.size() == 1
             alteredLobby.participants[0].displayName == DRIVER_LOGIN
             alteredLobby.participants[0].participantType == 'CAR_DRIVER'
+
+            1 * eventPublisher.publish(_ as CarAddedToLobby)
+            1 * eventPublisher.publish(_ as ParticipantAddedToLobby)
+            1 * eventPublisher.publish(_ as LobbyCreated)
+
     }
 
     //not setting top rate makes that price can be anything later and null rate should be handled

@@ -2,6 +2,7 @@ package com.splitoil.travel.travelflow.application;
 
 import com.splitoil.shared.annotation.ApplicationService;
 import com.splitoil.shared.event.EventPublisher;
+import com.splitoil.travel.lobby.application.LobbyQuery;
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested;
 import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.travelflow.domain.event.*;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Transactional
@@ -23,6 +25,8 @@ public class TravelFlowFacade {
     private final TravelRepository travelRepository;
 
     private final EventPublisher eventPublisher;
+
+    private final LobbyQuery lobbyQuery;
 
     public TravelOutputDto createNewTravel(final @NonNull TravelCreationRequested travelCreationRequest) {
         final Travel newTravel = travelCreator.createNewTravel(travelCreationRequest);
@@ -60,6 +64,22 @@ public class TravelFlowFacade {
 
     public void addReseatPlace(final @NonNull AddReseatPlaceCommand addReseatPlaceCommand) {
         final Travel travel = travelRepository.getByAggregateId(addReseatPlaceCommand.getTravelId());
+
+        final List<UUID> affectedCarIds = List.of(addReseatPlaceCommand.getCarFrom(), addReseatPlaceCommand.getCarFrom());
+        final UUID lobbyId = travel.getLobbyId().getId();
+        final UUID reseatedParticipantId = addReseatPlaceCommand.getParticipantId();
+
+        final boolean carsExist = lobbyQuery.carsExistInLobby(affectedCarIds, lobbyId);
+        final boolean passengerExist = lobbyQuery.participantExistsInLobby(reseatedParticipantId, lobbyId);
+
+        if (!carsExist) {
+            throw new IllegalArgumentException("Can't execute the command. Some car are not present in the lobby");
+        }
+
+        if (!passengerExist) {
+            throw new IllegalArgumentException("Can't execute the command. Passenger is not present in the lobby");
+        }
+
         final GeoPointDto waypointLocation = addReseatPlaceCommand.getLocation();
         final Waypoint reseatPlace = travelCreator.createReseatPlace(waypointLocation.getLon(), waypointLocation.getLat());
 
@@ -75,6 +95,16 @@ public class TravelFlowFacade {
 
     public void addRefuelPlace(final @NonNull AddRefuelPlaceCommand addRefuelPlaceCommand) {
         final Travel travel = travelRepository.getByAggregateId(addRefuelPlaceCommand.getTravelId());
+
+        final UUID refuelingCarId = addRefuelPlaceCommand.getCarBeingRefueld();
+        final UUID lobbyId = travel.getLobbyId().getId();
+
+        final boolean carExists = lobbyQuery.carExistInLobby(refuelingCarId, lobbyId);
+
+        if (!carExists) {
+            throw new IllegalArgumentException("Can't execute the command. Car is not present in the lobby");
+        }
+
         final GeoPointDto waypointLocation = addRefuelPlaceCommand.getLocation();
         final Waypoint refuelPlace = travelCreator.createRefuelPlace(waypointLocation.getLon(), waypointLocation.getLat());
 
@@ -98,8 +128,26 @@ public class TravelFlowFacade {
                 addStopPlaceCommand.getLocation()));
     }
 
+
+    //TODO: no dobra trzeba pomyśleć co będzie jesli to rozdzielimy na kilka mikroserwisów
     public void addBoardingPlace(final @NonNull AddParticipantBoardingPlaceCommand addParticipantBoardingPlaceCommand) {
         final Travel travel = travelRepository.getByAggregateId(addParticipantBoardingPlaceCommand.getTravelId());
+
+        final UUID participantId = addParticipantBoardingPlaceCommand.getPassengerId();
+        final UUID boardingCarId = addParticipantBoardingPlaceCommand.getCarId();
+        final UUID lobbyId = travel.getLobbyId().getId();
+
+        final boolean participantExist = lobbyQuery.participantExistsInLobby(participantId, lobbyId);
+        final boolean carExistInLobby = lobbyQuery.carExistInLobby(boardingCarId, lobbyId);
+
+        if (!participantExist) {
+            throw new IllegalArgumentException("Can't execute the command. Participant is not present in the lobby");
+        }
+
+        if (!carExistInLobby) {
+            throw new IllegalArgumentException("Can't execute the command. Car is not present in the lobby");
+        }
+
         final GeoPointDto waypointLocation = addParticipantBoardingPlaceCommand.getLocation();
         final Waypoint refuelPlace = travelCreator.createParticipantBoardingPlace(waypointLocation.getLon(), waypointLocation.getLat());
 
@@ -114,6 +162,22 @@ public class TravelFlowFacade {
 
     public void addExitPlace(final @NonNull AddParticipantExitPlaceCommand addParticipantExitPlaceCommand) {
         final Travel travel = travelRepository.getByAggregateId(addParticipantExitPlaceCommand.getTravelId());
+
+        final UUID participantId = addParticipantExitPlaceCommand.getPassengerId();
+        final UUID boardingCarId = addParticipantExitPlaceCommand.getCarId();
+        final UUID lobbyId = travel.getLobbyId().getId();
+
+        final boolean participantExist = lobbyQuery.participantExistsInLobby(participantId, lobbyId);
+        final boolean carExistInLobby = lobbyQuery.carExistInLobby(boardingCarId, lobbyId);
+
+        if (!participantExist) {
+            throw new IllegalArgumentException("Can't execute the command. Participant is not present in the lobby");
+        }
+
+        if (!carExistInLobby) {
+            throw new IllegalArgumentException("Can't execute the command. Car is not present in the lobby");
+        }
+
         final GeoPointDto waypointLocation = addParticipantExitPlaceCommand.getLocation();
         final Waypoint refuelPlace = travelCreator.createPassengerExitPlace(waypointLocation.getLon(), waypointLocation.getLat());
 
@@ -166,8 +230,12 @@ public class TravelFlowFacade {
 
     public void deleteWaypoint(final @NonNull DeleteWaypointCommand deleteWaypointCommand) {
         final Travel travel = travelRepository.getByAggregateId(deleteWaypointCommand.getTravelId());
-        @NonNull final UUID waypointToDeleteId = deleteWaypointCommand.getWaypointId();
+        final UUID waypointToDeleteId = deleteWaypointCommand.getWaypointId();
 
         travel.deleteWaypoint(waypointToDeleteId);
+        eventPublisher.publish(new WaypointDeleted(
+            travel.getAggregateId(),
+            waypointToDeleteId
+        ));
     }
 }

@@ -2,6 +2,7 @@ package com.splitoil.travel.lobby.domain
 
 import com.splitoil.UnitTest
 import com.splitoil.shared.model.Currency
+import com.splitoil.travel.lobby.domain.event.ParticipantTravelCurrencyChanged
 import com.splitoil.travel.lobby.infrastructure.LobbyConfiguration
 import com.splitoil.travel.lobby.web.dto.*
 import org.junit.experimental.categories.Category
@@ -32,6 +33,8 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
         then: "Passenger's changed travel currency"
             alteredLobby.participants[1].displayName == PASSENGER_NAME
             alteredLobby.participants[1].travelCurrency == EUR
+
+            1 * eventPublisher.publish(_ as ParticipantTravelCurrencyChanged)
     }
 
     def "Passenger has his default currency set when added to lobby"(Currency passengersDefault, String checkCurrency) {
@@ -78,7 +81,6 @@ class ParticipantMaintenanceCurrencyTest extends LobbyTest {
         setup: 'A new lobby with one car'
             loggedDriver(DRIVER_ID, DRIVER_LOGIN)
             carExists(CAR_ID, DRIVER_ID, 5, 0)
-            //passengerExists(PASSENGER_1_ID, PASSENGER_NAME, driverDefault.name())
             lobbyHasDefaultCurrency(lobbyCurrency)
 
         when: 'Create lobby and add passenger'

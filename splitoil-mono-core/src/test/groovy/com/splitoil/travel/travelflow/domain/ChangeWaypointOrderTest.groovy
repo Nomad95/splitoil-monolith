@@ -1,6 +1,7 @@
 package com.splitoil.travel.travelflow.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.travelflow.domain.event.WaypointOrderChanged
 import com.splitoil.travel.travelflow.web.dto.AddCheckpointCommand
 import com.splitoil.travel.travelflow.web.dto.AddRefuelPlaceCommand
 import com.splitoil.travel.travelflow.web.dto.AddStopPlaceCommand
@@ -15,6 +16,10 @@ As a lobby creator i want to be able to arrange the order of waypoints
 """)
 @See('resources/cucumber/defining_travel.feature')
 class ChangeWaypointOrderTest extends TravelTest {
+
+    def setup() {
+        allPassengersAndCarsExistsInLobby()
+    }
 
     def "Lobby creator can move travel beginning location"() {
         setup: 'New travel - checkpoint is after refuel place'
@@ -37,6 +42,8 @@ class ChangeWaypointOrderTest extends TravelTest {
             route.getWaypoints().get(1).waypointType == "CHECKPOINT"
             route.getWaypoints().get(2).waypointType == "REFUEL_PLACE"
             route.getWaypoints().get(3).waypointType == "DESTINATION_PLACE"
+
+            1 * eventPublisher.publish(_ as WaypointOrderChanged)
     }
 
     def "Reorder after beginning"() {
@@ -62,6 +69,8 @@ class ChangeWaypointOrderTest extends TravelTest {
             route.getWaypoints().get(2).waypointType == "REFUEL_PLACE"
             route.getWaypoints().get(3).waypointType == "STOP_PLACE"
             route.getWaypoints().get(4).waypointType == "DESTINATION_PLACE"
+
+            1 * eventPublisher.publish(_ as WaypointOrderChanged)
     }
 
     def "Reorder forward"() {
@@ -87,6 +96,8 @@ class ChangeWaypointOrderTest extends TravelTest {
             route.getWaypoints().get(2).waypointType == "CHECKPOINT"
             route.getWaypoints().get(3).waypointType == "REFUEL_PLACE"
             route.getWaypoints().get(4).waypointType == "DESTINATION_PLACE"
+
+            1 * eventPublisher.publish(_ as WaypointOrderChanged)
     }
 
     def "Reorder backward"() {
@@ -112,6 +123,8 @@ class ChangeWaypointOrderTest extends TravelTest {
             route.getWaypoints().get(2).waypointType == "CHECKPOINT"
             route.getWaypoints().get(3).waypointType == "STOP_PLACE"
             route.getWaypoints().get(4).waypointType == "DESTINATION_PLACE"
+
+            1 * eventPublisher.publish(_ as WaypointOrderChanged)
     }
 
     def "Reordering in the same place does't change route"() {
@@ -136,6 +149,8 @@ class ChangeWaypointOrderTest extends TravelTest {
             route.getWaypoints().get(2).waypointType == "STOP_PLACE"
             route.getWaypoints().get(3).waypointType == "CHECKPOINT"
             route.getWaypoints().get(4).waypointType == "DESTINATION_PLACE"
+
+            1 * eventPublisher.publish(_ as WaypointOrderChanged)
     }
 
     def "Can't rearrange when rearranging waypoint doesnt exist in route"() {

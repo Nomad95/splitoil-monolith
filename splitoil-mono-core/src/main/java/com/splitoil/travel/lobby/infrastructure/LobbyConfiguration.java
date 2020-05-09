@@ -5,6 +5,7 @@ import com.splitoil.shared.event.EventPublisher;
 import com.splitoil.shared.model.Currency;
 import com.splitoil.travel.lobby.application.CarTranslationService;
 import com.splitoil.travel.lobby.application.LobbyFacade;
+import com.splitoil.travel.lobby.application.LobbyQuery;
 import com.splitoil.travel.lobby.application.UserTranslationService;
 import com.splitoil.travel.lobby.domain.model.LobbyCreator;
 import com.splitoil.travel.lobby.domain.model.LobbyRepository;
@@ -33,6 +34,11 @@ public class LobbyConfiguration {
     @Bean
     public LobbyService lobbyService(final LobbyCreator lobbyCreator) {
         return new LobbyService(lobbyCreator);
+    }
+
+    @Bean
+    public LobbyQuery lobbyQuery(final LobbyRepository lobbyRepository) {
+        return new LobbyQuery(lobbyRepository);
     }
 
     @Bean
