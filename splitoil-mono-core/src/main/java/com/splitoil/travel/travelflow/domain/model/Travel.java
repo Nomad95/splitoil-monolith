@@ -7,9 +7,7 @@ import com.splitoil.travel.travelflow.web.dto.TravelOutputDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -18,7 +16,15 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Travel extends AbstractEntity {
 
+    enum TravelStatus {
+        IN_CONFIGURATION,
+        IN_CONFIRMATION,
+        IN_TRAVEL,
+        ENDED
+    }
+
     Travel(final LobbyId lobbyId, final TravelParticipants travelParticipants, final Route route) {
+        this.travelStatus = TravelStatus.IN_CONFIGURATION;
         this.lobbyId = lobbyId;
         this.travelParticipants = travelParticipants;
         this.route = route;
@@ -27,6 +33,10 @@ public class Travel extends AbstractEntity {
 
     @AttributeOverride(name = "id", column = @Column(name = "lobby_id"))
     private LobbyId lobbyId;
+
+    @NonNull
+    @Enumerated(EnumType.STRING)
+    private TravelStatus travelStatus;
 
     @Column(nullable = false, columnDefinition = "json")
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
@@ -51,7 +61,10 @@ public class Travel extends AbstractEntity {
     }
 
     public TravelOutputDto toDto() {
-        return TravelOutputDto.builder().travelId(getAggregateId()).build();
+        return TravelOutputDto.builder()
+            .travelId(getAggregateId())
+            .travelStatus(travelStatus.name())
+            .build();
     }
 
     public void moveWaypoint(final @NonNull UUID waypointId, final @NonNull GeoPoint newLocation) {

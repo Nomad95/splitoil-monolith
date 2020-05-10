@@ -33,4 +33,22 @@ class TravelCreationTest extends TravelTest {
         then: 'Event published'
             1 * eventPublisher.publish(_ as TravelCreated)
     }
+
+    def "Created travel is always in IN_CONFIGURATION state"() {
+        given: 'Start defining travel route asked'
+            def lobbyDto = ForTravelCreationLobbyDto.builder()
+                    .participant(LobbyParticipantForTravelPlanDto.builder().userId(DRIVER_ID).assignedCar(CAR_ID).build())
+                    .participant(LobbyParticipantForTravelPlanDto.builder().userId(SECOND_DRIVER_ID).assignedCar(SECOND_CAR_ID).build())
+                    .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_1_ID).assignedCar(CAR_ID).build())
+                    .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_2_ID).assignedCar(CAR_ID).build())
+                    .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_3_ID).assignedCar(SECOND_CAR_ID).build())
+                    .build()
+            def createTravelCommand = new TravelCreationRequested(LOBBY_ID, lobbyDto)
+
+        when: 'Create travel'
+            def travel = travelFlowFacade.createNewTravel(createTravelCommand)
+
+        then: 'travel is in IN_CONFIGURATION state'
+            travel.travelStatus == "IN_CONFIGURATION"
+    }
 }

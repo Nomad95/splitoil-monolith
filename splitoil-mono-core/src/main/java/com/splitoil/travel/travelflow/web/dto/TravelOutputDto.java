@@ -10,4 +10,5 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TravelOutputDto {
     @NonNull private UUID travelId;
+    @NonNull private String travelStatus;
 }
