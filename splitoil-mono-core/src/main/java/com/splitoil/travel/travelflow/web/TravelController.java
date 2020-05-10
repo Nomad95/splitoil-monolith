@@ -285,6 +285,18 @@ public class TravelController {
             .add(self);
     }
 
+    @PostMapping("confirm")
+    public EntityModel<TravelOutputDto> confirmTravel(@RequestBody @Valid @NonNull final ConfirmTravelPlanCommand confirmTravelPlanCommand) {
+        travelFlowFacade.confirmPlan(confirmTravelPlanCommand);
+        final TravelOutputDto travel = travelFlowFacade.getTravel(confirmTravelPlanCommand.getTravelId());
+
+        final Link self = linkTo(TravelController.class).slash("confirm").withSelfRel();
+
+        return new EntityModel<>(travel)
+            .add(getRouteLink(confirmTravelPlanCommand.getTravelId()))
+            .add(self);
+    }
+
     private Link addTravelBeginningLink() {
         return linkTo(TravelController.class).slash("route").slash("beginning").withRel("add-travel-beginning");
     }

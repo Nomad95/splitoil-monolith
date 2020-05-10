@@ -238,4 +238,17 @@ public class TravelFlowFacade {
             waypointToDeleteId
         ));
     }
+
+    public void confirmPlan(final @NonNull ConfirmTravelPlanCommand confirmTravelPlanCommand) {
+        final Travel travel = travelRepository.getByAggregateId(confirmTravelPlanCommand.getTravelId());
+
+        travel.confirmTravelPlan();
+        eventPublisher.publish(new TravelPlanConfirmed(
+            travel.getAggregateId()
+        ));
+    }
+
+    public TravelOutputDto getTravel(final @NonNull UUID travelId) {
+        return travelRepository.getByAggregateId(travelId).toDto();
+    }
 }

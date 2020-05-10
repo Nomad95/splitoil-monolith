@@ -322,4 +322,28 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.waypoints[1].waypointType').value('CHECKPOINT'))
                     .andExpect(jsonPath('$.waypoints[2].waypointType').value('DESTINATION_PLACE'))
     }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
+            '/db/user/user_passenger.sql',
+            '/db/user/user_passenger_2.sql',
+            '/db/user/user_passenger_3.sql',
+            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
+            '/db/travel/lobby/travel_participant_passenger.sql',
+            '/db/travel/lobby/travel_participant_passenger_2.sql',
+            '/db/travel/lobby/travel_participant_passenger_3.sql',
+            '/db/travel/travel/new_travel_two_drivers_three_pass_with_some_waypoints.sql'])
+    def "Lobby creator can confirm travel"() {
+        given:
+            def confirmTravelPlanCommand = ConfirmTravelPlanCommand.of(TRAVEL_ID)
+
+        when:
+            def result = mockMvc.perform(post("/travel/confirm")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(confirmTravelPlanCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.travelStatus').value('IN_CONFIRMATION'))
+    }
 }

@@ -16,13 +16,14 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Travel extends AbstractEntity {
 
+
+
     enum TravelStatus {
         IN_CONFIGURATION,
         IN_CONFIRMATION,
         IN_TRAVEL,
-        ENDED
+        ENDED;
     }
-
     Travel(final LobbyId lobbyId, final TravelParticipants travelParticipants, final Route route) {
         this.travelStatus = TravelStatus.IN_CONFIGURATION;
         this.lobbyId = lobbyId;
@@ -77,5 +78,17 @@ public class Travel extends AbstractEntity {
 
     public void deleteWaypoint(final @NonNull UUID waypointToDeleteId) {
         route.deleteWaypoint(waypointToDeleteId);
+    }
+
+    public void confirmTravelPlan() {
+        if (travelStatus != TravelStatus.IN_CONFIGURATION) {
+            throw new IllegalStateException("Cant confirm travel plan");
+        }
+
+        if (!route.hasBeginningAndEndDefined()) {
+            throw new IllegalStateException("Cant confirm travel route when beginning and destination was not set yet");
+        }
+
+        travelStatus = TravelStatus.IN_CONFIRMATION;
     }
 }

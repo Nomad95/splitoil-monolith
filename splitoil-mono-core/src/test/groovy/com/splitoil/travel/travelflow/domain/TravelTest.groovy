@@ -7,6 +7,7 @@ import com.splitoil.travel.lobby.web.dto.ForTravelCreationLobbyDto
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantForTravelPlanDto
 import com.splitoil.travel.travelflow.application.TravelFlowFacade
 import com.splitoil.travel.travelflow.infrastructure.TravelConfiguration
+import com.splitoil.travel.travelflow.web.dto.ConfirmTravelPlanCommand
 import com.splitoil.travel.travelflow.web.dto.GeoPointDto
 import com.splitoil.travel.travelflow.web.dto.SelectTravelBeginningCommand
 import com.splitoil.travel.travelflow.web.dto.SelectTravelDestinationCommand
@@ -53,7 +54,6 @@ class TravelTest extends Specification {
     }
 
     protected travelWithTwoCarsAndThreeParticipantsAndDestinationSelected() {
-
         def lobbyDto = ForTravelCreationLobbyDto.builder()
                 .participant(LobbyParticipantForTravelPlanDto.builder().userId(DRIVER_ID).assignedCar(CAR_ID).build())
                 .participant(LobbyParticipantForTravelPlanDto.builder().userId(SECOND_DRIVER_ID).assignedCar(SECOND_CAR_ID).build())
@@ -66,7 +66,26 @@ class TravelTest extends Specification {
         def travel = travelFlowFacade.createNewTravel(createTravelCommand)
         travelFlowFacade.selectTravelBeginning(new SelectTravelBeginningCommand(travel.getTravelId(), BEGINNING_LOCATION))
         travelFlowFacade.selectTravelDestination(new SelectTravelDestinationCommand(travel.getTravelId(), DESTINATION_LOCATION))
-        return travel;
+        return travel
+    }
+
+    protected confirmedPlan() {
+        def lobbyDto = ForTravelCreationLobbyDto.builder()
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(DRIVER_ID).assignedCar(CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(SECOND_DRIVER_ID).assignedCar(SECOND_CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_1_ID).assignedCar(CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_2_ID).assignedCar(CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_3_ID).assignedCar(SECOND_CAR_ID).build())
+                .build()
+        def createTravelCommand = new TravelCreationRequested(LOBBY_ID, lobbyDto)
+
+        def travel = travelFlowFacade.createNewTravel(createTravelCommand)
+        travelFlowFacade.selectTravelBeginning(new SelectTravelBeginningCommand(travel.getTravelId(), BEGINNING_LOCATION))
+        travelFlowFacade.selectTravelDestination(new SelectTravelDestinationCommand(travel.getTravelId(), DESTINATION_LOCATION))
+
+        travelFlowFacade.confirmPlan(ConfirmTravelPlanCommand.of(travel.travelId))
+
+        return travelFlowFacade.getTravel(travel.travelId)
     }
 
     protected allPassengersAndCarsExistsInLobby() {

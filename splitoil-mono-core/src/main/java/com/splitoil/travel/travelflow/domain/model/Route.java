@@ -182,4 +182,8 @@ class Route implements JsonEntity, Serializable {
     private UUID travelId() {
         return travelId.getId();
     }
+
+    public boolean hasBeginningAndEndDefined() {
+        return waypoints.stream().anyMatch(Waypoint::isBeginning) && waypoints.stream().anyMatch(Waypoint::isDestination);
+    }
 }
