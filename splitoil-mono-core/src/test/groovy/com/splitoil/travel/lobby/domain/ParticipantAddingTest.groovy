@@ -60,7 +60,7 @@ class ParticipantAddingTest extends LobbyTest {
 
     def "Should throw when creator adds a passenger to car that is full"() {
         setup: 'A new lobby'
-            carExists(CAR_ID, DRIVER_ID, 5, 4)//TODO ogarnac liczby
+            carExists(CAR_ID, DRIVER_ID, 5, 4)
             def lobby = aNewLobbyWithOneCar()
 
         when: 'Lobby creator adds a passenger'

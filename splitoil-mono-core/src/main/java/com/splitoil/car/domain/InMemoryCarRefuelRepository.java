@@ -1,85 +1,18 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.car.dto.RefuelCarOutputDto;
-import lombok.SneakyThrows;
+import com.splitoil.shared.CrudInMemoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
-class InMemoryCarRefuelRepository implements CarRefuelRepository {
-
-    private Map<Long, CarRefuel> map = new HashMap<>();
-
-    @Override
-    @SneakyThrows
-    public <S extends CarRefuel> S save(final S entity) {
-        final long id = map.size() + 1;
-
-        final Field id1 = entity.getClass().getSuperclass().getDeclaredField("id");
-        id1.setAccessible(true);
-
-        ReflectionUtils.setField(id1, entity, id);
-        map.put(id, entity);
-        return entity;
-    }
-
-    @Override
-    public <S extends CarRefuel> Iterable<S> saveAll(final Iterable<S> entities) {
-        return null;
-    }
-
-    @Override
-    public Optional<CarRefuel> findById(final Long aLong) {
-        return Optional.ofNullable(map.get(aLong));
-    }
-
-    @Override
-    public boolean existsById(final Long aLong) {
-        return false;
-    }
-
-    @Override
-    public Iterable<CarRefuel> findAll() {
-        return null;
-    }
-
-    @Override
-    public Iterable<CarRefuel> findAllById(final Iterable<Long> longs) {
-        return null;
-    }
-
-    @Override
-    public long count() {
-        return 0;
-    }
-
-    @Override
-    public void deleteById(final Long aLong) {
-
-    }
-
-    @Override
-    public void delete(final CarRefuel entity) {
-        final Long key = map.entrySet().stream().filter(entry -> entry.getValue().equals(entity)).map(entry -> entry.getKey()).findFirst().get();
-        map.remove(key);
-    }
-
-    @Override
-    public void deleteAll(final Iterable<? extends CarRefuel> entities) {
-
-    }
-
-    @Override
-    public void deleteAll() {
-
-    }
+class InMemoryCarRefuelRepository extends CrudInMemoryRepository<CarRefuel> implements CarRefuelRepository {
 
     @Override
     public Page<RefuelCarOutputDto> getRefuels(final UUID carId, final Pageable page) {
@@ -93,6 +26,7 @@ class InMemoryCarRefuelRepository implements CarRefuelRepository {
                 .gasStationName(v.getGasStation().getName())
                 .petrolType(v.getPetrolType()
                     .name())
+                .currency(v.getCurrency().name())
                 .build())
             .collect(toList());
         return new PageImpl<>(view);

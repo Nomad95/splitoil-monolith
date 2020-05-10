@@ -89,14 +89,20 @@ public class CarFacade {
         });
     }
 
-    public void addCarCost(final @NonNull AddCarCostDto addCarCostDto) {
+    public CarCostDto addCarCost(final @NonNull AddCarCostDto addCarCostDto) {
         checkCarExistsOrThrow(addCarCostDto.getCarId());
         final CarCost carCost = carCreator.createCarCost(addCarCostDto);
         carCostRepository.save(carCost);
+
+        return getCarCostDetails(carCost.getAggregateId());
     }
 
-    public BigDecimal getTotalCarCostsSum(final UUID carId) {
+    public BigDecimal getTotalCarCostsSum(final @NonNull UUID carId) {
         return carCostRepository.getSumCostForCarId(carId);
+    }
+
+    public CarCostDto getCarCostDetails(final @NonNull UUID carCostId) {
+        return carCostRepository.getCarCostDto(carCostId);
     }
 
     public void addCarRefuel(final @NonNull RefuelCarDto refuelCarDto) {
@@ -119,8 +125,6 @@ public class CarFacade {
 
         if (car.isAbleToCalculateAverages()) {
             //TODO: another event that new travel has been processed. Should trigger the calculation
-            //TODO: to domain service
-            //TODO: need events?
             final BigDecimal totalRefuelCost = carRefuelRepository.getTotalRefuelCostForCar(car.getAggregateId());
             final BigDecimal totalRefuelAmountInLitres = carRefuelRepository.getTotalRefuelAmountInLitres(car.getAggregateId());
             car.calculateAvg1kmCost(totalRefuelCost);

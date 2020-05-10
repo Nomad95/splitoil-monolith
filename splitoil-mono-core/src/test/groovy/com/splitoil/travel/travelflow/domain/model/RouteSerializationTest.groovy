@@ -8,8 +8,8 @@ import spock.lang.Specification
 @Category(UnitTest)
 class RouteSerializationTest extends Specification {
 
-    public static final String EMPTY = '{"waypoints":[]}'
-    public static final String ALL_WAYPOINTS = '{"waypoints":[{"id":"1435ba24-fd5d-4d9a-b19f-6224f0b2e210","location":{"lon":10.0,"lat":15.0},"waypointType":"BEGINNING_PLACE","historical":false},{"id":"1b6a488f-237a-4bad-9f84-c2200aa6f9cf","location":{"lon":10.0,"lat":15.0},"waypointType":"DESTINATION_PLACE","historical":false}]}'
+    public static final String EMPTY = '{"waypoints":[],"travelId":null}'
+    public static final String ALL_WAYPOINTS = '{"waypoints":[{"id":"1435ba24-fd5d-4d9a-b19f-6224f0b2e210","location":{"lon":10.0,"lat":15.0},"waypointType":"BEGINNING_PLACE","historical":false},{"id":"1b6a488f-237a-4bad-9f84-c2200aa6f9cf","location":{"lon":10.0,"lat":15.0},"waypointType":"DESTINATION_PLACE","historical":false}],"travelId":null}'
     public static final String WAYPOINT = '{"id":"1435ba24-fd5d-4d9a-b19f-6224f0b2e210","location":{"lon":10.0,"lat":15.0},"waypointType":"BEGINNING_PLACE","historical":false}'
     private static final GeoPoint GEO_POINT = GeoPoint.of(10, 15)
     private static final UUID BEGINNING_UUID = UUID.fromString('1435ba24-fd5d-4d9a-b19f-6224f0b2e210')

@@ -1,16 +1,12 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.car.dto.CarView;
-import lombok.SneakyThrows;
-import org.springframework.util.ReflectionUtils;
+import com.splitoil.shared.CrudInMemoryRepository;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
-class InMemoryCarsRepository implements CarsRepository {
-
-    private Map<Long, Car> map = new HashMap<>();
+class InMemoryCarsRepository extends CrudInMemoryRepository<Car> implements CarsRepository {
 
     @Override
     public List<Car> findAllByOwner(final Driver owner) {
@@ -26,62 +22,4 @@ class InMemoryCarsRepository implements CarsRepository {
             .collect(Collectors.toList());
     }
 
-    @Override
-    public Optional<Car> findByAggregateId(final UUID aggregateId) {
-        return map.values().stream().filter(e -> e.getAggregateId().equals(aggregateId)).findFirst();
-    }
-
-    @Override
-    @SneakyThrows
-    public <S extends Car> S save(final S entity) {
-        final long id = map.size() + 1;
-
-        final Field id1 = entity.getClass().getSuperclass().getDeclaredField("id");
-        id1.setAccessible(true);
-
-        ReflectionUtils.setField(id1, entity, id);
-        map.put(id, entity);
-        return entity;
-    }
-
-    @Override public <S extends Car> Iterable<S> saveAll(final Iterable<S> entities) {
-        return null;
-    }
-
-    @Override public Optional<Car> findById(final Long aLong) {
-        return Optional.ofNullable(map.get(aLong));
-    }
-
-    @Override public boolean existsById(final Long aLong) {
-        return false;
-    }
-
-    @Override public Iterable<Car> findAll() {
-        return null;
-    }
-
-    @Override public Iterable<Car> findAllById(final Iterable<Long> longs) {
-        return null;
-    }
-
-    @Override public long count() {
-        return 0;
-    }
-
-    @Override public void deleteById(final Long aLong) {
-
-    }
-
-    @Override public void delete(final Car entity) {
-        final Long key = map.entrySet().stream().filter(entry -> entry.getValue().equals(entity)).map(entry -> entry.getKey()).findFirst().get();
-        map.remove(key);
-    }
-
-    @Override public void deleteAll(final Iterable<? extends Car> entities) {
-
-    }
-
-    @Override public void deleteAll() {
-
-    }
 }

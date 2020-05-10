@@ -9,10 +9,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,7 +19,7 @@ class Route implements JsonEntity, Serializable {
 
     private final LinkedList<Waypoint> waypoints = new LinkedList<>();
 
-    //TODO: travelid
+    private TravelId travelId;
 
     List<Waypoint> waypoints() {
         return Collections.unmodifiableList(waypoints);
@@ -89,6 +86,10 @@ class Route implements JsonEntity, Serializable {
     }
 
     void changeLocation(final @NonNull UUID waypointId, final @NonNull GeoPoint newLocation) {
+        if (!waypointExists(waypointId)) {
+            throw new IllegalArgumentException(String.format("Waypoint %s doesn't exist in travel %s", waypointId, travelId()));
+        }
+
         final Waypoint waypoint = findWaypoint(waypointId);
         if (waypoint.isHistorical()) {
             throw new IllegalArgumentException("Cant change location of historical waypoint " + waypointId);
@@ -111,6 +112,17 @@ class Route implements JsonEntity, Serializable {
     }
 
     public void moveWaypointAfter(final @NonNull UUID rearrangingWaypointId, final @NonNull UUID rearrangeAfterWaypointId) {
+        if (!waypointExists(rearrangingWaypointId)) {
+            throw new IllegalArgumentException(
+                String.format("Cannot rearrange order of waypoint %s. Rearranging waypoint doesn't exist in travel %s", rearrangingWaypointId, travelId()));
+        }
+
+        if (!waypointExists(rearrangeAfterWaypointId)) {
+            throw new IllegalArgumentException(
+                String.format("Cannot rearrange order of waypoint %s. Rearrange after waypoint of id %s doesn't exist in travel %s",
+                    rearrangingWaypointId, rearrangeAfterWaypointId, travelId()));
+        }
+
         if (rearrangingWaypointId.equals(rearrangeAfterWaypointId)) {
             return;
         }
@@ -131,9 +143,16 @@ class Route implements JsonEntity, Serializable {
         } else {
             waypoints.add(rearrangeAfterIndex + 1, rearranging);
         }
+
+        checkRouteConsistency();
     }
 
     public void deleteWaypoint(final @NonNull UUID waypointToDeleteId) {
+        if (!waypointExists(waypointToDeleteId)) {
+            throw new IllegalArgumentException(
+                String.format("Cannot delete %s - it doesn't exist in travel %s", waypointToDeleteId, travelId()));
+        }
+
         final Waypoint waypointToDelete = findWaypoint(waypointToDeleteId);
 
         if (waypointToDelete.isHistorical()) {
@@ -149,5 +168,18 @@ class Route implements JsonEntity, Serializable {
         }
 
         waypoints.remove(waypointToDelete);
+        checkRouteConsistency();
+    }
+
+    public void setTravelId(final Travel travel) {
+        if (Objects.nonNull(this.travelId)) {
+            throw new IllegalStateException("Can't update travel id");
+        }
+
+        this.travelId = TravelId.of(travel.getAggregateId());
+    }
+
+    private UUID travelId() {
+        return travelId.getId();
     }
 }

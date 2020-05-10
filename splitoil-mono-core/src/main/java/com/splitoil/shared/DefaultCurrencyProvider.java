@@ -1,8 +1,8 @@
 package com.splitoil.shared;
 
 import com.splitoil.shared.model.Currency;
-import com.splitoil.user.domain.ApplicationUser;
-import com.splitoil.user.domain.UserRepository;
+import com.splitoil.user.application.UserFacade;
+import com.splitoil.user.dto.ApplicationUserDto;
 import com.splitoil.user.shared.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -17,22 +17,21 @@ import java.util.Objects;
 @Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
 public class DefaultCurrencyProvider implements UserCurrencyProvider {
 
-    private final UserRepository userRepository;
-    //TODO: maybe change to appService?
+    private final UserFacade userFacade;
     //TODO: taki bean z odświeżaniem :)
 
     private Currency currentUserDefaultCurrency;
 
     @Autowired
-    public DefaultCurrencyProvider(final UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public DefaultCurrencyProvider(final UserFacade userFacade) {
+        this.userFacade = userFacade;
     }
 
     @PostConstruct
     public void init() {
         final String currentUserLogin = SecurityUtils.getCurrentUserLogin();
-        final ApplicationUser oneByLogin = userRepository.getOneByLogin(currentUserLogin);
-        this.currentUserDefaultCurrency = oneByLogin.getDefaultCurrency();
+        final ApplicationUserDto oneByLogin = userFacade.getUserByLogin(currentUserLogin);
+        this.currentUserDefaultCurrency = Currency.valueOf(oneByLogin.getDefaultCurrency());
     }
 
     @Override

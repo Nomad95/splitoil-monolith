@@ -22,6 +22,7 @@ public class Travel extends AbstractEntity {
         this.lobbyId = lobbyId;
         this.travelParticipants = travelParticipants;
         this.route = route;
+        route.setTravelId(this);
     }
 
     @AttributeOverride(name = "id", column = @Column(name = "lobby_id"))
@@ -54,34 +55,14 @@ public class Travel extends AbstractEntity {
     }
 
     public void moveWaypoint(final @NonNull UUID waypointId, final @NonNull GeoPoint newLocation) {
-        if (!route.waypointExists(waypointId)) {
-            throw new IllegalArgumentException(String.format("Waypoint %s doesn't exist in travel %s", waypointId, getAggregateId()));
-        }
-
         route.changeLocation(waypointId, newLocation);
     }
 
     public void moveWaypointAfter(final @NonNull UUID rearrangingWaypointId, final @NonNull UUID rearrangeAfterWaypointId) {
-        if (!route.waypointExists(rearrangingWaypointId)) {
-            throw new IllegalArgumentException(
-                String.format("Cannot rearrange order of waypoint %s. Rearranging waypoint doesn't exist in travel %s", rearrangingWaypointId, getAggregateId()));
-        }
-
-        if (!route.waypointExists(rearrangeAfterWaypointId)) {
-            throw new IllegalArgumentException(
-                String.format("Cannot rearrange order of waypoint %s. Rearrange after waypoint of id %s doesn't exist in travel %s",
-                    rearrangingWaypointId, rearrangeAfterWaypointId, getAggregateId()));
-        }
-
         route.moveWaypointAfter(rearrangingWaypointId, rearrangeAfterWaypointId);
     }
 
     public void deleteWaypoint(final @NonNull UUID waypointToDeleteId) {
-        if (!route.waypointExists(waypointToDeleteId)) {
-            throw new IllegalArgumentException(
-                String.format("Cannot delete %s - it doesn't exist in travel %s", waypointToDeleteId, getAggregateId()));
-        }
-
         route.deleteWaypoint(waypointToDeleteId);
     }
 }

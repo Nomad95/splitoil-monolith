@@ -140,7 +140,7 @@ class CarIntegrationTest extends IntegrationSpec {
        given:
             def addCostDto = AddCarCostDto.builder()
                     .carId(CAR_ID)
-                    .value(new BigDecimal("125.53")) //TODO: currency
+                    .value(new BigDecimal("125.53"))
                     .name("Window repair")
                     .build()
             def addCostDto2 = AddCarCostDto.builder()

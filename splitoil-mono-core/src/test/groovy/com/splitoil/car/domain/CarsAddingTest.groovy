@@ -75,5 +75,5 @@ class CarsAddingTest extends Specification {
             car.avgCostPer1Km == BigDecimal.ZERO
     }
 
-    //TODO:     And user is now a driver
+    //TODO: tu wiecej testow poźniej
 }

@@ -101,7 +101,7 @@ class GasStationIntegrationTest extends IntegrationSpec {
             result.andExpect(status().isAccepted())
     }
 
-    //TODO: i think this should be done internally
+    //TODO: i think this should be done internally - scheduler or something
     @Sql(scripts = '/db/gas_station/default_petrol_price_not_accepted.sql')
     def "system should accept gas price"() {
         given:

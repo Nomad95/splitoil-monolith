@@ -1,8 +1,13 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.car.dto.*;
+import com.splitoil.shared.UserCurrencyProvider;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class CarCreator {
+
+    private final UserCurrencyProvider currencyProvider;
 
     Driver createDriver(final DriverDto driverDto) {
         return Driver.of(driverDto.getId());
@@ -31,6 +36,7 @@ class CarCreator {
             .carId(costDto.getCarId())
             .name(costDto.getName())
             .value(costDto.getValue())
+            .currency(currencyProvider.getCurrentUserDefaultCurrency())
             .build();
     }
 
@@ -41,6 +47,7 @@ class CarCreator {
             .fuelAmountInLitres(refuelCarDto.getAmount())
             .gasStation(GasStation.from(refuelCarDto.getGasStation()))
             .petrolType(PetrolType.valueOf(refuelCarDto.getPetrolType()))
+            .currency(currencyProvider.getCurrentUserDefaultCurrency())
             .value(refuelCarDto.getCost())
             .build();
     }

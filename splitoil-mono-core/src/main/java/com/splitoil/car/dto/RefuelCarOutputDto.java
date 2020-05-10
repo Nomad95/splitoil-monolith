@@ -27,6 +27,9 @@ public class RefuelCarOutputDto {
     @NotNull
     private BigDecimal cost;
 
+    @NonNull
+    private String currency;
+
     @NotNull
     private BigDecimal amount;
 

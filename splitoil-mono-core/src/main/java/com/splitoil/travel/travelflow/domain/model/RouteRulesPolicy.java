@@ -51,8 +51,12 @@ interface RouteRulesPolicy {
     };
 
     RouteRulesPolicy historicalBeforeActiveRule = waypoints -> {
-        final int indexOfFirstActiveWaypoint = getIndexOfFirstActiveWaypoint(waypoints);
-        final List<Waypoint>[] lists = split(waypoints, indexOfFirstActiveWaypoint);
+        final Waypoints.WaypointIndex indexOfFirstActiveWaypoint = getIndexOfFirstActiveWaypoint(waypoints);
+        if (indexOfFirstActiveWaypoint == Waypoints.WaypointIndex.ALL_HISTORICAL) {
+            return RouteRuleCheckResult.isFollowingTheRule();
+        }
+
+        final List<Waypoint>[] lists = split(waypoints, indexOfFirstActiveWaypoint.getIndex());
 
         if (!lists[0].stream().allMatch(Waypoint::isHistorical)) {
             return RouteRuleCheckResult.isNotFollowingTheRule("Historical waypoints are not before active in list");

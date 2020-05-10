@@ -24,6 +24,7 @@ class CarsCostsTest extends Specification {
     static final String GAS_STATION_NAME = "Orlen Radziwiłłów 3"
     static final GasStationIdDto GAS_STATION_ID_DTO = GasStationIdDto.of(GeoPointDto.of(LONGITUDE, LATITUDE), GAS_STATION_NAME)
     static final Instant NOW = Instant.now()
+    public static final String PLN = "PLN"
 
     private CarFacade carFacade
 
@@ -71,6 +72,22 @@ class CarsCostsTest extends Specification {
             carFacade.getTotalCarCostsSum(addedCar.id) == new BigDecimal("26.0")
     }
 
+    def "Car cost is in drivers default currency"() {
+        given: "chosen car"
+            def addedCar = carFacade.addNewCarToCollection(CAR_INPUT_DTO)
+            def addCarCostDto = AddCarCostDto.builder()
+                    .carId(addedCar.getId())
+                    .value(new BigDecimal("125.53"))
+                    .name("Engine oil 2L")
+                    .build()
+
+        when: "driver adds a cost related to his car"
+            def details = carFacade.addCarCost(addCarCostDto)
+
+        then:
+            details.currency == PLN
+    }
+
     def "Driver can add refuel manually"() {
         given: "chosen car"
             def addedCar = carFacade.addNewCarToCollection(CAR_INPUT_DTO)
@@ -93,6 +110,7 @@ class CarsCostsTest extends Specification {
                     .amount(new BigDecimal("25.0"))
                     .gasStationName(GAS_STATION_ID_DTO.getName())
                     .cost(new BigDecimal("100.0"))
+                    .currency(PLN)
                     .date(NOW)
                     .build()
 
@@ -101,5 +119,25 @@ class CarsCostsTest extends Specification {
             refuels.contains(expectedView)
     }
 
+    def "Currency sets as driver default when driver adds refuel manually"() {
+        given: 'chosen car'
+            def addedCar = carFacade.addNewCarToCollection(CAR_INPUT_DTO)
+            def refuelCommand = RefuelCarDto.builder()
+                    .carId(addedCar.getId())
+                    .petrolType("BENZINE_95")
+                    .amount(new BigDecimal("25.0"))
+                    .gasStation(GAS_STATION_ID_DTO)
+                    .cost(new BigDecimal("100.0"))
+                    .date(NOW)
+                    .build()
+
+        when: 'driver adds a refuel to his car'
+            carFacade.addCarRefuel(refuelCommand)
+
+        then: 'Currency is set as default'
+            def refuels = carFacade.getRefuels(addedCar.id, PageRequest.of(0, 20)).getContent()
+            refuels.size() == 1
+            refuels[0].currency == PLN
+    }
 
 }

@@ -14,8 +14,9 @@ import java.util.UUID;
 @Repository
 interface CarRefuelRepository extends CrudRepository<CarRefuel, Long> {
 
-    @Query("SELECT new com.splitoil.car.dto.RefuelCarOutputDto(cr.aggregateId, cr.costDate, cr.gasStation.name, cr.value, cr.fuelAmountInLitres, CAST(cr.petrolType as text)) "
-               + "FROM CarRefuel cr WHERE cr.carId = :carId ORDER BY cr.costDate DESC")
+    @Query(
+        "SELECT new com.splitoil.car.dto.RefuelCarOutputDto(cr.aggregateId, cr.costDate, cr.gasStation.name, cr.value, CAST(cr.currency as text), cr.fuelAmountInLitres, CAST(cr.petrolType as text)) "
+            + "FROM CarRefuel cr WHERE cr.carId = :carId ORDER BY cr.costDate DESC")
     Page<RefuelCarOutputDto> getRefuels(@Param("carId") UUID carId, Pageable page);
 
     @Query("SELECT SUM(cr.value) FROM CarRefuel cr WHERE cr.carId = :carId")

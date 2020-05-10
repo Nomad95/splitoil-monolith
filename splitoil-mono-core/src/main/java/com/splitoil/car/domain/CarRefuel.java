@@ -1,6 +1,7 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.shared.AbstractEntity;
+import com.splitoil.shared.model.Currency;
 import lombok.*;
 
 import javax.persistence.Embedded;
@@ -23,6 +24,8 @@ class CarRefuel extends AbstractEntity {
     private Instant costDate;
 
     private BigDecimal value;
+
+    private Currency currency;
 
     @Embedded
     private GasStation gasStation;

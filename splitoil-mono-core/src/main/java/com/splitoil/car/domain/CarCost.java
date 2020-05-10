@@ -1,6 +1,7 @@
 package com.splitoil.car.domain;
 
 import com.splitoil.shared.AbstractEntity;
+import com.splitoil.shared.model.Currency;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -23,4 +24,5 @@ class CarCost extends AbstractEntity {
 
     private UUID carId;
 
+    private Currency currency;
 }
