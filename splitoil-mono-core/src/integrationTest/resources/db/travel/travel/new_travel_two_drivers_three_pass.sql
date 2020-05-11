@@ -2,7 +2,7 @@
 SET search_path TO public;
 
 --data:
-insert into travel (id, aggregate_id, lobby_id, route, travel_participants, travel_status)
+insert into travel (id, aggregate_id, lobby_id, route, travel_participants, travel_status, initial_state)
 values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e05cfcd0f', '{
   "waypoints": [
   ]
@@ -21,4 +21,8 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
       "assignedCarId": "b9574b12-8ca1-4779-aab8-a25192e33739"
     }
   ]
-}', 'IN_CONFIGURATION')
+}',
+        'IN_CONFIGURATION',
+        '{
+          "carStates": {}
+        }')

@@ -251,4 +251,28 @@ public class TravelFlowFacade {
     public TravelOutputDto getTravel(final @NonNull UUID travelId) {
         return travelRepository.getByAggregateId(travelId).toDto();
     }
+
+    public void setCarInitialState(final @NonNull SetCarInitialStateCommand setCarInitialStateCommand) {
+        final Travel travel = travelRepository.getByAggregateId(setCarInitialStateCommand.getTravelId());
+
+        final UUID lobbyId = travel.getLobbyId().getId();
+        final UUID carId = setCarInitialStateCommand.getCarId();
+
+        final boolean carExistInLobby = lobbyQuery.carExistInLobby(carId, lobbyId);
+
+        if (!carExistInLobby) {
+            throw new IllegalArgumentException("Can't execute the command. Car is not present in the lobby");
+        }
+
+        final CarState initialCarState = travelCreator.createInitialCarState(
+            setCarInitialStateCommand.getCurrentFuelLevel(),
+            setCarInitialStateCommand.getOdometer());
+        travel.setCarsInitialState(carId, initialCarState);
+        eventPublisher.publish(new CarInitialStateSet(
+            travel.getAggregateId(),
+            carId,
+            setCarInitialStateCommand.getCurrentFuelLevel(),
+            setCarInitialStateCommand.getOdometer()
+        ));
+    }
 }

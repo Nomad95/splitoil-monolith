@@ -1,17 +1,19 @@
 package com.splitoil.travel.travelflow.domain
 
 import com.splitoil.UnitTest
+import com.splitoil.travel.travelflow.domain.event.CarInitialStateSet
 import com.splitoil.travel.travelflow.domain.event.TravelPlanConfirmed
 import com.splitoil.travel.travelflow.web.dto.ConfirmTravelPlanCommand
 import com.splitoil.travel.travelflow.web.dto.SelectTravelBeginningCommand
 import com.splitoil.travel.travelflow.web.dto.SelectTravelDestinationCommand
+import com.splitoil.travel.travelflow.web.dto.SetCarInitialStateCommand
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See
 
 @Category(UnitTest)
 @Narrative("""
-As a Lobby creator i want to define the travel route to show it to the participants
+As a Lobby creator i want to confirm travel plan i have made
 """)
 @See('resources/cucumber/defining_travel.feature')
 class TravelConfirmationTest extends TravelTest {
@@ -57,6 +59,32 @@ class TravelConfirmationTest extends TravelTest {
 
         then:
             thrown(IllegalStateException)
+    }
+
+    def "Lobby creator have to set car initial state"() {
+        setup: 'A confirmed travel'
+            def travel = confirmedPlan()
+            allPassengersAndCarsExistsInLobby()
+
+        when: 'Lobby creator enters cars fuel level and odometer'
+            def command = SetCarInitialStateCommand.of(travel.travelId, CAR_ID, new BigDecimal("15.0"), 123456)
+            travelFlowFacade.setCarInitialState(command)
+
+        then: 'Car state entered'
+            1 * eventPublisher.publish(_ as CarInitialStateSet)
+    }
+
+    def "Throw when adding cars state that is not found in lobby"() {
+        setup: 'A confirmed travel'
+            def travel = confirmedPlan()
+            passengersAreInTheLobbyButNotCar()
+
+        when: 'Lobby creator enters cars fuel level and odometer of wrong car'
+            def command = SetCarInitialStateCommand.of(travel.travelId, UUID.randomUUID(), new BigDecimal("15.0"), 123456)
+            travelFlowFacade.setCarInitialState(command)
+
+        then:
+            thrown(IllegalArgumentException)
     }
 
 }

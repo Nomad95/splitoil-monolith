@@ -16,20 +16,18 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Travel extends AbstractEntity {
 
-
-
     enum TravelStatus {
         IN_CONFIGURATION,
         IN_CONFIRMATION,
         IN_TRAVEL,
         ENDED;
     }
-    Travel(final LobbyId lobbyId, final TravelParticipants travelParticipants, final Route route) {
+    Travel(final LobbyId lobbyId, final TravelParticipants travelParticipants) {
         this.travelStatus = TravelStatus.IN_CONFIGURATION;
         this.lobbyId = lobbyId;
         this.travelParticipants = travelParticipants;
-        this.route = route;
-        route.setTravelId(this);
+        this.route = new Route(TravelId.of(getAggregateId()));
+        this.initialState = new InitialState();
     }
 
     @AttributeOverride(name = "id", column = @Column(name = "lobby_id"))
@@ -52,6 +50,13 @@ public class Travel extends AbstractEntity {
               @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.TravelParticipants"),
           })
     private TravelParticipants travelParticipants;
+
+    @Column(nullable = false, columnDefinition = "json")
+    @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
+          parameters = {
+              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.InitialState"),
+          })
+    private InitialState initialState;
 
     public void addWaypoint(final @NonNull Waypoint waypoint) {
         route.addWaypoint(waypoint);
@@ -90,5 +95,9 @@ public class Travel extends AbstractEntity {
         }
 
         travelStatus = TravelStatus.IN_CONFIRMATION;
+    }
+
+    public void setCarsInitialState(final @NonNull UUID carId, final @NonNull CarState initialCarState) {
+        initialState.addCarState(carId, initialCarState);
     }
 }

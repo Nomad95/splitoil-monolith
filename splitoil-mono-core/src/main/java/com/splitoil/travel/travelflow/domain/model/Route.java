@@ -3,23 +3,29 @@ package com.splitoil.travel.travelflow.domain.model;
 import com.splitoil.infrastructure.json.JsonEntity;
 import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.lobby.web.dto.WaypointDto;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 class Route implements JsonEntity, Serializable {
 
     private final LinkedList<Waypoint> waypoints = new LinkedList<>();
 
     private TravelId travelId;
+
+    Route(final TravelId travelId) {
+        this.travelId = travelId;
+    }
 
     List<Waypoint> waypoints() {
         return Collections.unmodifiableList(waypoints);
@@ -169,14 +175,6 @@ class Route implements JsonEntity, Serializable {
 
         waypoints.remove(waypointToDelete);
         checkRouteConsistency();
-    }
-
-    public void setTravelId(final Travel travel) {
-        if (Objects.nonNull(this.travelId)) {
-            throw new IllegalStateException("Can't update travel id");
-        }
-
-        this.travelId = TravelId.of(travel.getAggregateId());
     }
 
     private UUID travelId() {

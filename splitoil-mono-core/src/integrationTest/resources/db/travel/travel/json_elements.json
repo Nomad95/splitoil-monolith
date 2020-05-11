@@ -56,5 +56,18 @@
   },
   {
     "participants": []
+  },
+
+  {
+    "carStates": {}
+  },
+
+  {
+    "carStates": {
+      "bb1981e6-047c-417b-8e44-10ac303ce4cb": {
+        "fuelLevel": 1.23,
+        "odometer": 1234
+      }
+    }
   }
 ]

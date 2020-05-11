@@ -6,6 +6,8 @@ import com.splitoil.travel.travelflow.web.dto.GeoPointDto;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 public class TravelCreator {
 
@@ -18,7 +20,7 @@ public class TravelCreator {
             participantBuilder.participant(new TravelParticipant(lobbyParticipant.getUserId(), lobbyParticipant.getAssignedCar()));
         }
 
-        return new Travel(lobbyId, participantBuilder.build(), new Route());
+        return new Travel(lobbyId, participantBuilder.build());
     }
 
     public Waypoint createBeginningPlace(final double lon, final double lat) {
@@ -79,5 +81,9 @@ public class TravelCreator {
 
     public GeoPoint createGeoPoint(final GeoPointDto location) {
         return GeoPoint.of(location.getLon(), location.getLat());
+    }
+
+    public CarState createInitialCarState(final @NonNull BigDecimal currentFuelLevel, final int odometer) {
+        return new CarState(currentFuelLevel, odometer);
     }
 }
