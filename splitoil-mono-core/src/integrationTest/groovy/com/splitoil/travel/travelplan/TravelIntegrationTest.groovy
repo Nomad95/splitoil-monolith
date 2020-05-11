@@ -346,4 +346,31 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath('$.travelStatus').value('IN_CONFIRMATION'))
     }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
+            '/db/user/user_passenger.sql',
+            '/db/user/user_passenger_2.sql',
+            '/db/user/user_passenger_3.sql',
+            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
+            '/db/travel/lobby/travel_participant_passenger.sql',
+            '/db/travel/lobby/travel_participant_passenger_2.sql',
+            '/db/travel/lobby/travel_participant_passenger_3.sql',
+            '/db/travel/travel/confirmed_travel_with_some_waypoints.sql'])
+    def "Lobby creator can add initial car state to have its travel cost calculated correctly"() {
+        given:
+            def carInitialStateCommand = SetCarInitialStateCommand.of(TRAVEL_ID, CAR_UUID, BigDecimal.TEN, 1234)
+
+        when:
+            def result = mockMvc.perform(post("/travel/carstate")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(carInitialStateCommand)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.travelStatus').value('IN_CONFIRMATION'))
+                    .andExpect(jsonPath('$.state.carsState[0].carId').value(CAR_UUID.toString()))
+                    .andExpect(jsonPath('$.state.carsState[0].fuelAmount').value(new BigDecimal("10.0")))
+                    .andExpect(jsonPath('$.state.carsState[0].odometer').value(1234))
+    }
 }

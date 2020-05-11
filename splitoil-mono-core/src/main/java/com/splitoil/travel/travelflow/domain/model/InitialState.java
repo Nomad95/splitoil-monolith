@@ -3,12 +3,16 @@ package com.splitoil.travel.travelflow.domain.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.splitoil.infrastructure.json.JsonEntity;
+import com.splitoil.travel.travelflow.web.dto.CarStateOutputDto;
+import com.splitoil.travel.travelflow.web.dto.StateOutputDto;
 import lombok.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Builder
 @ToString
@@ -33,5 +37,16 @@ class InitialState implements JsonEntity, Serializable {
             carStates.put(carId, carState);
             return this;
         }
+    }
+
+    public StateOutputDto toDto() {
+        final List<CarStateOutputDto> cars = carStates.entrySet().stream()
+            .map(e -> CarStateOutputDto.builder().carId(e.getKey()).fuelAmount(e.getValue().getFuelLevel()).odometer(e.getValue().getOdometer()).build())
+            .collect(
+                Collectors.toUnmodifiableList());
+
+        return StateOutputDto.builder()
+            .carsState(cars)
+            .build();
     }
 }

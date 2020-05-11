@@ -85,6 +85,7 @@ public class TravelController {
             .add(addCheckpointPlaceLink())
             .add(addMoveWaypointLocationLink())
             .add(addChangeWaypointOrderLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -107,6 +108,7 @@ public class TravelController {
             .add(addCheckpointPlaceLink())
             .add(addMoveWaypointLocationLink())
             .add(addChangeWaypointOrderLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -129,6 +131,7 @@ public class TravelController {
             .add(addCheckpointPlaceLink())
             .add(addChangeWaypointOrderLink())
             .add(addMoveWaypointLocationLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -151,6 +154,7 @@ public class TravelController {
             .add(addCheckpointPlaceLink())
             .add(addChangeWaypointOrderLink())
             .add(addMoveWaypointLocationLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -173,6 +177,7 @@ public class TravelController {
             .add(addCheckpointPlaceLink())
             .add(addMoveWaypointLocationLink())
             .add(addChangeWaypointOrderLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -195,6 +200,7 @@ public class TravelController {
             .add(addExitPlaceLink())
             .add(addMoveWaypointLocationLink())
             .add(addChangeWaypointOrderLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -217,6 +223,7 @@ public class TravelController {
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
             .add(addChangeWaypointOrderLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -239,6 +246,7 @@ public class TravelController {
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
             .add(addMoveWaypointLocationLink())
+            .add(addConfirmTravelLink())
             .add(addDeleteWaypointLink())
             .add(self);
     }
@@ -261,6 +269,7 @@ public class TravelController {
             .add(addExitPlaceLink())
             .add(addCheckpointPlaceLink())
             .add(addMoveWaypointLocationLink())
+            .add(addConfirmTravelLink())
             .add(addChangeWaypointOrderLink())
             .add(self);
     }
@@ -282,6 +291,7 @@ public class TravelController {
             .add(addCheckpointPlaceLink())
             .add(addMoveWaypointLocationLink())
             .add(addDeleteWaypointLink())
+            .add(addConfirmTravelLink())
             .add(self);
     }
 
@@ -294,8 +304,22 @@ public class TravelController {
 
         return new EntityModel<>(travel)
             .add(getRouteLink(confirmTravelPlanCommand.getTravelId()))
+            .add(addCarStateLink())
             .add(self);
     }
+
+    @PostMapping("carstate")
+    public EntityModel<TravelOutputDto> setCarsInitialState(@RequestBody @Valid @NonNull final SetCarInitialStateCommand setCarInitialStateCommand) {
+        travelFlowFacade.setCarInitialState(setCarInitialStateCommand);
+        final TravelOutputDto travel = travelFlowFacade.getTravel(setCarInitialStateCommand.getTravelId());
+
+        final Link self = linkTo(TravelController.class).slash("carstate").withSelfRel();
+
+        return new EntityModel<>(travel)
+            .add(getRouteLink(setCarInitialStateCommand.getTravelId()))
+            .add(self);
+    }
+
 
     private Link addTravelBeginningLink() {
         return linkTo(TravelController.class).slash("route").slash("beginning").withRel("add-travel-beginning");
@@ -344,4 +368,13 @@ public class TravelController {
     private Link addDeleteWaypointLink() {
         return linkTo(TravelController.class).slash("route").slash("waypoint").withRel("delete-waypoint");
     }
+
+    private Link addConfirmTravelLink() {
+        return linkTo(TravelController.class).slash("confirm").withRel("confirm-travel-plan");
+    }
+
+    private Link addCarStateLink() {
+        return linkTo(TravelController.class).slash("carstate").withRel("add-car-initial-state");
+    }
+
 }

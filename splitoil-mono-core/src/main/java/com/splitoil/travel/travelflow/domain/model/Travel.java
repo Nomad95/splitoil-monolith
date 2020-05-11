@@ -70,6 +70,7 @@ public class Travel extends AbstractEntity {
         return TravelOutputDto.builder()
             .travelId(getAggregateId())
             .travelStatus(travelStatus.name())
+            .state(initialState.toDto())
             .build();
     }
 

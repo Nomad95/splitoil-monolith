@@ -2,14 +2,12 @@ package com.splitoil.travel.travelflow.web.dto;
 
 import lombok.*;
 
-import java.util.UUID;
+import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TravelOutputDto {
-    @NonNull private UUID travelId;
-    @NonNull private String travelStatus;
-    @NonNull private StateOutputDto state;
+public class StateOutputDto {
+    private List<CarStateOutputDto> carsState;
 }

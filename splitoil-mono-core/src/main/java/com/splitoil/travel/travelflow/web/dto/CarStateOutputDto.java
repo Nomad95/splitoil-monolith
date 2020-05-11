@@ -2,14 +2,16 @@ package com.splitoil.travel.travelflow.web.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TravelOutputDto {
-    @NonNull private UUID travelId;
-    @NonNull private String travelStatus;
-    @NonNull private StateOutputDto state;
+public class CarStateOutputDto {
+    private UUID carId;
+    private BigDecimal fuelAmount;
+    private int odometer;
+
 }
