@@ -3,29 +3,29 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
     id 'groovy'
-    id 'org.unbroken-dome.test-sets' version '2.2.1'
     id 'info.solidsoft.pitest' version '1.4.6'
-
 }
 
 
 group = 'com.splitoil'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 12
-targetCompatibility = 12
 def cucumberVersion = '4.7.4'
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
+    compileOnly.extendsFrom annotationProcessor
+    cucumberRuntime.extendsFrom testImplementation
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
 }
 
 repositories {
     mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_12
+    targetCompatibility = JavaVersion.VERSION_12
 }
 
 dependencies {
@@ -49,14 +49,18 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.2.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.2.2.RELEASE'
     testCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.0.RELEASE'
+    integrationTestCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.0.RELEASE'
+
 
     //spock
+    integrationTestCompile group: 'org.spockframework', name: 'spock-core', version: '1.3-groovy-2.5'
+    integrationTestCompile group: 'org.spockframework', name: 'spock-spring', version: '1.3-groovy-2.5'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.3-groovy-2.5'
     testCompile group: 'org.spockframework', name: 'spock-spring', version: '1.3-groovy-2.5'
 
     //cucumber
-    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
-    testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+    integrationTestImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    integrationTestImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
 
     //jackson
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
@@ -72,31 +76,58 @@ dependencies {
 
 }
 
-testSets {
-    integrationTest
-    test
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
 }
 
 test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+task unitTest(type: Test) {
+    description = 'Runs unit tests.'
+    group = 'verification'
+
     useJUnit {
         includeCategories 'com.splitoil.UnitTest'
     }
-    testLogging {
-        showStandardStreams = true
-    }
+
+    shouldRunAfter test
 }
 
-check.dependsOn integrationTest
-integrationTest.mustRunAfter test
+task integrationTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
 
-integrationTest {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
     useJUnit {
         includeCategories 'com.splitoil.IntegrationTest'
     }
-    testLogging {
-        showStandardStreams = true
-    }
+
+    shouldRunAfter test
 }
+
+task architectureTest(type: Test) {
+    description = 'Runs architecture tests.'
+    group = 'verification'
+
+    useJUnit {
+        includeCategories 'com.splitoil.ArchTest'
+    }
+
+    shouldRunAfter test
+}
+
+check.dependsOn unitTest
+check.dependsOn architectureTest
+check.dependsOn integrationTest
 
 task cucumber() {
     dependsOn assemble, compileIntegrationTestGroovy

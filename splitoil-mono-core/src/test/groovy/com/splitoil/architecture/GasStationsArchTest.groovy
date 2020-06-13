@@ -1,14 +1,15 @@
 package com.splitoil.architecture
 
-
+import com.splitoil.ArchTest
 import com.splitoil.gasstation.domain.GasStationsFacade
 import com.splitoil.shared.event.DomainEvent
 import com.tngtech.archunit.core.importer.ClassFileImporter
+import org.junit.experimental.categories.Category
 import spock.lang.Specification
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 
-//@Category(UnitTest)
+@Category(ArchTest)
 class GasStationsArchTest extends Specification {
 
     def "domain is sealed"() {
