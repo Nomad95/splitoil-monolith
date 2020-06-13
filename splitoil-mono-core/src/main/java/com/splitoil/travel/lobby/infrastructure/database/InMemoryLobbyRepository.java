@@ -1,5 +1,6 @@
 package com.splitoil.travel.lobby.infrastructure.database;
 
+import com.splitoil.infrastructure.json.JacksonAdapter;
 import com.splitoil.shared.CrudInMemoryRepository;
 import com.splitoil.travel.lobby.application.dto.ParticipantIdView;
 import com.splitoil.travel.lobby.domain.model.Lobby;
@@ -23,5 +24,11 @@ public class InMemoryLobbyRepository extends CrudInMemoryRepository<Lobby> imple
             .map(LobbyParticipantDto::getUserId)
             .map(ParticipantIdView::new)
             .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override public String getCarsJson(final UUID lobbyId) {
+        return findByAggregateId(lobbyId)
+            .map(Lobby::getCars)
+            .map(e -> JacksonAdapter.getInstance().toJson(e)).orElse(null);
     }
 }

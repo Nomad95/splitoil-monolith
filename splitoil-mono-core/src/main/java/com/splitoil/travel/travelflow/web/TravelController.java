@@ -317,6 +317,19 @@ public class TravelController {
 
         return new EntityModel<>(travel)
             .add(getRouteLink(setCarInitialStateCommand.getTravelId()))
+            .add(addStartTravelLink())
+            .add(self);
+    }
+
+    @PostMapping("start")
+    public EntityModel<TravelOutputDto> startTravel(@RequestBody @Valid @NonNull final StartTravelCommand startTravelCommand) {
+        travelFlowFacade.startTravel(startTravelCommand);
+        final TravelOutputDto travel = travelFlowFacade.getTravel(startTravelCommand.getTravelId());
+
+        final Link self = linkTo(TravelController.class).slash("start").withSelfRel();
+
+        return new EntityModel<>(travel)
+            .add(getRouteLink(startTravelCommand.getTravelId()))
             .add(self);
     }
 
@@ -375,6 +388,9 @@ public class TravelController {
 
     private Link addCarStateLink() {
         return linkTo(TravelController.class).slash("carstate").withRel("add-car-initial-state");
+    }
+    private Link addStartTravelLink() {
+        return linkTo(TravelController.class).slash("start").withRel("start-travel");
     }
 
 }

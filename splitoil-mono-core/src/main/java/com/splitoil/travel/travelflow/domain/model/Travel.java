@@ -6,8 +6,10 @@ import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.travelflow.web.dto.TravelOutputDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -58,6 +60,9 @@ public class Travel extends AbstractEntity {
           })
     private InitialState initialState;
 
+    @Nullable
+    private Instant timeStarted;
+
     public void addWaypoint(final @NonNull Waypoint waypoint) {
         route.addWaypoint(waypoint);
     }
@@ -100,5 +105,14 @@ public class Travel extends AbstractEntity {
 
     public void setCarsInitialState(final @NonNull UUID carId, final @NonNull CarState initialCarState) {
         initialState.addCarState(carId, initialCarState);
+    }
+
+    public void startTravel() {
+        travelStatus = TravelStatus.IN_TRAVEL;
+        timeStarted = Instant.now();
+    }
+
+    public boolean isInConfirmation() {
+        return travelStatus == TravelStatus.IN_CONFIRMATION;
     }
 }

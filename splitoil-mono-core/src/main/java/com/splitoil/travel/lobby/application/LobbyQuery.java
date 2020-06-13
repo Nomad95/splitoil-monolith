@@ -1,12 +1,16 @@
 package com.splitoil.travel.lobby.application;
 
+import com.splitoil.infrastructure.json.JacksonAdapter;
 import com.splitoil.travel.lobby.application.dto.ParticipantIdView;
 import com.splitoil.travel.lobby.domain.model.Lobby;
 import com.splitoil.travel.lobby.domain.model.LobbyRepository;
+import com.splitoil.travel.lobby.domain.model.TravelCars;
 import com.splitoil.travel.lobby.web.dto.CarDto;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,5 +48,12 @@ public class LobbyQuery {
         return lobbyPassengersView.stream()
             .map(ParticipantIdView::getId)
             .anyMatch(id -> id.equals(reseatedParticipantId));
+    }
+
+    public List<UUID> getLobbyCarsIds(final @NonNull UUID lobbyId) {
+        final String carsJson = lobbyRepository.getCarsJson(lobbyId);
+        final TravelCars travelCars = JacksonAdapter.getInstance().jsonDecode(carsJson, TravelCars.class);
+        //TODO: zmienic get cars!
+        return new ArrayList<>(travelCars.getCars().keySet());
     }
 }

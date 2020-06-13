@@ -373,4 +373,28 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(jsonPath('$.state.carsState[0].fuelAmount').value(new BigDecimal("10.0")))
                     .andExpect(jsonPath('$.state.carsState[0].odometer').value(1234))
     }
+
+    @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
+            '/db/user/user_passenger.sql',
+            '/db/user/user_passenger_2.sql',
+            '/db/user/user_passenger_3.sql',
+            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
+            '/db/travel/lobby/travel_participant_passenger.sql',
+            '/db/travel/lobby/travel_participant_passenger_2.sql',
+            '/db/travel/lobby/travel_participant_passenger_3.sql',
+            '/db/travel/travel/confirmed_travel_with_initial_state.sql'])
+    def "Lobby creator can start travel when all is set up correctly"() {
+        given:
+            def startTravel = StartTravelCommand.of(TRAVEL_ID)
+
+        when:
+            def result = mockMvc.perform(post("/travel/start")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jackson.toJson(startTravel)))
+
+        then:
+            result.andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.travelStatus').value('IN_TRAVEL'))
+    }
 }

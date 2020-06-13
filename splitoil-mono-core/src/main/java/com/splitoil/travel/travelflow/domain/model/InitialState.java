@@ -8,10 +8,7 @@ import com.splitoil.travel.travelflow.web.dto.StateOutputDto;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Builder
@@ -24,6 +21,10 @@ class InitialState implements JsonEntity, Serializable {
 
     @Builder.Default
     private Map<UUID, CarState> carStates = new HashMap<>();
+
+    List<UUID> getStatedCars() {
+        return new ArrayList<>(carStates.keySet());
+    }
 
     void addCarState(final UUID carId, final CarState carState) {
         carStates.put(carId, carState);

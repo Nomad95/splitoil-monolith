@@ -22,4 +22,7 @@ public interface LobbyRepository extends CrudRepository<Lobby, Long> {
 
     @Query("SELECT new com.splitoil.travel.lobby.application.dto.ParticipantIdView(tp.aggregateId) FROM TravelParticipant tp where tp.lobby.aggregateId = :lobbyId")
     List<ParticipantIdView> getLobbyPassengersView(final UUID lobbyId);
+
+    @Query("SELECT CAST(l.cars as text) FROM Lobby l where l.aggregateId = :lobbyId")
+    String getCarsJson(final UUID lobbyId);
 }

@@ -22,6 +22,8 @@ public class TravelFlowFacade {
 
     private final TravelCreator travelCreator;
 
+    private final TravelService travelService;
+
     private final TravelRepository travelRepository;
 
     private final EventPublisher eventPublisher;
@@ -273,6 +275,25 @@ public class TravelFlowFacade {
             carId,
             setCarInitialStateCommand.getCurrentFuelLevel(),
             setCarInitialStateCommand.getOdometer()
+        ));
+    }
+
+    public void startTravel(final @NonNull StartTravelCommand startTravelCommand) {
+        final Travel travel = travelRepository.getByAggregateId(startTravelCommand.getTravelId());
+
+        if (!travel.isInConfirmation()) {
+            throw new IllegalStateException("Can't start travel when all travel is not in confirmation state");
+        }
+
+        final List<UUID> carsIds = lobbyQuery.getLobbyCarsIds(travel.getLobbyId().getId());
+
+        if (!travelService.hasAllCarsStateSet(travel, carsIds)) {
+            throw new IllegalStateException("Can't start travel when all cars doesn't have their state set");
+        }
+
+        travel.startTravel();
+        eventPublisher.publish(new TravelStarted(
+            travel.getAggregateId()
         ));
     }
 }

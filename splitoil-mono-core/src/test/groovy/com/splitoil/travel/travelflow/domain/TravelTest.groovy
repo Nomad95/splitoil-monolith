@@ -7,10 +7,7 @@ import com.splitoil.travel.lobby.web.dto.ForTravelCreationLobbyDto
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantForTravelPlanDto
 import com.splitoil.travel.travelflow.application.TravelFlowFacade
 import com.splitoil.travel.travelflow.infrastructure.TravelConfiguration
-import com.splitoil.travel.travelflow.web.dto.ConfirmTravelPlanCommand
-import com.splitoil.travel.travelflow.web.dto.GeoPointDto
-import com.splitoil.travel.travelflow.web.dto.SelectTravelBeginningCommand
-import com.splitoil.travel.travelflow.web.dto.SelectTravelDestinationCommand
+import com.splitoil.travel.travelflow.web.dto.*
 import spock.lang.Specification
 
 class TravelTest extends Specification {
@@ -88,21 +85,49 @@ class TravelTest extends Specification {
         return travelFlowFacade.getTravel(travel.travelId)
     }
 
+    protected confirmedPlanWithInitialStateSet() {
+        def lobbyDto = ForTravelCreationLobbyDto.builder()
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(DRIVER_ID).assignedCar(CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(SECOND_DRIVER_ID).assignedCar(SECOND_CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_1_ID).assignedCar(CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_2_ID).assignedCar(CAR_ID).build())
+                .participant(LobbyParticipantForTravelPlanDto.builder().userId(PASSENGER_3_ID).assignedCar(SECOND_CAR_ID).build())
+                .build()
+        def createTravelCommand = new TravelCreationRequested(LOBBY_ID, lobbyDto)
+
+        def travel = travelFlowFacade.createNewTravel(createTravelCommand)
+        travelFlowFacade.selectTravelBeginning(new SelectTravelBeginningCommand(travel.getTravelId(), BEGINNING_LOCATION))
+        travelFlowFacade.selectTravelDestination(new SelectTravelDestinationCommand(travel.getTravelId(), DESTINATION_LOCATION))
+
+        travelFlowFacade.confirmPlan(ConfirmTravelPlanCommand.of(travel.travelId))
+
+        def setState1 = new SetCarInitialStateCommand( travel.travelId, CAR_ID, BigDecimal.TEN, 1234)
+        def setState2 = new SetCarInitialStateCommand(travel.travelId, SECOND_CAR_ID, BigDecimal.TEN, 1234)
+        travelFlowFacade.setCarInitialState(setState1)
+        travelFlowFacade.setCarInitialState(setState2)
+
+        return travelFlowFacade.getTravel(travel.travelId)
+    }
+
     protected allPassengersAndCarsExistsInLobby() {
         lobbyQuery.participantExistsInLobby(_ as UUID, _ as UUID) >> true
         lobbyQuery.carsExistInLobby(_ as List<UUID>, _ as UUID) >> true
         lobbyQuery.carExistInLobby(_ as UUID, _ as UUID) >> true
+        lobbyQuery.getLobbyCarsIds(_ as UUID) >> [CAR_ID, SECOND_CAR_ID]
     }
 
     protected passengersAreInTheLobbyButNotCar() {
         lobbyQuery.participantExistsInLobby(_ as UUID, _ as UUID) >> true
         lobbyQuery.carsExistInLobby(_ as List<UUID>, _ as UUID) >> false
         lobbyQuery.carExistInLobby(_ as UUID, _ as UUID) >> false
+        lobbyQuery.getLobbyCarsIds(_ as UUID) >> [CAR_ID, SECOND_CAR_ID]
     }
 
     protected allCarsArePresentInLobbyButNotPassengers() {
         lobbyQuery.participantExistsInLobby(_ as UUID, _ as UUID) >> false
         lobbyQuery.carsExistInLobby(_ as List<UUID>, _ as UUID) >> true
         lobbyQuery.carExistInLobby(_ as UUID, _ as UUID) >> true
+        lobbyQuery.getLobbyCarsIds(_ as UUID) >> [CAR_ID, SECOND_CAR_ID]
     }
+
 }

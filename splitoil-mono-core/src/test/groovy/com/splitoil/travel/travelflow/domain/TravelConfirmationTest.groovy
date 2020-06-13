@@ -3,10 +3,8 @@ package com.splitoil.travel.travelflow.domain
 import com.splitoil.UnitTest
 import com.splitoil.travel.travelflow.domain.event.CarInitialStateSet
 import com.splitoil.travel.travelflow.domain.event.TravelPlanConfirmed
-import com.splitoil.travel.travelflow.web.dto.ConfirmTravelPlanCommand
-import com.splitoil.travel.travelflow.web.dto.SelectTravelBeginningCommand
-import com.splitoil.travel.travelflow.web.dto.SelectTravelDestinationCommand
-import com.splitoil.travel.travelflow.web.dto.SetCarInitialStateCommand
+import com.splitoil.travel.travelflow.domain.event.TravelStarted
+import com.splitoil.travel.travelflow.web.dto.*
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See
@@ -85,6 +83,46 @@ class TravelConfirmationTest extends TravelTest {
 
         then:
             thrown(IllegalArgumentException)
+    }
+
+    def "Lobby creator can start travelling"() {
+        setup: 'Travel all set'
+            allPassengersAndCarsExistsInLobby()
+            def travel = confirmedPlanWithInitialStateSet()
+
+        when: 'Lobby creator starts the travel'
+            def command = StartTravelCommand.of(travel.travelId)
+            travelFlowFacade.startTravel(command)
+
+        then: 'Travel started'
+            1 * eventPublisher.publish(_ as TravelStarted)
+    }
+
+    def "Starting travel changes travel status"() {
+        setup: 'Travel all set'
+            allPassengersAndCarsExistsInLobby()
+            def travel = confirmedPlanWithInitialStateSet()
+
+        when: 'Lobby creator starts the travel'
+            def command = StartTravelCommand.of(travel.travelId)
+            travelFlowFacade.startTravel(command)
+            travel = travelFlowFacade.getTravel(travel.travelId)
+
+        then: 'Travel status is changed'
+            travel.travelStatus == "IN_TRAVEL"
+    }
+
+    def "Cant start travel when confirmed but not set cars initial state"() {
+        setup: 'Confirmed travel'
+            allPassengersAndCarsExistsInLobby()
+            def travel = confirmedPlan()
+
+        when: 'Lobby creator starts the travel'
+            def command = StartTravelCommand.of(travel.travelId)
+            travelFlowFacade.startTravel(command)
+
+        then:
+            thrown(IllegalStateException)
     }
 
 }
