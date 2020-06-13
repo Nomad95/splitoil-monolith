@@ -42,13 +42,6 @@ class TravelIntegrationTest extends IntegrationSpec {
 
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass.sql'])
     def "Lobby creator can add travel beginning"() {
         given:
@@ -66,13 +59,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_beginning.sql'])
     def "Lobby creator can add travel destination"() {
         given:
@@ -117,13 +103,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_begin_and_end.sql'])
     def "Lobby creator can add refuel place"() {
         given:
@@ -143,13 +122,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_begin_and_end.sql'])
     def "Lobby creator can add stop place"() {
         given:
@@ -221,13 +193,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_begin_and_end.sql'])
     def "Lobby creator can add checkpoint"() {
         given:
@@ -247,13 +212,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_begin_and_end.sql'])
     def "Lobby creator can change location of a waypoint"() {
         given:
@@ -273,13 +231,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_some_waypoints.sql'])
     def "Lobby creator can change order of waypoints"() {
         given:
@@ -298,13 +249,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_some_waypoints.sql'])
     def "Lobby creator can delete waypoint"() {
         given:
@@ -324,13 +268,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/new_travel_two_drivers_three_pass_with_some_waypoints.sql'])
     def "Lobby creator can confirm travel"() {
         given:
@@ -348,13 +285,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/confirmed_travel_with_some_waypoints.sql'])
     def "Lobby creator can add initial car state to have its travel cost calculated correctly"() {
         given:
@@ -375,13 +305,6 @@ class TravelIntegrationTest extends IntegrationSpec {
     }
 
     @Sql(scripts = ['/db/travel/lobby/new_lobby_with_passenger.sql',
-            '/db/user/user_passenger.sql',
-            '/db/user/user_passenger_2.sql',
-            '/db/user/user_passenger_3.sql',
-            '/db/travel/lobby/travel_participant_lobby_creator_driver.sql',
-            '/db/travel/lobby/travel_participant_passenger.sql',
-            '/db/travel/lobby/travel_participant_passenger_2.sql',
-            '/db/travel/lobby/travel_participant_passenger_3.sql',
             '/db/travel/travel/confirmed_travel_with_initial_state.sql'])
     def "Lobby creator can start travel when all is set up correctly"() {
         given:
