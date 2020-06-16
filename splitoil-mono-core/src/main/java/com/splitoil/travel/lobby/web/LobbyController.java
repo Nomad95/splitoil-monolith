@@ -1,6 +1,5 @@
 package com.splitoil.travel.lobby.web;
 
-import com.splitoil.car.CarController;
 import com.splitoil.travel.lobby.application.LobbyFacade;
 import com.splitoil.travel.lobby.web.dto.*;
 import lombok.AllArgsConstructor;
@@ -48,6 +47,8 @@ public class LobbyController {
             .add(setLobbyCurrencyLink())
             .add(addCarToLobbyLink())
             .add(addTemporalPassengerLink())
+            .add(lobbyDetailsLink(outputDto.getLobbyId()))
+            .add(startDefiningTravelPlanLink())
             .add(addPassengerLink())
             .add(changeLobbyTopRateLink());
     }
@@ -74,6 +75,7 @@ public class LobbyController {
             .add(setLobbyCurrencyLink())
             .add(addCarToLobbyLink())
             .add(addTemporalPassengerLink())
+            .add(startDefiningTravelPlanLink())
             .add(assignToCarLink())
             .add(addPassengerLink());
     }
@@ -90,6 +92,7 @@ public class LobbyController {
             .add(lobbyDetailsLink(lobby.getLobbyId()))
             .add(changeLobbyTopRateLink())
             .add(addTemporalPassengerLink())
+            .add(startDefiningTravelPlanLink())
             .add(assignToCarLink())
             .add(addPassengerLink());
     }
@@ -106,6 +109,7 @@ public class LobbyController {
             .add(setLobbyCurrencyLink())
             .add(addTemporalPassengerLink())
             .add(assignToCarLink())
+            .add(startDefiningTravelPlanLink())
             .add(lobbyDetailsLink(lobby.getLobbyId()))
             .add(changeLobbyTopRateLink());
     }
@@ -123,6 +127,7 @@ public class LobbyController {
             .add(addCarToLobbyLink())
             .add(setLobbyCurrencyLink())
             .add(addPassengerLink())
+            .add(startDefiningTravelPlanLink())
             .add(assignToCarLink())
             .add(changeLobbyTopRateLink());
     }
@@ -140,6 +145,7 @@ public class LobbyController {
             .add(setLobbyCurrencyLink())
             .add(addPassengerLink())
             .add(addTemporalPassengerLink())
+            .add(startDefiningTravelPlanLink())
             .add(changeLobbyTopRateLink());
     }
 
@@ -150,7 +156,7 @@ public class LobbyController {
     }
 
     private Link addTemporalPassengerLink() {
-        return linkTo(LobbyController.class).slash("participant/passenger").withRel("add-temporal-passenger");
+        return linkTo(LobbyController.class).slash("participant/temporalpassenger").withRel("add-temporal-passenger");
     }
 
     private Link assignToCarLink() {
@@ -162,7 +168,7 @@ public class LobbyController {
     }
 
     private Link addCarToLobbyLink() {
-        return linkTo(CarController.class).slash("car").withRel("add-car-to-lobby");
+        return linkTo(LobbyController.class).slash("car").withRel("add-car-to-lobby");
     }
 
     private Link setLobbyCurrencyLink() {
@@ -174,6 +180,10 @@ public class LobbyController {
     }
 
     private Link lobbyDetailsLink(final UUID lobbyId) {
-        return linkTo(CarController.class).slash(lobbyId.toString()).withRel("get-lobby-info");
+        return linkTo(LobbyController.class).slash(lobbyId.toString()).withRel("get-lobby-info");
+    }
+
+    private Link startDefiningTravelPlanLink() {
+        return linkTo(LobbyController.class).slash("starttravelplan").withRel("start-defining-plan");
     }
 }

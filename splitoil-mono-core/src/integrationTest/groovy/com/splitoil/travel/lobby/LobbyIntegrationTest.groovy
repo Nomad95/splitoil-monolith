@@ -31,7 +31,6 @@ class LobbyIntegrationTest extends IntegrationSpec {
 
     private static final String DRIVER_ID_STR = '0ea7db01-5f68-409b-8130-e96e8d96060a'
     private static final UUID DRIVER_ID = UUID.fromString('0ea7db01-5f68-409b-8130-e96e8d96060a')
-    private static final UUID SECOND_DRIVER_ID = UUID.fromString('c13d02de-c7a4-4ab0-9f3f-7ee0768b4a5f')
 
     private static final UUID PASSENGER_ID = UUID.fromString('31c7b8b8-17fe-46b2-9ec6-df4c1d23f3a4')
 

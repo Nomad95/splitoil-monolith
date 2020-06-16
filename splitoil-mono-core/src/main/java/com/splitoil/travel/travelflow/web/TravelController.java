@@ -91,7 +91,7 @@ public class TravelController {
     }
 
     @PostMapping("route/refuel")
-    public EntityModel<RouteDto> selectParticipantRefuelPlace(@RequestBody @Valid @NonNull final AddRefuelPlaceCommand addRefuelPlaceCommand) {
+    public EntityModel<RouteDto> selectRefuelPlace(@RequestBody @Valid @NonNull final AddRefuelPlaceCommand addRefuelPlaceCommand) {
         travelFlowFacade.addRefuelPlace(addRefuelPlaceCommand);
         final RouteDto newRoute = travelFlowFacade.getRoute(addRefuelPlaceCommand.getTravelId());
 
