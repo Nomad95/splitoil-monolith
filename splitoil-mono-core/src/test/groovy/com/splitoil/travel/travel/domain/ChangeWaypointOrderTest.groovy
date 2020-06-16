@@ -1,11 +1,11 @@
 package com.splitoil.travel.travel.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.travel.travelflow.domain.event.WaypointOrderChanged
-import com.splitoil.travel.travelflow.web.dto.AddCheckpointCommand
-import com.splitoil.travel.travelflow.web.dto.AddRefuelPlaceCommand
-import com.splitoil.travel.travelflow.web.dto.AddStopPlaceCommand
-import com.splitoil.travel.travelflow.web.dto.ChangeOrderWaypointCommand
+import com.splitoil.travel.travel.domain.event.WaypointOrderChanged
+import com.splitoil.travel.travel.web.dto.AddCheckpointCommand
+import com.splitoil.travel.travel.web.dto.AddRefuelPlaceCommand
+import com.splitoil.travel.travel.web.dto.AddStopPlaceCommand
+import com.splitoil.travel.travel.web.dto.ChangeOrderWaypointCommand
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See

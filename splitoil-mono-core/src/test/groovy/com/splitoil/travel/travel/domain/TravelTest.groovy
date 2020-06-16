@@ -5,9 +5,9 @@ import com.splitoil.travel.lobby.application.LobbyQuery
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested
 import com.splitoil.travel.lobby.web.dto.ForTravelCreationLobbyDto
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantForTravelPlanDto
-import com.splitoil.travel.travelflow.application.TravelFlowFacade
-import com.splitoil.travel.travelflow.infrastructure.TravelConfiguration
-import com.splitoil.travel.travelflow.web.dto.*
+import com.splitoil.travel.travel.application.TravelFlowFacade
+import com.splitoil.travel.travel.infrastructure.TravelConfiguration
+import com.splitoil.travel.travel.web.dto.*
 import spock.lang.Specification
 
 class TravelTest extends Specification {

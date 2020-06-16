@@ -1,8 +1,8 @@
 package com.splitoil.travel.travel.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.travel.travelflow.domain.event.WaypointLocationMoved
-import com.splitoil.travel.travelflow.web.dto.MoveWaypointCommand
+import com.splitoil.travel.travel.domain.event.WaypointLocationMoved
+import com.splitoil.travel.travel.web.dto.MoveWaypointCommand
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See

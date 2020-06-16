@@ -4,7 +4,7 @@ import com.splitoil.UnitTest
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested
 import com.splitoil.travel.lobby.web.dto.ForTravelCreationLobbyDto
 import com.splitoil.travel.lobby.web.dto.LobbyParticipantForTravelPlanDto
-import com.splitoil.travel.travelflow.domain.event.TravelCreated
+import com.splitoil.travel.travel.domain.event.TravelCreated
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See

@@ -42,21 +42,21 @@ public class Travel extends AbstractEntity {
     @Column(nullable = false, columnDefinition = "json")
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
           parameters = {
-              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.Route"),
+              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travel.domain.model.Route"),
           })
     private Route route;
 
     @Column(nullable = false, columnDefinition = "json")
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
           parameters = {
-              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.TravelParticipants"),
+              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travel.domain.model.TravelParticipants"),
           })
     private TravelParticipants travelParticipants;
 
     @Column(nullable = false, columnDefinition = "json")
     @Type(type = "com.splitoil.infrastructure.json.JsonUserType",
           parameters = {
-              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travelflow.domain.model.InitialState"),
+              @org.hibernate.annotations.Parameter(name = JsonUserType.OBJECT, value = "com.splitoil.travel.travel.domain.model.InitialState"),
           })
     private InitialState initialState;
 

@@ -3,7 +3,7 @@ package com.splitoil.travel.travelplan
 import com.splitoil.IntegrationTest
 import com.splitoil.base.IntegrationSpec
 import com.splitoil.infrastructure.security.WithMockSecurityContext
-import com.splitoil.travel.travelflow.web.dto.*
+import com.splitoil.travel.travel.web.dto.*
 import org.junit.experimental.categories.Category
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser

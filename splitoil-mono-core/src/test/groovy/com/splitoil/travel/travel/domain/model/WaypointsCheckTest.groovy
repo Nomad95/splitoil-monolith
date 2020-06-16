@@ -1,7 +1,7 @@
 package com.splitoil.travel.travel.domain.model
 
 import com.splitoil.UnitTest
-import com.splitoil.travel.travelflow.domain.TravelTest
+import com.splitoil.travel.travel.domain.TravelTest
 import org.junit.experimental.categories.Category
 import spock.lang.Unroll
 

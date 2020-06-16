@@ -1,10 +1,10 @@
 package com.splitoil.travel.travel.domain
 
 import com.splitoil.UnitTest
-import com.splitoil.travel.travelflow.domain.event.CarInitialStateSet
-import com.splitoil.travel.travelflow.domain.event.TravelPlanConfirmed
-import com.splitoil.travel.travelflow.domain.event.TravelStarted
-import com.splitoil.travel.travelflow.web.dto.*
+import com.splitoil.travel.travel.domain.event.CarInitialStateSet
+import com.splitoil.travel.travel.domain.event.TravelPlanConfirmed
+import com.splitoil.travel.travel.domain.event.TravelStarted
+import com.splitoil.travel.travel.web.dto.*
 import org.junit.experimental.categories.Category
 import spock.lang.Narrative
 import spock.lang.See
