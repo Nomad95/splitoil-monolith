@@ -1,6 +1,6 @@
 package com.splitoil.travel.lobby.web.dto;
 
-import com.splitoil.travel.travelflow.web.dto.GeoPointDto;
+import com.splitoil.travel.travel.web.dto.GeoPointDto;
 import lombok.*;
 
 import java.util.UUID;

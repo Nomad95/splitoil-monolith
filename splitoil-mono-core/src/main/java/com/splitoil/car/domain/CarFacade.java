@@ -22,15 +22,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CarFacade {
 
-    private CarCreator carCreator;
+    private final CarCreator carCreator;
 
-    private CarsRepository carsRepository;
+    private final CarsRepository carsRepository;
 
-    private CarCostRepository carCostRepository;
+    private final CarCostRepository carCostRepository;
 
-    private CarRefuelRepository carRefuelRepository;
+    private final CarRefuelRepository carRefuelRepository;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public CarOutputDto addNewCarToCollection(final @NonNull AddCarDto addCarDto) {

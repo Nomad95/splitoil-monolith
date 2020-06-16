@@ -50,11 +50,7 @@ I am skipping some mutation test outputs as its too time-consuming and this proj
 not on tests. Mutation tests are here only to experiment with various frameworks and libraries.
 
 
-
 ## Notes
 
 "When a significant process or transformation in the domain is not a natural responsibility of an ENTITY or VALUE OBJECT, add an operation to the 
 model as standalone interface declared as a SERVICE."
-
-## bledy 
-* jak sie dodaje samochod co ma 0 miejsc do lobby to sie wyswietla ze nie mozna dodac pasazera - nie ma ustawiania seat count

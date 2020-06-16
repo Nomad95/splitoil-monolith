@@ -1,6 +1,6 @@
 package com.splitoil.travel.lobby.application;
 
-import com.splitoil.travel.travelflow.domain.event.TravelCreated;
+import com.splitoil.travel.travel.domain.event.TravelCreated;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.context.event.EventListener;
