@@ -179,6 +179,8 @@ class TravelIntegrationTest extends IntegrationSpec {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath('$.waypoints[0].waypointType').value('BEGINNING_PLACE'))
                     .andExpect(jsonPath('$.waypoints[1].waypointType').value('PARTICIPANT_EXIT_PLACE'))
+                    .andExpect(jsonPath('$.waypoints[1].additionalInfo.passengerId').value(PASSENGER_ID.toString()))
+                    .andExpect(jsonPath('$.waypoints[1].additionalInfo.carId').value(CAR_UUID.toString()))
                     .andExpect(jsonPath('$.waypoints[2].waypointType').value('DESTINATION_PLACE'))
     }
 

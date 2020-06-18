@@ -1,4 +1,4 @@
-package com.splitoil.travel.lobby.web.dto;
+package com.splitoil.travel.travel.web.dto;
 
 import lombok.*;
 
@@ -12,5 +12,5 @@ import java.util.List;
 public class RouteDto {
     @Singular
     @NonNull
-    private List<WaypointDto> waypoints; //TODO: wiecej info o waypopintach ;/
+    private List<WaypointDto> waypoints;
 }

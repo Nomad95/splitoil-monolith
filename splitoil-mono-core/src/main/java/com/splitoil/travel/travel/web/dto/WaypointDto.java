@@ -1,6 +1,6 @@
-package com.splitoil.travel.lobby.web.dto;
+package com.splitoil.travel.travel.web.dto;
 
-import com.splitoil.travel.travel.web.dto.GeoPointDto;
+import com.splitoil.travel.travel.web.dto.waypoint.WaypointAdditionalInfoPayload;
 import lombok.*;
 
 import java.util.UUID;
@@ -15,4 +15,5 @@ public class WaypointDto {
     private GeoPointDto location;
     private String waypointType;
     private boolean historical;
+    private WaypointAdditionalInfoPayload additionalInfo;
 }

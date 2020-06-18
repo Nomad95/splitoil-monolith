@@ -2,7 +2,7 @@ package com.splitoil.travel.travel.domain.model;
 
 import com.splitoil.infrastructure.json.JsonUserType;
 import com.splitoil.shared.AbstractEntity;
-import com.splitoil.travel.lobby.web.dto.RouteDto;
+import com.splitoil.travel.travel.web.dto.RouteDto;
 import com.splitoil.travel.travel.web.dto.TravelOutputDto;
 import lombok.*;
 import org.hibernate.annotations.Type;

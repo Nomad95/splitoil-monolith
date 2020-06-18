@@ -63,6 +63,24 @@ class DefiningRoutesTest extends TravelTest {
             1 * eventPublisher.publish(_ as TravelReseatPlaceAdded)
     }
 
+    def "Lobby creator can see reseat place info"() {
+        setup: 'Travel with beginning and destination point'
+            def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
+            allPassengersAndCarsExistsInLobby()
+
+        when: 'Lobby creator selects reseat place'
+            def command = AddReseatPlaceCommand.of(travel.travelId, DESTINATION_LOCATION, CAR_ID, SECOND_CAR_ID, PASSENGER_1_ID)
+            travelFlowFacade.addReseatPlace(command)
+            def route = travelFlowFacade.getRoute(travel.travelId)
+
+        then: 'Reseat place info visible'
+            route.getWaypoints().get(1).additionalInfo.passengerId == PASSENGER_1_ID
+            route.getWaypoints().get(1).additionalInfo.carFrom == CAR_ID
+            route.getWaypoints().get(1).additionalInfo.carTo == SECOND_CAR_ID
+
+            1 * eventPublisher.publish(_ as TravelReseatPlaceAdded)
+    }
+
     def "Should throw when car is not found in the lobby"() {
         setup: 'Travel with beginning and destination point'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
@@ -122,6 +140,22 @@ class DefiningRoutesTest extends TravelTest {
             1 * eventPublisher.publish(_ as TravelRefuelPlaceAdded)
     }
 
+    def "Lobby creator sees refuel place info in waypoints view"() {
+        setup: 'Travel with beginning and destination point'
+            def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
+            allPassengersAndCarsExistsInLobby()
+
+        when: 'Lobby creator selects refuel place'
+            def command = AddRefuelPlaceCommand.of(travel.travelId, DESTINATION_LOCATION, CAR_ID)
+            travelFlowFacade.addRefuelPlace(command)
+            def route = travelFlowFacade.getRoute(travel.travelId)
+
+        then: 'Refuel place info present'
+            route.getWaypoints().get(1).additionalInfo.carBeingRefueled == CAR_ID
+
+            1 * eventPublisher.publish(_ as TravelRefuelPlaceAdded)
+    }
+
     def "Should throw when car is not in the lobby when adding refuel car waypoint"() {
         setup: 'Travel with beginning and destination point'
             def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
@@ -148,6 +182,23 @@ class DefiningRoutesTest extends TravelTest {
         then: 'Passenger boarding place set'
             route.getWaypoints().size() == 3
             route.getWaypoints().get(1).getWaypointType() == "PARTICIPANT_BOARDING_PLACE"
+
+            1 * eventPublisher.publish(_ as TravelParticipantBoardingPlaceAdded)
+    }
+
+    def "Lobby creator can see passenger boarding place info in waypoints view"() {
+        setup: 'Travel with beginning and destination point'
+            def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
+            allPassengersAndCarsExistsInLobby()
+
+        when: 'Lobby creator selects passenger boarding place'
+            def command = AddParticipantBoardingPlaceCommand.of(travel.travelId, DESTINATION_LOCATION, PASSENGER_1_ID, CAR_ID)
+            travelFlowFacade.addBoardingPlace(command)
+            def route = travelFlowFacade.getRoute(travel.travelId)
+
+        then: 'Passenger boarding place info visible'
+            route.getWaypoints().get(1).additionalInfo.passengerId == PASSENGER_1_ID
+            route.getWaypoints().get(1).additionalInfo.carId == CAR_ID
 
             1 * eventPublisher.publish(_ as TravelParticipantBoardingPlaceAdded)
     }
@@ -191,6 +242,23 @@ class DefiningRoutesTest extends TravelTest {
         then: 'Passenger exit place set'
             route.getWaypoints().size() == 3
             route.getWaypoints().get(1).getWaypointType() == "PARTICIPANT_EXIT_PLACE"
+
+            1 * eventPublisher.publish(_ as TravelParticipantExitPlaceAdded)
+    }
+
+    def "Lobby creator can see passenger exit place info in waypoints view"() {
+        setup: 'Travel with beginning and destination point'
+            def travel = travelWithTwoCarsAndThreeParticipantsAndDestinationSelected()
+            allPassengersAndCarsExistsInLobby()
+
+        when: 'Lobby creator selects passenger exit place'
+            def command = AddParticipantExitPlaceCommand.of(travel.travelId, DESTINATION_LOCATION, PASSENGER_1_ID, CAR_ID)
+            travelFlowFacade.addExitPlace(command)
+            def route = travelFlowFacade.getRoute(travel.travelId)
+
+        then: 'Passenger exit place visible'
+            route.getWaypoints().get(1).additionalInfo.passengerId == PASSENGER_1_ID
+            route.getWaypoints().get(1).additionalInfo.carId == CAR_ID
 
             1 * eventPublisher.publish(_ as TravelParticipantExitPlaceAdded)
     }

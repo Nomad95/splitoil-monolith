@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class TravelCreator {
@@ -35,48 +36,25 @@ public class TravelCreator {
         return Waypoint.checkpoint(GeoPoint.of(lon, lat));
     }
 
-    public Waypoint createParticipantBoardingPlace(final double lon, final double lat) {
-        return Waypoint.participantBoardingPlace(GeoPoint.of(lon, lat));
+    public Waypoint createParticipantBoardingPlace(final double lon, final double lat, final UUID participantId, final UUID boardingCarId) {
+        return Waypoint.participantBoardingPlace(GeoPoint.of(lon, lat), new PassengerBoardingPlaceInfo(participantId, boardingCarId));
     }
 
-    public Waypoint createPassengerExitPlace(final double lon, final double lat) {
-        return Waypoint.passengerExitPlace(GeoPoint.of(lon, lat));
+    public Waypoint createPassengerExitPlace(final double lon, final double lat, final UUID passengerId, final UUID exitingCarId) {
+        return Waypoint.passengerExitPlace(GeoPoint.of(lon, lat), new PassengerExitPlaceInfo(passengerId, exitingCarId));
     }
 
-    public Waypoint createRefuelPlace(final double lon, final double lat) {
-        return Waypoint.refuelPlace(GeoPoint.of(lon, lat));
+    public Waypoint createRefuelPlace(final double lon, final double lat, final UUID refuelingCarId) {
+        return Waypoint.refuelPlace(GeoPoint.of(lon, lat), new CarRefuelPlaceInfo(refuelingCarId));
     }
 
-    public Waypoint createReseatPlace(final double lon, final double lat) {
-        return Waypoint.reseatPlace(GeoPoint.of(lon, lat));
+    public Waypoint createReseatPlace(final double lon, final double lat, final @NonNull UUID participantId,
+        final @NonNull UUID carFrom, final @NonNull UUID carTo) {
+        return Waypoint.reseatPlace(GeoPoint.of(lon, lat), new PassengerReseatPlaceInfo(participantId, carFrom, carTo));
     }
 
     public Waypoint createStopPlace(final double lon, final double lat) {
         return Waypoint.stopPlace(GeoPoint.of(lon, lat));
-    }
-
-    public Waypoint createWaypointByType(final GeoPointDto location, final String waypointType) {
-        final Waypoint.WaypointType type = Waypoint.WaypointType.valueOf(waypointType);
-        switch (type) {
-            case CHECKPOINT:
-                return createCheckpoint(location.getLon(), location.getLat());
-            case RESEAT_PLACE:
-                return createReseatPlace(location.getLon(), location.getLat());
-            case BEGINNING_PLACE:
-                return createBeginningPlace(location.getLon(), location.getLat());
-            case DESTINATION_PLACE:
-                return createDestinationPlace(location.getLon(), location.getLat());
-            case PARTICIPANT_BOARDING_PLACE:
-                return createParticipantBoardingPlace(location.getLon(), location.getLat());
-            case STOP_PLACE:
-                return createStopPlace(location.getLon(), location.getLat());
-            case REFUEL_PLACE:
-                return createRefuelPlace(location.getLon(), location.getLat());
-            case PARTICIPANT_EXIT_PLACE:
-                return createPassengerExitPlace(location.getLon(), location.getLat());
-        }
-
-        throw new IllegalArgumentException("No waypoint for type: " + waypointType);
     }
 
     public GeoPoint createGeoPoint(final GeoPointDto location) {

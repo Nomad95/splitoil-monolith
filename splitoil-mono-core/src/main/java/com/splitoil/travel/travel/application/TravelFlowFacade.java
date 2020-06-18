@@ -4,7 +4,6 @@ import com.splitoil.shared.annotation.ApplicationService;
 import com.splitoil.shared.event.EventPublisher;
 import com.splitoil.travel.lobby.application.LobbyQuery;
 import com.splitoil.travel.lobby.domain.event.TravelCreationRequested;
-import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.travel.domain.event.*;
 import com.splitoil.travel.travel.domain.model.*;
 import com.splitoil.travel.travel.web.dto.*;
@@ -83,7 +82,13 @@ public class TravelFlowFacade {
         }
 
         final GeoPointDto waypointLocation = addReseatPlaceCommand.getLocation();
-        final Waypoint reseatPlace = travelCreator.createReseatPlace(waypointLocation.getLon(), waypointLocation.getLat());
+        final Waypoint reseatPlace = travelCreator.createReseatPlace(
+            waypointLocation.getLon(),
+            waypointLocation.getLat(),
+            addReseatPlaceCommand.getParticipantId(),
+            addReseatPlaceCommand.getCarFrom(),
+            addReseatPlaceCommand.getCarTo()
+            );
 
         travel.addWaypoint(reseatPlace);
         eventPublisher.publish(
@@ -108,7 +113,10 @@ public class TravelFlowFacade {
         }
 
         final GeoPointDto waypointLocation = addRefuelPlaceCommand.getLocation();
-        final Waypoint refuelPlace = travelCreator.createRefuelPlace(waypointLocation.getLon(), waypointLocation.getLat());
+        final Waypoint refuelPlace = travelCreator.createRefuelPlace(
+            waypointLocation.getLon(),
+            waypointLocation.getLat(),
+            refuelingCarId);
 
         travel.addWaypoint(refuelPlace);
         eventPublisher.publish(
@@ -151,7 +159,11 @@ public class TravelFlowFacade {
         }
 
         final GeoPointDto waypointLocation = addParticipantBoardingPlaceCommand.getLocation();
-        final Waypoint refuelPlace = travelCreator.createParticipantBoardingPlace(waypointLocation.getLon(), waypointLocation.getLat());
+        final Waypoint refuelPlace = travelCreator.createParticipantBoardingPlace(
+            waypointLocation.getLon(),
+            waypointLocation.getLat(),
+            participantId,
+            boardingCarId);
 
         travel.addWaypoint(refuelPlace);
         eventPublisher.publish(
@@ -166,11 +178,11 @@ public class TravelFlowFacade {
         final Travel travel = travelRepository.getByAggregateId(addParticipantExitPlaceCommand.getTravelId());
 
         final UUID participantId = addParticipantExitPlaceCommand.getPassengerId();
-        final UUID boardingCarId = addParticipantExitPlaceCommand.getCarId();
+        final UUID exitingCarId = addParticipantExitPlaceCommand.getCarId();
         final UUID lobbyId = travel.getLobbyId().getId();
 
         final boolean participantExist = lobbyQuery.participantExistsInLobby(participantId, lobbyId);
-        final boolean carExistInLobby = lobbyQuery.carExistInLobby(boardingCarId, lobbyId);
+        final boolean carExistInLobby = lobbyQuery.carExistInLobby(exitingCarId, lobbyId);
 
         if (!participantExist) {
             throw new IllegalArgumentException("Can't execute the command. Participant is not present in the lobby");
@@ -181,7 +193,11 @@ public class TravelFlowFacade {
         }
 
         final GeoPointDto waypointLocation = addParticipantExitPlaceCommand.getLocation();
-        final Waypoint refuelPlace = travelCreator.createPassengerExitPlace(waypointLocation.getLon(), waypointLocation.getLat());
+        final Waypoint refuelPlace = travelCreator.createPassengerExitPlace(
+            waypointLocation.getLon(),
+            waypointLocation.getLat(),
+            participantId,
+            exitingCarId);
 
         travel.addWaypoint(refuelPlace);
         eventPublisher.publish(

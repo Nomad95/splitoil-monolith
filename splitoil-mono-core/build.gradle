@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.2.0.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
     id 'groovy'
     id 'info.solidsoft.pitest' version '1.4.6'
@@ -73,6 +73,9 @@ dependencies {
 
     //HATEOAS
     compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version: '1.0.2.RELEASE'
+
+    //javax validation
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
 }
 

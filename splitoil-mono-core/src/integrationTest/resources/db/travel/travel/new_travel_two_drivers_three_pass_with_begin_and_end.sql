@@ -12,7 +12,10 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
         "lat": 15.0
       },
       "waypointType": "BEGINNING_PLACE",
-      "historical": false
+      "historical": false,
+      "additionalInfo": {
+        "type": "emptyInfo"
+      }
     },
     {
       "id": "1b6a488f-237a-4bad-9f84-c2200aa6f9cf",
@@ -21,7 +24,10 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
         "lat": 15.0
       },
       "waypointType": "DESTINATION_PLACE",
-      "historical": false
+      "historical": false,
+      "additionalInfo": {
+        "type": "emptyInfo"
+      }
     }
   ]
 }', '{

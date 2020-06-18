@@ -12,7 +12,10 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
         "lat": 15.0
       },
       "waypointType": "BEGINNING_PLACE",
-      "historical": false
+      "historical": false,
+      "additionalInfo": {
+        "type": "emptyInfo"
+      }
     },
     {
       "id": "e4a6bf07-b429-464d-8e1c-554aac5e543e",
@@ -21,7 +24,10 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
         "lat": 15.0
       },
       "waypointType": "STOP_PLACE",
-      "historical": false
+      "historical": false,
+      "additionalInfo": {
+        "type": "emptyInfo"
+      }
     },
     {
       "id": "4db9b61e-6ae8-472f-93ee-6a90e5cb6dae",
@@ -30,7 +36,10 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
         "lat": 15.0
       },
       "waypointType": "CHECKPOINT",
-      "historical": false
+      "historical": false,
+      "additionalInfo": {
+        "type": "emptyInfo"
+      }
     },
     {
       "id": "1b6a488f-237a-4bad-9f84-c2200aa6f9cf",
@@ -39,7 +48,10 @@ values (1, '799c470e-b0d6-4df9-8bbe-195533515826', '148091b1-c0f0-4a3e-9b0d-569e
         "lat": 15.0
       },
       "waypointType": "DESTINATION_PLACE",
-      "historical": false
+      "historical": false,
+      "additionalInfo": {
+        "type": "emptyInfo"
+      }
     }
   ]
 }', '{

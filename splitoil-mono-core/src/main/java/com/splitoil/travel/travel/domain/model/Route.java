@@ -1,8 +1,8 @@
 package com.splitoil.travel.travel.domain.model;
 
 import com.splitoil.infrastructure.json.JsonEntity;
-import com.splitoil.travel.lobby.web.dto.RouteDto;
-import com.splitoil.travel.lobby.web.dto.WaypointDto;
+import com.splitoil.travel.travel.web.dto.RouteDto;
+import com.splitoil.travel.travel.web.dto.WaypointDto;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 

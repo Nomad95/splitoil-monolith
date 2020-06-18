@@ -1,6 +1,5 @@
 package com.splitoil.travel.travel.web;
 
-import com.splitoil.travel.lobby.web.dto.RouteDto;
 import com.splitoil.travel.travel.application.TravelFlowFacade;
 import com.splitoil.travel.travel.web.dto.*;
 import lombok.AllArgsConstructor;
