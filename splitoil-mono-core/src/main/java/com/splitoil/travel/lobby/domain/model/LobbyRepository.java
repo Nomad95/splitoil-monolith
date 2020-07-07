@@ -25,4 +25,7 @@ public interface LobbyRepository extends CrudRepository<Lobby, Long> {
 
     @Query("SELECT CAST(l.cars as text) FROM Lobby l where l.aggregateId = :lobbyId")
     String getCarsJson(final UUID lobbyId);
+
+    @Query("SELECT CAST(l.cars as text) FROM Lobby l where l.travelId = :travelId")
+    String getCarsJsonByTravelId(final UUID travelId);
 }

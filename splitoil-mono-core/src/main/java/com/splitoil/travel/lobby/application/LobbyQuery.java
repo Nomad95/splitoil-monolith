@@ -56,4 +56,10 @@ public class LobbyQuery {
         //TODO: zmienic get cars!
         return new ArrayList<>(travelCars.getCars().keySet());
     }
+
+    public List<UUID> getLobbyCarsIdsByTravelId(final @NonNull UUID travelId) {
+        final String carsJson = lobbyRepository.getCarsJsonByTravelId(travelId);
+        final TravelCars travelCars = JacksonAdapter.getInstance().jsonDecode(carsJson, TravelCars.class);
+        return new ArrayList<>(travelCars.getCars().keySet());
+    }
 }

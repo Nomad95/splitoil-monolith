@@ -19,7 +19,6 @@ class TravelTest extends Specification {
     protected static final UUID PASSENGER_2_ID = UUID.fromString('46e853a4-bb2e-43ab-8e88-80807468954d')
     protected static final UUID PASSENGER_3_ID = UUID.fromString('4dbd718c-f9b1-4c65-9b3c-0af8e5eaf5d1')
     protected static final UUID LOBBY_ID = UUID.fromString('148091b1-c0f0-4a3e-9b0d-569e05cfcd0f')
-    protected static final UUID TRAVEL_ID = UUID.fromString('1511e033-5db3-4e4d-a498-7e7f32cfc063')
 
     protected static final String LOBBY_NAME = "Some lobby name"
 

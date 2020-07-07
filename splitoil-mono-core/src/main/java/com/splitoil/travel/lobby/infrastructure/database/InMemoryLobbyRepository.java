@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class InMemoryLobbyRepository extends CrudInMemoryRepository<Lobby> implements LobbyRepository {
 
@@ -30,5 +31,15 @@ public class InMemoryLobbyRepository extends CrudInMemoryRepository<Lobby> imple
         return findByAggregateId(lobbyId)
             .map(Lobby::getCars)
             .map(e -> JacksonAdapter.getInstance().toJson(e)).orElse(null);
+    }
+
+    @Override
+    public String getCarsJsonByTravelId(final UUID travelId) {
+        return StreamSupport.stream(findAll().spliterator(), false)
+            .filter(l -> travelId.equals(l.getTravelId().getTravelId()))
+            .map(Lobby::getCars)
+            .map(e -> JacksonAdapter.getInstance().toJson(e))
+            .findFirst()
+            .orElse(null);
     }
 }
